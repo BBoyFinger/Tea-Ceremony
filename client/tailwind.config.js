@@ -14,6 +14,12 @@ module.exports = {
         xl: "1280px",
       },
     },
+    backgroundPosition: {
+      'center-bottom': 'center bottom'
+    },
+    backgroundImage: {
+      'custom-fall': "url('https://www.adagio.com/images6/carbon_offset/animation_fall.webp'), url('https://www.adagio.com/images6/carbon_offset/footer_fall_retina.webp')",
+    },
   },
   plugins: [],
 };
