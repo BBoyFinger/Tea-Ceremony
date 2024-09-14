@@ -10,8 +10,8 @@ type Props = {};
 
 const Header = (props: Props) => {
   return (
-    <header className="h-24 shadow-sm">
-      <div className="container h-full flex justify-between items-center">
+    <header className="h-24 shadow-2xl bg-[#db8f32]">
+      <div className="container h-full flex justify-between items-center  text-white">
         {/* Logo */}
         <div className="flex items-center">
           <Logo width={100} height={100} />
@@ -22,9 +22,9 @@ const Header = (props: Props) => {
           <input
             type="text"
             placeholder="Search product here..."
-            className="w-full outline-none "
+            className="w-full outline-none bg-transparent placeholder:text-white text-white"
           />
-          <div className="text-lg min-w-[50px] h-[32px] flex items-center justify-center rounded-r-full bg-red-600 text-white ">
+          <div className="text-lg min-w-[50px] h-[32px] flex items-center justify-center rounded-r-full bg-red-600 text-white cursor-pointer ">
             <IoSearchOutline />
           </div>
         </div>
@@ -33,7 +33,7 @@ const Header = (props: Props) => {
           <div className="cursor-pointer text-3xl">
             <PiUserCircleLight />
           </div>
-          <div className=" text-2xl relative">
+          <div className=" text-2xl relative cursor-pointer">
             <span>
               <HiOutlineShoppingBag />
             </span>
