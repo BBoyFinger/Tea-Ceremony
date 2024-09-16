@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       <Header />
-        <main className="bg-gray-100">
+        <main className="bg-white/80 p-4">
           <Outlet />
         </main>
       <Footer />

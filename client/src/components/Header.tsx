@@ -13,10 +13,10 @@ const Header = (props: Props) => {
     <header className="h-24 shadow-2xl bg-[#db8f32]">
       <div className="container h-full flex justify-between items-center  text-white">
         {/* Logo */}
-        <div className="flex items-center">
+        <Link to="/" className="flex items-center">
           <Logo width={100} height={100} />
           <span className="text-xl">Teaware Shop</span>
-        </div>
+        </Link>
         {/* Search */}
         <div className="hidden lg:flex w-full items-center justify-between max-w-sm border rounded-full pl-2 focus-within:shadow">
           <input
@@ -24,7 +24,7 @@ const Header = (props: Props) => {
             placeholder="Search product here..."
             className="w-full outline-none bg-transparent placeholder:text-white text-white"
           />
-          <div className="text-lg min-w-[50px] h-[32px] flex items-center justify-center rounded-r-full bg-red-600 text-white cursor-pointer ">
+          <div className="text-lg min-w-[50px] h-[32px] flex items-center justify-center rounded-r-full bg-[#bd3030] text-white cursor-pointer ">
             <IoSearchOutline />
           </div>
         </div>
@@ -37,12 +37,12 @@ const Header = (props: Props) => {
             <span>
               <HiOutlineShoppingBag />
             </span>
-            <div className="bg-red-600 text-white w-4 h-4 p-1 flex items-center justify-center rounded-full absolute -top-1 -right-2">
+            <div className="bg-[#bd3030] text-white w-4 h-4 p-1 flex items-center justify-center rounded-full absolute -top-1 -right-2">
               <p className="text-xs">0</p>
             </div>
           </div>
           <div>
-            <Link to={'/login'} className="px-4 py-2 rounded-full font-bold bg-slate-300 hover:bg-slate-400 text-black hover:text-white">
+            <Link to={'/login'} className="px-4 py-2 rounded-full font-bold bg-[#bd3030] hover:opacity-[0.9] text-white ">
               Login
             </Link>
           </div>

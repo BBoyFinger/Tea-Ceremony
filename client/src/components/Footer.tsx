@@ -66,17 +66,20 @@ const links = [
 const Footer = (props: Props) => {
   return (
     <>
-      <footer id="footer">
-        <div className="pt-[75px] ">
-          <div className="container grid grid-cols-1 lg:grid-cols-5">
+      <footer id="footer" className="bg-[#a66920] md:bg-transparent pb-[20px]">
+        <div className="pt-0 lg:pt-[75px] md:pt-[125px]">
+          <div className="container grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5">
             {links.map((section) => (
               <div key={section.title}>
-                <h2 className="text-[14px] lg:text-[15px] lg:pb-[20px] leading-5 font-semibold text-[#7E792A]">
+                <h2 className="text-[14px] text-white lg:text-[15px] pt-[15px] md:pt-0 md:pb-[20px] lg:pt-0 lg:pb-[20px] leading-5 font-semibold md:text-[#7E792A] lg:text-[#7E792A] uppercase">
                   {section.title}
                 </h2>
                 <ul className="inline text-black text-sm leading-[1.2em] pr-[10px] pb-[7px]">
                   {section.items.map((item) => (
-                    <li key={item.name}>
+                    <li
+                      key={item.name}
+                      className="inline-block pb-0 pr-[10px] text-white md:text-[12px] md:pb-[10px] lg:pb-[7px] md:text-black md:leading-5 md:block text-[12px] lg:text-[14px]"
+                    >
                       <a href={item.href}>{item.name}</a>
                     </li>
                   ))}
@@ -90,7 +93,7 @@ const Footer = (props: Props) => {
       <div
         tabIndex={0}
         id="carbonOffset"
-        className="hidden lg:block bg-custom-fall w-full h-[225px] bg-[center_bottom] bg-contain"
+        className="hidden lg:block md:block bg-custom-fall w-full h-[225px] bg-[center_bottom] md:bg-cover lg:bg-contain"
       >
         <div></div>
       </div>
@@ -117,38 +120,38 @@ const Footer = (props: Props) => {
             </div>
             <div className="hidden lg:flex text-white opacity-[0.8]">
               <div className="cursor-pointer mx-5">
-                <a href="">
+                <a href="/#">
                   <FaFacebookF className="w-[20px] h-[20px]" />
                 </a>
               </div>
               <div className="cursor-pointer mx-5">
-                <a href="">
+                <a href="/#">
                   <FaTwitter className="w-[20px] h-[20px]" />
                 </a>
               </div>
               <div className="cursor-pointer mx-5">
-                <a href="">
+                <a href="/#">
                   <FaInstagram className="w-[20px] h-[20px]" />
                 </a>
               </div>
               <div className="cursor-pointer mx-5">
-                <a href="">
+                <a href="/#">
                   <FaYoutube className="w-[20px] h-[20px]" />
                 </a>
               </div>
               <div className="cursor-pointer mx-5">
-                <a href="">
+                <a href="/#">
                   <FaPinterest className="w-[20px] h-[20px]" />
                 </a>
               </div>
               <div className="cursor-pointer mx-5">
-                <a href="">
+                <a href="/#">
                   <FaTiktok className="w-[20px] h-[20px]" />
                 </a>
               </div>
             </div>
             <div className="text-white opacity-[0.8] hover:text-[#a66920] duration-75 transition-all	text-[13px]">
-              <a href="">Privacy Policy</a>
+              <a href="/#">Privacy Policy</a>
             </div>
           </div>
         </div>

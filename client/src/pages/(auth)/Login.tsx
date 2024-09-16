@@ -1,16 +1,40 @@
 import React, { useState } from "react";
-import Logo from "../assets/logo.svg";
+import Logo from "../../assets/logo.svg";
 import { Link } from "react-router-dom";
 import { IoEyeSharp } from "react-icons/io5";
 import { BsEyeSlashFill } from "react-icons/bs";
 
-type Props = {};
+interface LoginForm {
+  email: string;
+  password: string;
+}
 
-const Login = (props: Props) => {
+const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [data, setData] = useState<LoginForm>({
+    email: "",
+    password: "",
+  });
+
+  const handleOnchange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setData((pre) => {
+      return {
+        ...pre,
+        [name]: value,
+      };
+    });
+  };
+
+  console.log("data login: ", data);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <section id="login">
-      <div className="container bg-white">
+      <div className="container bg-white mx-auto max-w-[600px]">
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             <img
@@ -18,14 +42,19 @@ const Login = (props: Props) => {
               src={Logo}
               className="mx-auto w-40 object-cover"
             />
-            <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            <h2 className="mt-4 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
               Sign in to your account
             </h2>
           </div>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+        <div className="mt-10 pb-2 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form
+            action="#"
+            method="POST"
+            className="space-y-6"
+            onSubmit={handleSubmit}
+          >
             <div className="">
               <label
                 htmlFor="email"
@@ -41,6 +70,8 @@ const Login = (props: Props) => {
                   required
                   autoComplete="email"
                   className="h-full w-full outline-none bg-transparent"
+                  value={data.email}
+                  onChange={handleOnchange}
                 />
               </div>
             </div>
@@ -55,8 +86,8 @@ const Login = (props: Props) => {
                 </label>
                 <div className="text-sm">
                   <Link
-                    to="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                    to="/forgot-password"
+                    className="font-semibold text-[#bd3030] hover:opacity-[0.9]"
                   >
                     Forgot password?
                   </Link>
@@ -67,6 +98,8 @@ const Login = (props: Props) => {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   id="password"
+                  value={data.password}
+                  onChange={handleOnchange}
                   required
                   autoComplete="password"
                   className="h-full w-full outline-none bg-transparent"
@@ -82,20 +115,20 @@ const Login = (props: Props) => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-[#bd3030] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-[0.9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign In
               </button>
             </div>
           </form>
 
-          <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{" "}
+          <p className="my-10 text-center text-sm text-gray-500">
+            Don't have any account?{" "}
             <Link
-              to=""
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+              to="/sign-up"
+              className="font-semibold leading-6 text-[#bd3030] hover:opacity-[0.9]"
             >
-              Start a 14 day free trial
+              Sign up
             </Link>
           </p>
         </div>
