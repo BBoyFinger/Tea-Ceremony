@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Logo from "../../assets/logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoEyeSharp } from "react-icons/io5";
 import { BsEyeSlashFill } from "react-icons/bs";
+import axiosInstance from "../../utils/axiosConfig";
+import { toast } from "react-toastify";
 
 interface LoginForm {
   email: string;
@@ -10,6 +12,7 @@ interface LoginForm {
 }
 
 const Login = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [data, setData] = useState<LoginForm>({
     email: "",
@@ -26,10 +29,20 @@ const Login = () => {
     });
   };
 
-  console.log("data login: ", data);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const response = await axiosInstance.post("/signin", data);
+     
+      if (response.data.success) {
+        toast.success(response.data.message);
+      }
+
+      navigate("/")
+      
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+    }
   };
 
   return (

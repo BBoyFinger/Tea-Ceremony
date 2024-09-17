@@ -93,7 +93,7 @@ const Footer = (props: Props) => {
       <div
         tabIndex={0}
         id="carbonOffset"
-        className="hidden lg:block md:block bg-custom-fall w-full h-[225px] bg-[center_bottom] md:bg-cover lg:bg-contain"
+        className="hidden lg:block md:block bg-custom-fall w-full h-[225px] bg-[center_bottom] md:bg-contain lg:bg-contain"
       >
         <div></div>
       </div>

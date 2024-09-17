@@ -1,62 +1,159 @@
 import { Request, Response } from "express";
-import userModel from "../models/userModel";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { IUser } from "../utils/type";
 import HttpStatusCode from "../utils/HttpStatusCode";
+import UserModel from "../models/userModel";
 
 const authController = {
-  userSignUp: async (req: Request, res: Response) => {
+  userSignUp: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password } = req.body as IUser;
 
-      if (!email) {
-        throw new Error("Please enter your email!");
-      }
-      if (!password) {
-        throw new Error("Please enter your password!");
-      }
-      if (!name) {
-        throw new Error("Please enter your name!");
+      // Kiểm tra xem email đã tồn tại chưa
+      const isEmail = await UserModel.findOne({ email });
+
+      if (isEmail) {
+        return res.status(HttpStatusCode.Conflict).json({
+          message: "User already exists!",
+          error: true,
+          success: false,
+        });
       }
 
+      // Kiểm tra các trường bắt buộc
+      if (!email || !password || !name) {
+        return res.status(HttpStatusCode.BadRequest).json({
+          message: "Please fill in all required fields!",
+          error: true,
+          success: false,
+        });
+      }
+
+      // Tạo salt và hash mật khẩu
       const salt = bcrypt.genSaltSync(10);
-      const hashPassword = await bcrypt.hashSync(password, salt);
+      const hashPassword = bcrypt.hashSync(password, salt);
 
       if (!hashPassword) {
-        throw new Error("Somthing went wrong!");
+        throw new Error("Something went wrong while hashing the password!");
       }
 
-      //Check email
-      const isEmail = await userModel.find(email);
-      if (isEmail) {
-        res
-          .status(HttpStatusCode.InternalServerError)
-          .json("Duplicate email! Please enter other email!");
-      }
-
-      const payload = {
+      // Tạo payload người dùng
+      const payload: IUser = {
         ...req.body,
         password: hashPassword,
       };
 
-      const registerUser = new userModel<IUser>(payload);
-      const saveUser = registerUser.save();
+      const registerUser = new UserModel<IUser>(payload);
+      const saveUser = await registerUser.save();
 
-      res.status(HttpStatusCode.OK).json({
-        message: "Signup user successfully!",
+      return res.status(HttpStatusCode.OK).json({
+        message: "User created successfully!",
         data: saveUser,
         error: false,
         success: true,
       });
-    } catch (error) {
-      res.status(500).json({
-        message: error,
+    } catch (error: any) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message || "An error occurred",
+        error: true,
+        success: false,
+      });
+    }
+  },
+
+  userSignIn: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { email, password } = req.body;
+      // Kiểm tra email và password có tồn tại
+      if (!email || !password) {
+        return res.status(HttpStatusCode.BadRequest).json({
+          message: "Please enter both email and password!",
+          error: true,
+          success: false,
+        });
+      }
+
+      // Tìm người dùng
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        return res.status(HttpStatusCode.NotFound).json({
+          message: "User not found!",
+          error: true,
+          success: false,
+        });
+      }
+
+      // So sánh mật khẩu
+      const checkPassword = bcrypt.compareSync(
+        password,
+        user.password as string
+      );
+      if (!checkPassword) {
+        return res.status(HttpStatusCode.Unauthorized).json({
+          message: "Invalid password!",
+          error: true,
+          success: false,
+        });
+      }
+
+      const payload = {
+        _id: user.id,
+        email: user.email,
+      };
+
+      const token = await jwt.sign(
+        payload,
+        process.env.TOKEN_SECRET || "default-secret-key",
+        {
+          expiresIn: 60 * 60 * 8,
+        }
+      );
+
+      const tokenOption = {
+        httpOnly: true,
+        secure: true,
+      };
+
+      // Trả về kết quả đăng nhập thành công
+      return res
+        .cookie("token", token, tokenOption)
+        .status(HttpStatusCode.OK)
+        .json({
+          message: "Login successful!",
+          data: { token },
+          error: false,
+          success: true,
+        });
+    } catch (error: any) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message || "An error occurred",
+        error: true,
+        success: false,
+      });
+    }
+  },
+  userDetail: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const userDetail = await UserModel.find().select("-password");
+
+      if (!userDetail) {
+        throw new Error("Something went wrong");
+      }
+      return res.status(HttpStatusCode.OK).json({
+        message: "Get user successfully!",
+        data: userDetail,
+        error: false,
+        success: true,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: error.message || error,
         error: true,
         sucess: false,
       });
     }
   },
-  userSignIn: async (req: Request, res: Response) => {},
 };
 
 export default authController;

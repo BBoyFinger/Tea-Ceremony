@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Logo from "../../assets/logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoEyeSharp } from "react-icons/io5";
 import { BsEyeSlashFill } from "react-icons/bs";
+import axiosInstance from "../../utils/axiosConfig";
+import { toast } from "react-toastify";
 
 type Props = {};
 
@@ -14,6 +16,7 @@ interface RegisterForm {
 }
 
 const SignUp = (props: Props) => {
+  const navigate = useNavigate(); 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
@@ -34,10 +37,26 @@ const SignUp = (props: Props) => {
     });
   };
 
-  console.log("data register: ", data);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    try {
+      if (data.password === data.confirmPassword) {
+        const dataRes = await axiosInstance.post("/signup", data);
+
+        console.log(dataRes.data);
+
+        if (dataRes.data.success) {
+          toast.success(dataRes.data.message);
+          navigate("/login");
+        }
+      } else {
+        console.log("Please check password and confirm password!");
+      }
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+    }
   };
 
   return (

@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
 import * as dotenv from "dotenv";
-import cors from "cors"
+import cors from "cors";
 import connectDb from "./config/db";
 import router from "./routes";
-
+import cookieParser from "cookie-parser";
 // Initialize dotenv to load environment variables
 dotenv.config();
 
@@ -14,11 +14,16 @@ const app = express();
 const PORT: number = parseInt(process.env.PORT || "8081", 10);
 
 // Middleware to parse JSON
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
 
-
-app.use("/api", router)
+app.use("/api", router);
 
 connectDb().then(() => {
   // Start the server and log the URL
