@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Logo from "../../assets/logo.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { IoEyeSharp } from "react-icons/io5";
 import { BsEyeSlashFill } from "react-icons/bs";
 import axiosInstance from "../../utils/axiosConfig";
 import { toast } from "react-toastify";
+import Context from "../../context";
 
 interface LoginForm {
   email: string;
@@ -13,6 +14,7 @@ interface LoginForm {
 
 const Login = () => {
   const navigate = useNavigate();
+  const userContext = useContext(Context);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [data, setData] = useState<LoginForm>({
     email: "",
@@ -36,9 +38,10 @@ const Login = () => {
      
       if (response.data.success) {
         toast.success(response.data.message);
+        navigate("/")
+        userContext?.fetchUserDetails();
       }
 
-      navigate("/")
       
     } catch (error: any) {
       toast.error(error.response.data.message);

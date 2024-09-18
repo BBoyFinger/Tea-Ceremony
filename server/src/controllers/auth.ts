@@ -133,13 +133,15 @@ const authController = {
       });
     }
   },
+
   userDetail: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const userDetail = await UserModel.find().select("-password");
+    
+        const userDetail = await UserModel.findById(req.userId).select("-password")
 
-      if (!userDetail) {
-        throw new Error("Something went wrong");
-      }
+        if (!userDetail) {
+          throw new Error("Something went wrong");
+        }
       return res.status(HttpStatusCode.OK).json({
         message: "Get user successfully!",
         data: userDetail,
