@@ -24,7 +24,7 @@ export const authMiddleware = (
   try {
     // Verify token using JWT secret key
     const secretKey = process.env.JWT_SECRET_KEY as string;
-
+    
     if (!secretKey) {
       throw new Error(
         "JWT_SECRET_KEY is not defined in environment variables."

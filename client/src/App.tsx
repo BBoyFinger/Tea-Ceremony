@@ -6,12 +6,19 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import axiosInstance from "./utils/axiosConfig";
 import Context from "./context";
+import { useDispatch } from "react-redux";
+import { setUserDetails } from "./features/auth/authSlice";
 
 
 function App() {
+  const dispatch = useDispatch()
   const fetchUserDetails = async (): Promise<void> => {
     try {
       const response = await axiosInstance.get("/user-detail");
+    
+      if(response.data.success){
+        dispatch(setUserDetails(response.data.data))
+      }
     
     } catch (error) {
       console.log(error);

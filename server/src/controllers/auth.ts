@@ -104,7 +104,7 @@ const authController = {
 
       const token = await jwt.sign(
         payload,
-        process.env.TOKEN_SECRET || "default-secret-key",
+        process.env.JWT_SECRET_KEY || "default-secret-key",
         {
           expiresIn: 60 * 60 * 8,
         }
@@ -136,18 +136,36 @@ const authController = {
 
   userDetail: async (req: Request, res: Response): Promise<Response> => {
     try {
-    
-        const userDetail = await UserModel.findById(req.userId).select("-password")
+      const userDetail = await UserModel.findById(req.userId).select(
+        "-password"
+      );
 
-        if (!userDetail) {
-          throw new Error("Something went wrong");
-        }
+      if (!userDetail) {
+        throw new Error("Something went wrong");
+      }
       return res.status(HttpStatusCode.OK).json({
         message: "Get user successfully!",
         data: userDetail,
         error: false,
         success: true,
       });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: error.message || error,
+        error: true,
+        sucess: false,
+      });
+    }
+  },
+  userLogout: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      res.clearCookie("token");
+      return res.status(HttpStatusCode.OK).json({
+        message: "Logged out successfully",
+        error: false,
+        success: true,
+        data: []
+      })
     } catch (error: any) {
       return res.status(500).json({
         message: error.message || error,
