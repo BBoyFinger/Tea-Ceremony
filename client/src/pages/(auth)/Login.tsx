@@ -35,16 +35,17 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axiosInstance.post("/signin", data);
+      console.log(response);
      
-      if (response.data.success) {
-        toast.success(response.data.message);
+      if (response?.data.success) {
+        toast.success(response?.data.message);
         navigate("/")
         userContext?.fetchUserDetails();
       }
 
       
     } catch (error: any) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data.message);
     }
   };
 

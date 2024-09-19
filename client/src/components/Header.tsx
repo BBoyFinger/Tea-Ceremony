@@ -3,30 +3,33 @@ import Logo from "./Logo";
 import { IoSearchOutline } from "react-icons/io5";
 import { PiUserCircleLight } from "react-icons/pi";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosConfig";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { setUserDetails } from "../features/auth/authSlice";
 
 type Props = {};
 
-
-
 const Header = (props: Props) => {
   const user = useSelector((state: RootState) => state.authReducer.user);
-  console.log("user: ", user)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  console.log("user: ", user);
 
   const handleLogout = async () => {
     const response = await axiosInstance.get("/logout");
 
     if (response.data.success) {
       toast.success(response.data.message);
+      dispatch(setUserDetails(null));
     }
 
     if (response.data.error) {
       toast.error(response.data.message);
     }
+    navigate("/login");
   };
 
   return (
@@ -61,9 +64,15 @@ const Header = (props: Props) => {
               <p className="text-xs">0</p>
             </div>
           </div>
-          <div>
+          <div id="dropdownList">
             {user?._id ? (
-              <button onClick={handleLogout}> Logout </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-full font-bold bg-[#bd3030] hover:opacity-[0.9] text-white "
+              >
+                {" "}
+                Logout{" "}
+              </button>
             ) : (
               <Link
                 to={"/login"}
@@ -72,12 +81,24 @@ const Header = (props: Props) => {
                 Login
               </Link>
             )}
-             {/* <Link
+            {/* <Link
                 to={"/login"}
                 className="px-4 py-2 rounded-full font-bold bg-[#bd3030] hover:opacity-[0.9] text-white "
               >
                 Login
               </Link> */}
+            <div
+              id="dropdownHover"
+              data-dropdown-toggle="dropdownHover"
+              data-dropdown-trigger="hover"
+              className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44"
+            >
+              <ul className="" aria-labelledby="dropdownList">
+                <li>Hello</li>
+                <li></li>
+                <li></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

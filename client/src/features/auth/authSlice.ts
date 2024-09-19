@@ -1,12 +1,12 @@
 import {} from "react-redux";
 import { createSlice } from "@reduxjs/toolkit";
+import { User } from "../../types/user.types";
 
-interface User {
-    _id: string;
-    // Các thuộc tính khác của user (nếu có)
-  }
+interface AuthState {
+  user: User | null;
+}
 
-const initialState = {
+const initialState: AuthState = {
   user: null,
 };
 
@@ -15,7 +15,7 @@ export const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     setUserDetails: (state, action) => {
-      state.user = action.payload
+      state.user = action.payload;
       console.log("detail", action.payload);
     },
   },
