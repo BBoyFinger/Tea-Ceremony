@@ -164,8 +164,31 @@ const authController = {
         message: "Logged out successfully",
         error: false,
         success: true,
-        data: []
-      })
+        data: [],
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: error.message || error,
+        error: true,
+        sucess: false,
+      });
+    }
+  },
+
+  getAllUser: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const users = await UserModel.find();
+
+      if (!users) {
+        throw new Error("Something went wrong ");
+      }
+
+      return res.status(200).json({
+        message: "Get All User successfully",
+        data: users,
+        error: true,
+        sucess: false,
+      });
     } catch (error: any) {
       return res.status(500).json({
         message: error.message || error,

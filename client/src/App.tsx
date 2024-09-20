@@ -8,10 +8,11 @@ import axiosInstance from "./utils/axiosConfig";
 import Context from "./context";
 import { useDispatch } from "react-redux";
 import { setUserDetails } from "./features/auth/authSlice";
+import { AppDispatch } from "./store/store";
 
 
 function App() {
-  const dispatch = useDispatch()
+  const dispatch: AppDispatch = useDispatch()
   const fetchUserDetails = async (): Promise<void> => {
     try {
       const response = await axiosInstance.get("/user-detail");
@@ -34,7 +35,7 @@ function App() {
       <Context.Provider value={{ fetchUserDetails }}>
         <ToastContainer />
         <Header />
-        <main className="bg-white/80 p-4">
+        <main className="bg-white/80">
           <Outlet />
         </main>
         <Footer />

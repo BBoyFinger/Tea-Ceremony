@@ -5,6 +5,7 @@ interface IUser extends Document {
   name?: string;
   email: string;
   password?: string;
+  pictureImg: string;
 }
 
 // Define the schema for the User model
@@ -23,6 +24,7 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: false,
     },
+    pictureImg: String,
   },
   {
     timestamps: true,

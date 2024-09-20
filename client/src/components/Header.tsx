@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { setUserDetails } from "../features/auth/authSlice";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 type Props = {};
 
@@ -53,9 +54,31 @@ const Header = (props: Props) => {
         </div>
         {/* Cart User */}
         <div className="flex gap-4 items-center justify-center">
-          <div className="cursor-pointer text-3xl">
-            <PiUserCircleLight />
+          <div className="">
+            {/* User */}
+            <Menu as={"div"} className="relative text-left">
+              <div className="flex items-center">
+                <MenuButton className="cursor-pointer text-3xl">
+                  <PiUserCircleLight />
+                </MenuButton>
+              </div>
+              <MenuItems
+                transition
+                className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+              >
+                <div className="py-1">
+                  <Link
+                    to={"/admin-panel"}
+                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+                  >
+                    Admin Panel
+                  </Link>
+                </div>
+              </MenuItems>
+            </Menu>
           </div>
+
+          {/* Cart*/}
           <div className=" text-2xl relative cursor-pointer">
             <span>
               <HiOutlineShoppingBag />
@@ -64,7 +87,7 @@ const Header = (props: Props) => {
               <p className="text-xs">0</p>
             </div>
           </div>
-          <div id="dropdownList">
+          <div className="">
             {user?._id ? (
               <button
                 onClick={handleLogout}
@@ -81,24 +104,6 @@ const Header = (props: Props) => {
                 Login
               </Link>
             )}
-            {/* <Link
-                to={"/login"}
-                className="px-4 py-2 rounded-full font-bold bg-[#bd3030] hover:opacity-[0.9] text-white "
-              >
-                Login
-              </Link> */}
-            <div
-              id="dropdownHover"
-              data-dropdown-toggle="dropdownHover"
-              data-dropdown-trigger="hover"
-              className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44"
-            >
-              <ul className="" aria-labelledby="dropdownList">
-                <li>Hello</li>
-                <li></li>
-                <li></li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>
