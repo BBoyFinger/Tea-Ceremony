@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaSort, FaFilter, FaShoppingCart } from "react-icons/fa";
 import { Product } from "../../types/product.types";
 import { ICategory } from "../../types/category.types";
+import { Link } from "react-router-dom";
 
 const ProductListingPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -179,7 +180,8 @@ const ProductListingPage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProducts.map((product: Product) => (
-                <div
+                <Link 
+                  to={`${product._id}`}
                   key={product._id}
                   className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-105"
                 >
@@ -199,7 +201,7 @@ const ProductListingPage = () => {
                       Add to Cart
                     </button>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>

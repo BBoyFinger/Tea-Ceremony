@@ -6,6 +6,7 @@ import ForgotPassword from "../pages/(auth)/ForgotPassword";
 import SignUp from "../pages/(auth)/SignUp";
 import AdminPanel from "../pages/admin/AdminPanel";
 import ProductListingPage from "../pages/products";
+import ProductDetailPage from "../pages/products/[id]";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "/products",
         element: <ProductListingPage />,
+      },
+      {
+        path: "/products/:id",
+        element: <ProductDetailPage />,
       },
     ],
   },

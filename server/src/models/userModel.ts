@@ -24,7 +24,10 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: false,
     },
-    pictureImg: String,
+    pictureImg: {
+      type: String,
+      default: "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg"
+    }
   },
   {
     timestamps: true,

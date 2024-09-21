@@ -5,6 +5,7 @@ import { IoEyeSharp } from "react-icons/io5";
 import { BsEyeSlashFill } from "react-icons/bs";
 import axiosInstance from "../../utils/axiosConfig";
 import { toast } from "react-toastify";
+import { imageToBase64 } from "../../utils/imageTobase64";
 
 type Props = {};
 
@@ -13,10 +14,11 @@ interface RegisterForm {
   email: string;
   password: string;
   confirmPassword: string;
+  profilePic: string;
 }
 
 const SignUp = (props: Props) => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
@@ -25,7 +27,22 @@ const SignUp = (props: Props) => {
     email: "",
     password: "",
     confirmPassword: "",
+    profilePic: "",
   });
+
+  const handleUploadUploadPic = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    const imagePic = await imageToBase64(file);
+
+    setData((pre: any) => {
+      return {
+        ...pre,
+        profilePic: imagePic,
+      };
+    });
+  };
 
   const handleOnchange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,7 +53,6 @@ const SignUp = (props: Props) => {
       };
     });
   };
-
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,17 +79,31 @@ const SignUp = (props: Props) => {
     <section id="login">
       <div className="container bg-white mx-auto max-w-[600px]">
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <img
-              alt="Your Company"
-              src={Logo}
-              className="mx-auto w-40 object-cover"
-            />
-            <h2 className="mt-4 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-              Sign up
-            </h2>
+          <div className="sm:mx-auto sm:w-full sm:max-w-sm relative overflow-hidden">
+            <div>
+              <img
+                alt="Your Company"
+                src={data.profilePic || Logo}
+                className="mx-auto w-40 object-cover rounded-full"
+              />
+            </div>
+            <form>
+              <label>
+                <div className="text-xs bg-slate-300/20 py-4 text-center absolute bottom-0 left-[38%] cursor-pointer rounded-full p-2">
+                  Upload photo
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={handleUploadUploadPic}
+                />
+              </label>
+            </form>
           </div>
         </div>
+        <h2 className="mt-4 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          Sign up
+        </h2>
 
         <div className="mt-10 pb-2 sm:mx-auto sm:w-full sm:max-w-sm">
           <form

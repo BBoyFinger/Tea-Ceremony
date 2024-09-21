@@ -197,6 +197,25 @@ const authController = {
       });
     }
   },
+  deleteUser: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { id } = req.params;
+      
+      const deleteUser = await UserModel.findByIdAndDelete(id)
+      return res.status(200).json({
+        message: "Delete User successfully",
+        data: deleteUser,
+        error: true,
+        sucess: false,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: error.message || error,
+        error: true,
+        sucess: false,
+      });
+    }
+  },
 };
 
 export default authController;

@@ -3,8 +3,8 @@ export interface User{
     name: string,
     email: string,
     password: string,
-    image: string,
+    pictureImg: string,
     status: string,
     role: string,
-    createAt: string,
+    createdAt: string,
 }
