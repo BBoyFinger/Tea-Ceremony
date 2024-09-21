@@ -5,6 +5,7 @@ import Login from "../pages/(auth)/Login";
 import ForgotPassword from "../pages/(auth)/ForgotPassword";
 import SignUp from "../pages/(auth)/SignUp";
 import AdminPanel from "../pages/admin/AdminPanel";
+import ProductListingPage from "../pages/products";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/admin-panel",
         element: <AdminPanel />,
+      },
+      {
+        path: "/products",
+        element: <ProductListingPage />,
       },
     ],
   },

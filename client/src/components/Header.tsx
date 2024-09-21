@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { setUserDetails } from "../features/auth/authSlice";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { Menu, MenuButton, MenuItems } from "@headlessui/react";
 
 type Props = {};
 
