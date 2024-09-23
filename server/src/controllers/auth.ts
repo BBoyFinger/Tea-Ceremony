@@ -225,6 +225,8 @@ const authController = {
 
       const { userId, email, name, role } = req.body;
 
+      
+
       const payload = {
         ...(email && { email: email }),
         ...(name && { name: name }),

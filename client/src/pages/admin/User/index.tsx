@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import ChangeRoleUser from "../../../components/ChangeRoleUser";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
-import { getAllUser, deleteUser } from "../../../features/auth/authSlice";
+import {
+  getAllUser,
+  deleteUser,
+  updateUser,
+} from "../../../features/auth/authSlice";
 import { User } from "../../../types/user.types";
 import { toast } from "react-toastify";
 import { Modal } from "../../../components/Modal";
@@ -13,27 +16,29 @@ import { ROLE } from "../../../utils/role";
 type Props = {};
 
 const UserManagement = (props: Props) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedUserRole, setSelectedUserRole] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteUserDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userRole, setUserRole] = useState("");
+  const [userDetail, setUserdetail] = useState({
+    email: "",
+    name: "",
+    role: "",
+    userId: "",
+  });
   const dispatch: AppDispatch = useDispatch();
 
   const userState = useSelector((state: RootState) => state.authReducer.users);
-  
+
   const handleUpdateRole = () => {
-    
-  }
+    dispatch(updateUser({ userRole }));
+    dispatch(getAllUser());
+    // setIsEditDialogOpen(false);
+  };
 
   useEffect(() => {
     dispatch(getAllUser());
   }, []);
-
-  const handleEditRole = (role: any) => {
-    setSelectedUserRole(role);
-    setIsEditDialogOpen(true);
-  };
 
   const handleDeleteUser = (id: any) => {
     setIsDeleteDialogOpen(true);
@@ -128,7 +133,18 @@ const UserManagement = (props: Props) => {
 
                         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 flex gap-2">
                           <button className="bg-yellow-100 p-3 rounded-full cursor-pointer hover:bg-yellow-200 flex items-center ">
-                            <FaEdit onClick={handleEditRole} />
+                            <FaEdit
+                              onClick={() => {
+                                setUserdetail({
+                                  email: user.email,
+                                  name: user.name,
+                                  role: user.role,
+                                  userId: user._id,
+                                });
+
+                                setIsEditDialogOpen(true);
+                              }}
+                            />
                           </button>
                           <button className="bg-red-400 p-3 rounded-full cursor-pointer hover:bg-red-500 hover:text-white flex items-center ">
                             <FaTrash
@@ -151,12 +167,18 @@ const UserManagement = (props: Props) => {
           title="Change User role"
         >
           <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-700">Name:</p>
-            <p className="text-sm font-medium text-gray-700">Email:</p>
+            <p className="text-sm font-medium text-gray-700">
+              Name: {userDetail.name}
+            </p>
+            <p className="text-sm font-medium text-gray-700">
+              Email: {userDetail.email}
+            </p>
           </div>
 
           <div className="flex items-center justify-between my-4 space-x-4">
-            <p className="text-sm font-medium text-gray-700">Role:</p>
+            <p className="text-sm font-medium text-gray-700">
+              Role: {userDetail.role}
+            </p>
             <select
               name="role"
               value={userRole}

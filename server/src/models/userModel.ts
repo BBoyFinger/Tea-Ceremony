@@ -1,7 +1,6 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 import { IUser } from "../utils/type";
 
-
 // Define the schema for the User model
 const userSchema: Schema<IUser> = new Schema(
   {
@@ -23,7 +22,10 @@ const userSchema: Schema<IUser> = new Schema(
       default:
         "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg",
     },
-    role: String
+    role: {
+      type: String,
+      default: "GENERAL",
+    },
   },
   {
     timestamps: true,
