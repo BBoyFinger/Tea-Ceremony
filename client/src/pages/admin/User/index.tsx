@@ -7,16 +7,24 @@ import { AppDispatch, RootState } from "../../../store/store";
 import { getAllUser, deleteUser } from "../../../features/auth/authSlice";
 import { User } from "../../../types/user.types";
 import { toast } from "react-toastify";
+import { Modal } from "../../../components/Modal";
+import { ROLE } from "../../../utils/role";
 
 type Props = {};
 
 const UserManagement = (props: Props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedUserRole, setSelectedUserRole] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteUserDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [userRole, setUserRole] = useState("");
   const dispatch: AppDispatch = useDispatch();
 
   const userState = useSelector((state: RootState) => state.authReducer.users);
+  
+  const handleUpdateRole = () => {
+    
+  }
 
   useEffect(() => {
     dispatch(getAllUser());
@@ -24,13 +32,19 @@ const UserManagement = (props: Props) => {
 
   const handleEditRole = (role: any) => {
     setSelectedUserRole(role);
-    setIsDialogOpen(true);
+    setIsEditDialogOpen(true);
   };
 
   const handleDeleteUser = (id: any) => {
-    const response = dispatch(deleteUser(id))
-    toast.success("Delete User successfully!")
-    dispatch(getAllUser())
+    setIsDeleteDialogOpen(true);
+    const response = dispatch(deleteUser(id));
+    toast.success("Delete User successfully!");
+    dispatch(getAllUser());
+  };
+
+  const handleOnChangeSelect = (e: any) => {
+    setUserRole(e.target.value);
+    console.log(e.target.value);
   };
 
   return (
@@ -117,7 +131,9 @@ const UserManagement = (props: Props) => {
                             <FaEdit onClick={handleEditRole} />
                           </button>
                           <button className="bg-red-400 p-3 rounded-full cursor-pointer hover:bg-red-500 hover:text-white flex items-center ">
-                            <FaTrash onClick={() => handleDeleteUser(user._id)} />
+                            <FaTrash
+                              onClick={() => handleDeleteUser(user._id)}
+                            />
                           </button>
                         </td>
                       </tr>
@@ -128,11 +144,61 @@ const UserManagement = (props: Props) => {
             </div>
           </div>
         </div>
-        <ChangeRoleUser
-          open={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          role={selectedUserRole}
-        />
+        {/* Edit */}
+        <Modal
+          open={isEditDialogOpen}
+          onClose={() => setIsEditDialogOpen(false)}
+          title="Change User role"
+        >
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-700">Name:</p>
+            <p className="text-sm font-medium text-gray-700">Email:</p>
+          </div>
+
+          <div className="flex items-center justify-between my-4 space-x-4">
+            <p className="text-sm font-medium text-gray-700">Role:</p>
+            <select
+              name="role"
+              value={userRole}
+              id="role-select"
+              onChange={handleOnChangeSelect}
+              className="border border-gray-300 rounded-lg px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {Object.values(ROLE).map((el) => (
+                <option value={el} key={el} className="text-sm">
+                  {el}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex justify-end space-x-4 mt-4">
+            <button
+              type="button"
+              onClick={handleUpdateRole}
+              className="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm text-white bg-red-600 font-semibold shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto "
+            >
+              Save
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsEditDialogOpen(false)}
+              data-autofocus
+              className="mt-3 inline-flex w-full justify-center rounded-md bg-white  px-3 py-2 text-sm text-gray-900 font-semibold shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
+        {/* Delete */}
+        <Modal
+          open={isDeleteUserDialogOpen}
+          onClose={() => setIsDeleteDialogOpen(false)}
+          title="Are u want to delete User?"
+        >
+          <div>hello</div>
+        </Modal>
       </div>
     </>
   );
