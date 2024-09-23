@@ -6,6 +6,7 @@ interface IUser extends Document {
   email: string;
   password?: string;
   pictureImg: string;
+  role: string;
 }
 
 // Define the schema for the User model
@@ -27,8 +28,10 @@ const userSchema: Schema<IUser> = new Schema(
     pictureImg: {
       type: String,
       default: "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg"
-    }
+    },
+    role: String
   },
+  
   {
     timestamps: true,
   }

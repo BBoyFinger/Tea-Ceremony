@@ -6,6 +6,7 @@ interface AuthState {
   user: User | null;
   users: User[];
   isLoading: boolean;
+  updateUser: any;
   deleteUser: any;
   isError: boolean;
   isSuccess: boolean;
@@ -19,6 +20,7 @@ const initialState: AuthState = {
   isError: false,
   isSuccess: false,
   deleteUser: null,
+  updateUser: null,
   message: "",
 };
 
@@ -29,6 +31,10 @@ export const getAllUser = createAsyncThunk("user", async (_, thunkApi) => {
     return thunkApi.rejectWithValue(error);
   }
 });
+
+export const updateUser = createAsyncThunk("delete-user", async (data, thunkApi) => {
+
+})
 
 export const deleteUser = createAsyncThunk(
   "delete-user",
