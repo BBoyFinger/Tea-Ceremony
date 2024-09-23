@@ -1,12 +1,6 @@
-import mongoose, { Document, Schema, Model } from 'mongoose';
+import mongoose, { Document, Schema, Model } from "mongoose";
+import { IUser } from "../utils/type";
 
-// Define an interface for the User document
-interface IUser extends Document {
-  name?: string;
-  email: string;
-  password?: string;
-  pictureImg: string;
-}
 
 // Define the schema for the User model
 const userSchema: Schema<IUser> = new Schema(
@@ -26,8 +20,10 @@ const userSchema: Schema<IUser> = new Schema(
     },
     pictureImg: {
       type: String,
-      default: "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg"
-    }
+      default:
+        "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg",
+    },
+    role: String
   },
   {
     timestamps: true,
@@ -35,6 +31,6 @@ const userSchema: Schema<IUser> = new Schema(
 );
 
 // Create and export the User model
-const UserModel: Model<IUser> = mongoose.model<IUser>('User', userSchema);
+const UserModel: Model<IUser> = mongoose.model<IUser>("User", userSchema);
 
 export default UserModel;
