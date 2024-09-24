@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { User } from "../../types/user.types";
 import authService from "./authService";
 import { toast } from "react-toastify";
@@ -7,7 +7,7 @@ interface AuthState {
   user: User | null;
   users: User[];
   isLoading: boolean;
-  updateUser: any;
+  updatedUser: any;
   deleteUser: any;
   isError: boolean;
   isSuccess: boolean;
@@ -21,9 +21,13 @@ const initialState: AuthState = {
   isError: false,
   isSuccess: false,
   deleteUser: null,
-  updateUser: null,
+  updatedUser: null,
   message: "",
 };
+
+export const resetState = createAction("Reset_all");
+
+
 
 export const getAllUser = createAsyncThunk("user", async (_, thunkApi) => {
   try {
@@ -34,7 +38,8 @@ export const getAllUser = createAsyncThunk("user", async (_, thunkApi) => {
 });
 
 export const updateUser = createAsyncThunk(
-  "user/update-user", async (dataUser: any, thunkApi) => {
+  "user/update-user",
+  async (dataUser: any, thunkApi) => {
     try {
       return await authService.updateUserRole(dataUser);
     } catch (error) {
@@ -60,7 +65,6 @@ export const authSlice = createSlice({
   reducers: {
     setUserDetails: (state, action) => {
       state.user = action.payload;
-      console.log("detail", action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -100,15 +104,15 @@ export const authSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.isError = false;
-        state.updateUser = action.payload;
-        toast.success("Updated user role successfully!")
+        state.updatedUser = action.payload;
+        toast.success("Updated user role successfully!");
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
         state.message = action.error.message || "";
-      });
+      }) .addCase(resetState, () => initialState);;
   },
 });
 

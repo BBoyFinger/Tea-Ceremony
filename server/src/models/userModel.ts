@@ -22,6 +22,10 @@ const userSchema: Schema<IUser> = new Schema(
       default:
         "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg",
     },
+    status: {
+      type: String,
+      default: "Active"
+    },
     role: {
       type: String,
       default: "GENERAL",

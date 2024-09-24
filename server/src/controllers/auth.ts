@@ -225,8 +225,6 @@ const authController = {
 
       const { userId, email, name, role } = req.body;
 
-      
-
       const payload = {
         ...(email && { email: email }),
         ...(name && { name: name }),
@@ -235,10 +233,7 @@ const authController = {
 
       const user = await UserModel.findById(userSession);
 
-      console.log("user role", user?.role)
-
       const updateUser = await UserModel.findByIdAndUpdate(userId, payload);
-     
 
       return res.status(HttpStatusCode.OK).json({
         data: updateUser,

@@ -3,23 +3,27 @@ import moment from "moment";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
+import { ImSpinner3 } from "react-icons/im";
+
 import {
   getAllUser,
   deleteUser,
   updateUser,
+  resetState,
 } from "../../../features/auth/authSlice";
 import { User } from "../../../types/user.types";
 import { toast } from "react-toastify";
 import { Modal } from "../../../components/Modal";
-import { ROLE } from "../../../utils/role";
+import { ROLE } from "../../../utils/User";
+import { useNavigate } from "react-router-dom";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 type Props = {};
 
 const UserManagement = (props: Props) => {
-  const [selectedUserRole, setSelectedUserRole] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteUserDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [userRole, setUserRole] = useState("");
+
+  const [userRole, setUserRole] = useState("ADMIN");
   const [userDetail, setUserdetail] = useState({
     email: "",
     name: "",
@@ -27,29 +31,34 @@ const UserManagement = (props: Props) => {
     userId: "",
   });
   const dispatch: AppDispatch = useDispatch();
+  // Selector from redux
 
-  const userState = useSelector((state: RootState) => state.authReducer.users);
+  const userState = useSelector((state: RootState) => state.authReducer);
+  const { users, isError, isLoading, isSuccess, updatedUser } = userState;
+
+  
 
   const handleUpdateRole = () => {
-    dispatch(updateUser({ userRole }));
-    dispatch(getAllUser());
-    // setIsEditDialogOpen(false);
+    dispatch(updateUser({ userId: userDetail.userId, role: userRole }));
+    setIsEditDialogOpen(false);
   };
 
   useEffect(() => {
     dispatch(getAllUser());
-  }, []);
+    dispatch(resetState());
+    
+  }, [dispatch]);
 
-  const handleDeleteUser = (id: any) => {
-    setIsDeleteDialogOpen(true);
-    const response = dispatch(deleteUser(id));
-    toast.success("Delete User successfully!");
-    dispatch(getAllUser());
+  const handleDeleteUser = async (id: any) => {
+    if (window.confirm("Are u sure you want to delete this user?")) {
+      await dispatch(deleteUser(id));
+      toast.success("Delete User successfully!");
+      dispatch(getAllUser());
+    }
   };
 
   const handleOnChangeSelect = (e: any) => {
     setUserRole(e.target.value);
-    console.log(e.target.value);
   };
 
   return (
@@ -73,7 +82,7 @@ const UserManagement = (props: Props) => {
                         Role
                       </th>
                       <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                        Status
+                        Activate
                       </th>
                       <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                         Created Date
@@ -84,7 +93,7 @@ const UserManagement = (props: Props) => {
                     </tr>
                   </thead>
                   <tbody className="bg-white">
-                    {userState.map((user: User) => (
+                    {users.map((user: User) => (
                       <tr key={user._id}>
                         <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                           <div className="flex items-center">
@@ -131,9 +140,9 @@ const UserManagement = (props: Props) => {
                           </div>
                         </td>
 
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200 flex gap-2">
-                          <button className="bg-yellow-100 p-3 rounded-full cursor-pointer hover:bg-yellow-200 flex items-center ">
-                            <FaEdit
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button className="text-blue-600 hover:text-blue-900 mr-3">
+                            <FiEdit
                               onClick={() => {
                                 setUserdetail({
                                   email: user.email,
@@ -146,8 +155,8 @@ const UserManagement = (props: Props) => {
                               }}
                             />
                           </button>
-                          <button className="bg-red-400 p-3 rounded-full cursor-pointer hover:bg-red-500 hover:text-white flex items-center ">
-                            <FaTrash
+                          <button className="text-red-600 hover:text-red-900">
+                            <FiTrash2
                               onClick={() => handleDeleteUser(user._id)}
                             />
                           </button>
@@ -213,14 +222,15 @@ const UserManagement = (props: Props) => {
             </button>
           </div>
         </Modal>
-        {/* Delete */}
-        <Modal
-          open={isDeleteUserDialogOpen}
-          onClose={() => setIsDeleteDialogOpen(false)}
-          title="Are u want to delete User?"
-        >
-          <div>hello</div>
-        </Modal>
+        {isLoading && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg flex items-center flex-col">
+              <ImSpinner3 className="animate-spin w-[40px] h-[40px]" />
+
+              <p className="mt-4 text-gray-700">Loading...</p>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

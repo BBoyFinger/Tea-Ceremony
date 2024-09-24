@@ -4,4 +4,12 @@ export interface IUser {
   password?: string;
   pictureImg: string;
   role: string;
+  status: string;
+}
+
+export interface Account{
+  status: {
+    Active: "Active",
+    Inactive: "Inactive"
+  }
 }
