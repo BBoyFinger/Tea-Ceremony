@@ -27,8 +27,6 @@ const initialState: AuthState = {
 
 export const resetState = createAction("Reset_all");
 
-
-
 export const getAllUser = createAsyncThunk("user", async (_, thunkApi) => {
   try {
     return await authService.getAllUser();
@@ -112,7 +110,8 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.isError = true;
         state.message = action.error.message || "";
-      }) .addCase(resetState, () => initialState);;
+      })
+      .addCase(resetState, () => initialState);
   },
 });
 

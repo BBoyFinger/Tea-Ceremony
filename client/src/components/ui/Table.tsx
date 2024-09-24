@@ -4,6 +4,7 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 interface TableColumn {
   key: string;
   label: string;
+  sortable: boolean;
   render?: (item: any) => React.ReactNode;
   isAction?: boolean;
 }
@@ -29,10 +30,12 @@ function Table({
   data,
   sortBy,
   sortOrder,
+  selectedItems,
   onSort,
   onEdit,
   onDelete,
   onDeleteSelected,
+  onSelectItem,
 }: TableProps) {
   return (
     <div className="overflow-x-auto">

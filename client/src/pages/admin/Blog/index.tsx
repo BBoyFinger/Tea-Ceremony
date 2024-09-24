@@ -23,6 +23,11 @@ const BlogManagement = () => {
   const handleDelete = (id: number) => {
     // Logic xóa
   };
+
+  const handleSelectItem = () => {
+
+  }
+
   const columns = [
     { key: "name", label: "Name", sortable: true },
     { key: "description", label: "Description", sortable: true },
@@ -46,6 +51,11 @@ const BlogManagement = () => {
   return (
     <div>
       <Table
+        selectedItems={[1,2,3]}
+        onSelectItem={handleSelectItem}
+        onDeleteItem={handleDelete}
+        onEditItem={handleEdit}
+        onDeleteSelected={() => {}}
         columns={columns}
         data={blogs}
         sortBy={sortBy}

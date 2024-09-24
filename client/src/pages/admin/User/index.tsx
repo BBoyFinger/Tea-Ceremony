@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
-import { FaEdit, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { ImSpinner3 } from "react-icons/im";
@@ -13,9 +12,9 @@ import {
 } from "../../../features/auth/authSlice";
 import { User } from "../../../types/user.types";
 import { toast } from "react-toastify";
-import { Modal } from "../../../components/Modal";
-import { ROLE } from "../../../utils/User";
-import { useNavigate } from "react-router-dom";
+import { Modal } from "../../../components/ui/Modal";
+import { Account, ROLE } from "../../../utils/User";
+
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 type Props = {};
@@ -24,29 +23,30 @@ const UserManagement = (props: Props) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const [userRole, setUserRole] = useState("ADMIN");
+  const [status, setStatus] = useState("Active");
   const [userDetail, setUserdetail] = useState({
     email: "",
     name: "",
     role: "",
     userId: "",
+    status: "",
   });
   const dispatch: AppDispatch = useDispatch();
   // Selector from redux
 
   const userState = useSelector((state: RootState) => state.authReducer);
-  const { users, isError, isLoading, isSuccess, updatedUser } = userState;
-
-  
+  const { users, isLoading } = userState;
 
   const handleUpdateRole = () => {
-    dispatch(updateUser({ userId: userDetail.userId, role: userRole }));
+    dispatch(
+      updateUser({ userId: userDetail.userId, role: userRole, status: status })
+    );
     setIsEditDialogOpen(false);
   };
 
   useEffect(() => {
     dispatch(getAllUser());
     dispatch(resetState());
-    
   }, [dispatch]);
 
   const handleDeleteUser = async (id: any) => {
@@ -55,10 +55,6 @@ const UserManagement = (props: Props) => {
       toast.success("Delete User successfully!");
       dispatch(getAllUser());
     }
-  };
-
-  const handleOnChangeSelect = (e: any) => {
-    setUserRole(e.target.value);
   };
 
   return (
@@ -149,6 +145,7 @@ const UserManagement = (props: Props) => {
                                   name: user.name,
                                   role: user.role,
                                   userId: user._id,
+                                  status: user.status,
                                 });
 
                                 setIsEditDialogOpen(true);
@@ -171,28 +168,56 @@ const UserManagement = (props: Props) => {
         </div>
         {/* Edit */}
         <Modal
-          open={isEditDialogOpen}
-          onClose={() => setIsEditDialogOpen(false)}
+          isOpen={isEditDialogOpen}
+          closeModal={() => setIsEditDialogOpen(false)}
           title="Change User role"
+          onSubmit={handleUpdateRole}
+          submitText="Save"
+          cancelText="Cancel"
         >
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-700">
-              Name: {userDetail.name}
-            </p>
-            <p className="text-sm font-medium text-gray-700">
-              Email: {userDetail.email}
-            </p>
+          <div className="mb-4">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Name
+            </label>
+            <input
+              type="text"
+              value={userDetail.name}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              disabled
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="Email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
+            <input
+              type="text"
+              value={userDetail.email}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              disabled
+            />
           </div>
 
-          <div className="flex items-center justify-between my-4 space-x-4">
-            <p className="text-sm font-medium text-gray-700">
-              Role: {userDetail.role}
-            </p>
+          <div className="mb-4 flex gap-4 items-center justify-between">
+            <label
+              htmlFor="Role"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Role
+            </label>
             <select
               name="role"
               value={userRole}
               id="role-select"
-              onChange={handleOnChangeSelect}
+              onChange={(e) => {
+                setUserRole(e.target.value);
+              }}
               className="border border-gray-300 rounded-lg px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               {Object.values(ROLE).map((el) => (
@@ -201,25 +226,27 @@ const UserManagement = (props: Props) => {
                 </option>
               ))}
             </select>
-          </div>
-
-          <div className="flex justify-end space-x-4 mt-4">
-            <button
-              type="button"
-              onClick={handleUpdateRole}
-              className="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm text-white bg-red-600 font-semibold shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto "
+            <label
+              htmlFor="status"
+              className="block text-sm font-medium text-gray-700"
             >
-              Save
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsEditDialogOpen(false)}
-              data-autofocus
-              className="mt-3 inline-flex w-full justify-center rounded-md bg-white  px-3 py-2 text-sm text-gray-900 font-semibold shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+              Status
+            </label>
+            <select
+              name="status"
+              value={status}
+              id="role-select"
+              onChange={(e) => {
+                setStatus(e.target.value);
+              }}
+              className="border border-gray-300 rounded-lg px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              Cancel
-            </button>
+              {Object.values(Account).map((el) => (
+                <option value={el} key={el} className="text-sm">
+                  {el}
+                </option>
+              ))}
+            </select>
           </div>
         </Modal>
         {isLoading && (

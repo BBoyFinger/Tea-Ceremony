@@ -223,12 +223,13 @@ const authController = {
 
       const userSession = req.userId;
 
-      const { userId, email, name, role } = req.body;
+      const { userId, email, name, role, status } = req.body;
 
       const payload = {
         ...(email && { email: email }),
         ...(name && { name: name }),
         ...(role && { role: role }),
+        ...(status && { status: status }),
       };
 
       const user = await UserModel.findById(userSession);

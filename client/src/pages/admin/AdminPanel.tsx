@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FiMenu,
   FiHome,
@@ -9,8 +9,6 @@ import {
 
 import Logo from "../../assets/logo.svg";
 
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../store/store";
 
 import UserManagement from "./User";
 import Dashboard from "./Dashboard";
@@ -20,8 +18,6 @@ import BlogManagement from "./Blog";
 
 const AdminPanel = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [selectedUserRole, setSelectedUserRole] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
