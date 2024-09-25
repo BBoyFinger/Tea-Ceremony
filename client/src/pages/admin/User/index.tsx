@@ -16,6 +16,7 @@ import { Modal } from "../../../components/ui/Modal";
 import { Account, ROLE } from "../../../utils/User";
 
 import { FiEdit, FiTrash2 } from "react-icons/fi";
+import Table from "../../../components/ui/Table";
 
 type Props = {};
 
@@ -57,114 +58,33 @@ const UserManagement = (props: Props) => {
     }
   };
 
+  const columns = [
+    { key: "name", label: "Name", sortable: true },
+    { key: "email", label: "Email", sortable: true },
+    { key: "role", label: "Role", sortable: true },
+    { key: "status", label: "Activate", sortable: true },
+  ];
+
+  const handleSelectItem = () => {};
+
   return (
     <>
       <div className="mb-8">
         <h3 className="text-gray-700 text-3xl font-medium">Users</h3>
-        <div className="mt-8">
-          <div className="flex flex-col mt-6">
-            <div className="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-              <div className="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
-                <table className="min-w-full">
-                  <thead>
-                    <tr>
-                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                        Role
-                      </th>
-                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                        Activate
-                      </th>
-                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                        Created Date
-                      </th>
-                      <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white">
-                    {users.map((user: User) => (
-                      <tr key={user._id}>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              <img
-                                className="h-10 w-10 rounded-full"
-                                src={user.pictureImg}
-                                alt=""
-                              />
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm leading-5 font-medium text-gray-900">
-                                {user.name}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          <div className="text-sm leading-5 text-gray-900">
-                            {user.email}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          <div className="text-sm leading-5 text-gray-900">
-                            {user.role}
-                          </div>
-                        </td>
-
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              user.status === "Active"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                            }`}
-                          >
-                            {user.status}
-                          </span>
-                        </td>
-
-                        <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                          <div className="text-sm leading-5 text-gray-900">
-                            {moment(user.createdAt).format("LL")}
-                          </div>
-                        </td>
-
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <button className="text-blue-600 hover:text-blue-900 mr-3">
-                            <FiEdit
-                              onClick={() => {
-                                setUserdetail({
-                                  email: user.email,
-                                  name: user.name,
-                                  role: user.role,
-                                  userId: user._id,
-                                  status: user.status,
-                                });
-
-                                setIsEditDialogOpen(true);
-                              }}
-                            />
-                          </button>
-                          <button className="text-red-600 hover:text-red-900">
-                            <FiTrash2
-                              onClick={() => handleDeleteUser(user._id)}
-                            />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+        <div>
+          <Table
+            selectedItems={[]}
+            onSelectItem={handleSelectItem}
+            onDeleteItem={handleDeleteUser}
+            onEditItem={handleSelectItem}
+            onSort={handleSelectItem}
+            onEdit={handleUpdateRole}
+            onDelete={handleDeleteUser}
+            sortBy=""
+            sortOrder="asc"
+            columns={columns}
+            data={users}
+          />
         </div>
         {/* Edit */}
         <Modal
