@@ -65,7 +65,13 @@ export const Modal = ({
                   {title}
                 </Dialog.Title>
 
-                <form onSubmit={onSubmit} className="mt-4">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault(); // Ngăn chặn reload trang
+                    onSubmit(); // Gọi hàm xử lý submit
+                  }}
+                  className="mt-4"
+                >
                   {children}
 
                   <div className="mt-6 flex justify-end">

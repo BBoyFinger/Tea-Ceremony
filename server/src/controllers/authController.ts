@@ -106,7 +106,7 @@ const authController = {
         payload,
         process.env.JWT_SECRET_KEY || "default-secret-key",
         {
-          expiresIn: 60 * 60 * 8,
+          expiresIn: 60 * 60 * 24,
         }
       );
 
@@ -177,8 +177,6 @@ const authController = {
 
   getAllUser: async (req: Request, res: Response): Promise<Response> => {
     try {
-    
-
       const users = await UserModel.find();
 
       if (!users) {
@@ -199,16 +197,30 @@ const authController = {
       });
     }
   },
-  deleteUser: async (req: Request, res: Response): Promise<Response> => {
-    try {
-      const { id } = req.params;
+  deleteUsers: async (req: Request, res: Response): Promise<Response> => {
+    const { ids } = req.body;
 
-      const deleteUser = await UserModel.findByIdAndDelete(id);
+    if (!ids || ids.length === 0) {
+      return res.status(400).json({ message: "No user IDs provided" });
+    }
+
+    try {
+      if (ids.length === 1) {
+        const deleteUser = await UserModel.findByIdAndDelete(ids[0]);
+        if (!deleteUser) {
+          return res
+            .status(HttpStatusCode.NotFound)
+            .json({ user: "User not found!" });
+        }
+        return res
+          .status(HttpStatusCode.OK)
+          .json({ message: "User deleted successfully" });
+      }
+
+      const deleteManyUsers = await UserModel.deleteMany({ _id: { $in: ids } });
+
       return res.status(200).json({
-        message: "Delete User successfully",
-        data: deleteUser,
-        error: true,
-        sucess: false,
+        message: `${deleteManyUsers.deletedCount} users deleted successfully`,
       });
     } catch (error: any) {
       return res.status(500).json({
@@ -220,7 +232,6 @@ const authController = {
   },
   updateUser: async (req: Request, res: Response): Promise<Response> => {
     try {
-
       const userSession = req.userId;
 
       const { userId, email, name, role, status } = req.body;
@@ -231,8 +242,6 @@ const authController = {
         ...(role && { role: role }),
         ...(status && { status: status }),
       };
-
-      const user = await UserModel.findById(userSession);
 
       const updateUser = await UserModel.findByIdAndUpdate(userId, payload);
 

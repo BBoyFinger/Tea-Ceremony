@@ -1,7 +1,7 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { User } from "../../types/user.types";
 import authService from "./authService";
-import { toast } from "react-toastify";
+
 
 interface AuthState {
   user: User | null;
@@ -46,11 +46,11 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-export const deleteUser = createAsyncThunk(
+export const deleteUsers = createAsyncThunk(
   "delete-user",
-  async (id: string, thunkApi) => {
+  async (ids: string[], thunkApi) => {
     try {
-      return await authService.deleteUser(id);
+      return await authService.deleteUsers(ids);
     } catch (error) {
       thunkApi.rejectWithValue(error);
     }
@@ -80,16 +80,16 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.isError = true;
       })
-      .addCase(deleteUser.pending, (state) => {
+      .addCase(deleteUsers.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteUser.fulfilled, (state, action) => {
+      .addCase(deleteUsers.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
         state.deleteUser = action.payload;
       })
-      .addCase(deleteUser.rejected, (state, action) => {
+      .addCase(deleteUsers.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
@@ -99,11 +99,11 @@ export const authSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.isError = false;
+        state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
         state.updatedUser = action.payload;
-        toast.success("Updated user role successfully!");
+        
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.isLoading = false;

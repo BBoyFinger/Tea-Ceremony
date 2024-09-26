@@ -5,8 +5,10 @@ const getAllUser = async () => {
   return response.data.data;
 };
 
-const deleteUser = async (id: string) => {
-  const response = await axiosInstance.delete(`/user/${id}`);
+const deleteUsers = async (selectedUserIds: string[]) => {
+  const response = await axiosInstance.delete(`/users`, {
+    data: { ids: selectedUserIds },
+  });
   return response.data.data;
 };
 
@@ -17,7 +19,7 @@ const updateUserRole = async (data: any) => {
 
 const authService = {
   getAllUser,
-  deleteUser,
+  deleteUsers,
   updateUserRole,
 };
 

@@ -14,7 +14,7 @@ interface RegisterForm {
   email: string;
   password: string;
   confirmPassword: string;
-  profilePic: string;
+  pictureImg: string;
 }
 
 const SignUp = (props: Props) => {
@@ -27,7 +27,7 @@ const SignUp = (props: Props) => {
     email: "",
     password: "",
     confirmPassword: "",
-    profilePic: "",
+    pictureImg: "",
   });
 
   const handleUploadUploadPic = async (
@@ -39,7 +39,7 @@ const SignUp = (props: Props) => {
     setData((pre: any) => {
       return {
         ...pre,
-        profilePic: imagePic,
+        pictureImg: imagePic,
       };
     });
   };
@@ -83,7 +83,7 @@ const SignUp = (props: Props) => {
             <div>
               <img
                 alt="Your Company"
-                src={data.profilePic || Logo}
+                src={data.pictureImg || Logo}
                 className="mx-auto w-40 object-cover rounded-full"
               />
             </div>

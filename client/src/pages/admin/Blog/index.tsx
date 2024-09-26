@@ -53,15 +53,14 @@ const BlogManagement = () => {
   return (
     <div>
       <Table
-        selectedItems={[1,2,3]}
+        selectedItems={["1","2","3"]}
         onSelectItem={handleSelectItem}
-        onDeleteItem={handleDelete}
-        onEditItem={handleEdit}
         onDeleteSelected={() => {}}
         columns={columns}
         data={blogs}
         sortBy={sortBy}
         sortOrder={sortOrder}
+        itemsPerPage={20}
         onSort={handleSort}
         onEdit={handleEdit}
         onDelete={handleDelete}
