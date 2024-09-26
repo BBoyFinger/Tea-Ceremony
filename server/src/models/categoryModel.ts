@@ -7,7 +7,10 @@ const categorySchema: Schema<ICategory> = new Schema({
     require: true,
   },
   description: String,
-  productCount: {},
+  productCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const categoryModel: Model<ICategory> = mongoose.model(
