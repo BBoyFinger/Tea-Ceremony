@@ -61,14 +61,12 @@ const SignUp = (props: Props) => {
       if (data.password === data.confirmPassword) {
         const dataRes = await axiosInstance.post("/signup", data);
 
-        console.log(dataRes.data);
-
         if (dataRes.data.success) {
           toast.success(dataRes.data.message);
           navigate("/login");
         }
       } else {
-        console.log("Please check password and confirm password!");
+        toast.error("Please check password and confirm password!");
       }
     } catch (error: any) {
       toast.error(error.response.data.message);

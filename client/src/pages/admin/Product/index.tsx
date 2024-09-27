@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlus, FaSearch } from "react-icons/fa";
 import Table from "../../../components/ui/Table";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
+import { getProducts } from "../../../features/product/productSlice";
 
 const ProductManagement = () => {
   const columns = [
-    { key: "images", label: "Image", sortable: false }, // Hình ảnh sản phẩm
-    { key: "name", label: "Name", sortable: true }, // Tên sản phẩm
+    // { key: "images", label: "Image", sortable: false }, // Hình ảnh sản phẩm
+    { key: "productName", label: "Name", sortable: true }, // Tên sản phẩm
     { key: "price", label: "Price", sortable: true }, // Giá sản phẩm
     { key: "category", label: "Category", sortable: true }, // Danh mục sản phẩm
     { key: "stockQuantity", label: "Stock", sortable: true }, // Số lượng tồn kho
@@ -20,6 +21,10 @@ const ProductManagement = () => {
   const productState = useSelector((state: RootState) => state.productReducer);
 
   const { products } = productState;
+
+  useEffect(() => {
+    dispatch(getProducts());
+  }, [dispatch]);
 
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
   const [searchTerm, setSearchTerm] = useState("");

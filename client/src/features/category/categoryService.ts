@@ -12,7 +12,6 @@ const createCategory = async (data: ICategory) => {
 };
 
 const editCategory = async (data: ICategory) => {
-  console.log(data._id)
   const response = await axiosInstance.put(`/category/${data._id}`, {
     name: data.name,
     description: data.description,

@@ -4,7 +4,7 @@ import { IProduct } from "../utils/type";
 // Tạo schema cho product
 const ProductSchema: Schema<IProduct> = new Schema(
   {
-    name: { type: String, required: true },
+    productName: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     currency: { type: String, required: true },

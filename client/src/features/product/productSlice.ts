@@ -1,4 +1,4 @@
-import { createSlice, createAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { IProduct } from "../../types/product.types";
 import { productService } from "./productService";
 
@@ -27,7 +27,7 @@ const initialState: IProductState = {
 };
 
 export const getProducts = createAsyncThunk(
-  "categories",
+  "get-products",
   async (_, thunkApi) => {
     try {
       return await productService.getProducts();

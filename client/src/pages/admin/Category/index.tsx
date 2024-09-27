@@ -115,7 +115,6 @@ const CategoryManagement = () => {
   };
 
   const handleDeleteCategory = async (id: any) => {
-    console.log("delete category with id", id);
     if (window.confirm("Are u sure delete this category!")) {
       await dispatch(deleteCategory(id));
       toast.success("Delete category successfully");

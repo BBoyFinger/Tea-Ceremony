@@ -24,7 +24,7 @@ export interface ICategory {
 
 export interface IProduct {
   id?: string; // optional vì trong một số trường hợp có thể chưa có id khi tạo mới
-  name: string;
+  productName: string;
   description: string;
   price: number;
   currency: string;
