@@ -4,7 +4,7 @@ import { ICategory } from "../utils/type";
 import HttpStatusCode from "../utils/HttpStatusCode";
 
 const categoryController = {
-  addCategory: async (req: Request, res: Response) => {
+  addCategory: async (req: Request, res: Response): Promise<Response> => {
     const { name, description } = req.body as ICategory;
 
     try {
@@ -25,7 +25,26 @@ const categoryController = {
       });
     }
   },
-  getAllCategories: async (req: Request, res: Response) => {
+  getCategoryById: async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.params;
+    try {
+      const category = await categoryModel.findById(id);
+      if (!category) {
+        return res.status(HttpStatusCode.NotFound).json({
+          message: "Category not found",
+        });
+      }
+      return res.status(HttpStatusCode.OK).json({
+        message: "Get category successfully!",
+        data: category,
+      });
+    } catch (error) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error,
+      });
+    }
+  },
+  getAllCategories: async (req: Request, res: Response): Promise<Response> => {
     try {
       const categories = await categoryModel.find();
       if (!categories) {
@@ -33,7 +52,7 @@ const categoryController = {
           message: "Get category unsuccessfully!",
         });
       }
-      return res.status(HttpStatusCode.NotFound).json({
+      return res.status(HttpStatusCode.OK).json({
         message: "Get category successfully!",
         data: categories,
       });
@@ -43,22 +62,19 @@ const categoryController = {
       });
     }
   },
-  editCategory: async (req: Request, res: Response) => {
+  editCategory: async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
-    const { name, description } = req.body;
     try {
-      const category = await categoryModel.findByIdAndUpdate(
-        id,
-        { name, description },
-        { new: true }
-      );
+      const category = await categoryModel.findByIdAndUpdate(id, req.body, {
+        new: true,
+      });
       if (!category) {
         return res
           .status(HttpStatusCode.NotFound)
           .json("Updated category unsuccess!");
       }
       return res.status(HttpStatusCode.OK).json({
-        message: "Updated category successfully!",
+        message: "Updated category successfully 123!",
         data: category,
       });
     } catch (error) {
@@ -67,7 +83,7 @@ const categoryController = {
       });
     }
   },
-  deleteCategories: async (req: Request, res: Response) => {
+  deleteCategories: async (req: Request, res: Response): Promise<Response> => {
     const { ids } = req.body;
 
     if (!ids || ids.length === 0) {

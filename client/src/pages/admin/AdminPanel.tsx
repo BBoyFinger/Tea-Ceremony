@@ -7,11 +7,12 @@ import {
   FiSettings,
 } from "react-icons/fi";
 import { Outlet } from "react-router-dom"; // Import Outlet
+import { BiCategoryAlt } from "react-icons/bi";
 
 import Logo from "../../assets/logo.svg";
 
-
 import { Link, useLocation } from "react-router-dom";
+import { RiBloggerLine } from "react-icons/ri";
 
 const AdminPanel = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -71,7 +72,8 @@ const AdminPanel = () => {
                     : "hover:bg-gray-700"
                 }`}
               >
-                <FiDatabase />
+                <BiCategoryAlt />
+
                 <span>Categories</span>
               </Link>
             </li>
@@ -97,7 +99,8 @@ const AdminPanel = () => {
                     : "hover:bg-gray-700"
                 }`}
               >
-                <FiDatabase />
+                <RiBloggerLine />
+
                 <span>Blogs</span>
               </Link>
             </li>

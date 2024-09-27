@@ -17,5 +17,6 @@ router.post("/category", authMiddleware, categoryController.addCategory);
 router.put("/category/:id", authMiddleware, categoryController.editCategory);
 router.delete("/category", authMiddleware, categoryController.deleteCategories);
 router.get("/category", categoryController.getAllCategories);
+router.get("/category/:id", categoryController.getCategoryById);
 
 export default router;

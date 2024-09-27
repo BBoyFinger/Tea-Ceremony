@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -10,10 +10,20 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { FiUsers, FiDatabase, FiSettings } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../store/store";
+import { getAllUser } from "../../../features/auth/authSlice";
 
 type Props = {};
 
 const Dashboard = (props: Props) => {
+  const dispatch: AppDispatch = useDispatch();
+  const UserState = useSelector((state: RootState) => state.authReducer);
+  const { users } = UserState;
+
+  useEffect(() => {
+    dispatch(getAllUser());
+  }, []);
   const chartData = [
     { name: "Jan", value: 400 },
     { name: "Feb", value: 300 },
@@ -34,7 +44,7 @@ const Dashboard = (props: Props) => {
                 </div>
                 <div className="mx-5">
                   <h4 className="text-2xl font-semibold text-gray-700">
-                    8,282
+                    {users.length}
                   </h4>
                   <div className="text-gray-500">New Users</div>
                 </div>
