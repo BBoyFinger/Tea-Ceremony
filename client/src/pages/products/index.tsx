@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 
-import { Product } from "../../types/product.types";
+import { IProduct } from "../../types/product.types";
 import { ICategory } from "../../types/category.types";
 import { Link } from "react-router-dom";
 
 const ProductListingPage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("popularity");
@@ -15,56 +15,55 @@ const ProductListingPage = () => {
   useEffect(() => {
     // Simulating API call to fetch products and categories
     const fetchData = async () => {
-      const productsData: Product[] = [
-        {
-          _id: 1,
-          name: "Product 1",
-          price: 99.99,
-          category: "Electronics",
-          image:
-            "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-        },
-        {
-          _id: 2,
-          name: "Product 2",
-          price: 149.99,
-          category: "Clothing",
-          image:
-            "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1305&q=80",
-        },
-        {
-          _id: 3,
-          name: "Product 3",
-          price: 199.99,
-          category: "Home",
-          image:
-            "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-        },
-        {
-          _id: 4,
-          name: "Product 4",
-          price: 79.99,
-          category: "Electronics",
-          image:
-            "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-        },
-        {
-          _id: 5,
-          name: "Product 5",
-          price: 129.99,
-          category: "Clothing",
-          image:
-            "https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80",
-        },
-        {
-          _id: 6,
-          name: "Product 6",
-          price: 249.99,
-          category: "Home",
-          image:
-            "https://images.unsplash.com/photo-1523575708161-ad0fc2a9b951?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-        },
-      ];
+      // const productsData: IProduct[] = [
+      //   {
+      //     _id: "1",
+      //     name: "Product 1",
+      //     price: 99.99,
+      //     category: "Electronics",
+      //     images: []
+      //   },
+      //   {
+      //     _id: "2",
+      //     name: "Product 2",
+      //     price: 149.99,
+      //     category: "Clothing",
+      //     images:
+      //       "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1305&q=80",
+      //   },
+      //   {
+      //     _id: "3",
+      //     name: "Product 3",
+      //     price: 199.99,
+      //     category: "Home",
+      //     images:
+      //       "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+      //   },
+      //   {
+      //     _id: "4",
+      //     name: "Product 4",
+      //     price: 79.99,
+      //     category: "Electronics",
+      //     images:
+      //       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+      //   },
+      //   {
+      //     _id: "5",
+      //     name: "Product 5",
+      //     price: 129.99,
+      //     category: "Clothing",
+      //     images:
+      //       "https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80",
+      //   },
+      //   {
+      //     _id: "6",
+      //     name: "Product 6",
+      //     price: 249.99,
+      //     category: "Home",
+      //     images:
+      //       "https://images.unsplash.com/photo-1523575708161-ad0fc2a9b951?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+      //   },
+      // ];
       const categoriesData = [
         { _id: 1, name: "All" },
         { _id: 2, name: "Electronics" },
@@ -72,7 +71,7 @@ const ProductListingPage = () => {
         { _id: 4, name: "Home" },
       ];
 
-      setProducts(productsData);
+      // setProducts(productsData);
       // setCategories(categoriesData);
     };
 
@@ -93,7 +92,7 @@ const ProductListingPage = () => {
 
   const filteredProducts = products
     .filter(
-      (product: Product) =>
+      (product: IProduct) =>
         (selectedCategory === "All" || product.category === selectedCategory) &&
         product.price >= priceRange[0] &&
         product.price <= priceRange[1]
@@ -179,17 +178,17 @@ const ProductListingPage = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product: Product) => (
+              {filteredProducts.map((product: IProduct) => (
                 <Link
                   to={`${product._id}`}
                   key={product._id}
                   className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-105"
                 >
-                  <img
-                    src={product.image}
+                  {/* <img
+                    src={product?.images[0]}
                     alt={product.name}
                     className="w-full h-48 object-cover"
-                  />
+                  /> */}
                   <div className="p-4">
                     <h3 className="text-lg font-semibold mb-2">
                       {product.name}
