@@ -192,6 +192,7 @@ const UserManagement = (props: Props) => {
             </div>
           </div>
         </div>
+        {/* Button */}
         <div className="flex items-center justify-end mb-2">
           <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
             <BsSearch className="mr-2" /> Search

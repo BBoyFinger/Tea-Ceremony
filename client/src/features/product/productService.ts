@@ -3,7 +3,6 @@ import axiosInstance from "../../utils/axiosConfig";
 
 const getProducts = async () => {
   const response = await axiosInstance.get("/product");
-  console.log(response);
   return response.data.data;
 };
 
@@ -15,7 +14,7 @@ const createProduct = async (data: IProduct) => {
 const editProduct = async (data: IProduct) => {
 
   const response = await axiosInstance.put(`/product/${data._id}`, {
-    name: data.name,
+    name: data.productName,
     description: data.description,
   });
   

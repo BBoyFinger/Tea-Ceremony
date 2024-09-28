@@ -13,6 +13,7 @@ import { FiUsers, FiDatabase, FiSettings } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { getAllUser } from "../../../features/auth/authSlice";
+import AddProductModal from "../../../components/AddProductComponent";
 
 type Props = {};
 
@@ -35,6 +36,7 @@ const Dashboard = (props: Props) => {
     <div>
       <div className="mb-8">
         <h3 className="text-gray-700 text-3xl font-medium">Dashboard</h3>
+       
         <div className="mt-4">
           <div className="flex flex-wrap -mx-6">
             <div className="w-full px-6 sm:w-1/2 xl:w-1/3">

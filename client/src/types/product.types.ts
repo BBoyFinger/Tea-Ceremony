@@ -1,10 +1,10 @@
 export interface IProduct {
    _id: string; // ID thường là ObjectId trong MongoDB, nên dùng string
-   name: string;
+   productName: string;
    description: string;
    price: number;
    currency: string;
-   images?: string[]; // Mảng chứa các URL hình ảnh
+   images: string[]; // Mảng chứa các URL hình ảnh
    category: string; // Đây là ObjectId tham chiếu đến model Category, nhưng có thể sử dụng string nếu chỉ lưu ID
    material: string;
    stockQuantity: number;
@@ -20,7 +20,7 @@ export interface IProduct {
  
    discount?: number;
    isFeatured: boolean;
-   tags?: string[];
+   tags: string[];
    shippingInfo: string;
    brand: string;
  }

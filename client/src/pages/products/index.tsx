@@ -4,7 +4,7 @@ import { IProduct } from "../../types/product.types";
 import { ICategory } from "../../types/category.types";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/store";
+import { AppDispatch, RootState } from "../../store/store";
 import { getCategories } from "../../features/category/categorySlice";
 
 const ProductListingPage = () => {
@@ -15,7 +15,7 @@ const ProductListingPage = () => {
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const categoryState = useSelector(
     (state: RootState) => state.categoryReducer
@@ -87,7 +87,7 @@ const ProductListingPage = () => {
     // };
 
     // fetchData();
-    // dispatch(getCategories())
+    dispatch(getCategories());
   }, []);
 
   const handleCategoryChange = (category: any) => {
@@ -203,7 +203,7 @@ const ProductListingPage = () => {
                   /> */}
                   <div className="p-4">
                     <h3 className="text-lg font-semibold mb-2">
-                      {product.name}
+                      {product.productName}
                     </h3>
                     <p className="text-gray-600 mb-2">
                       ${product.price.toFixed(2)}
