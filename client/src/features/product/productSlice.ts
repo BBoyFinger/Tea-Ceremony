@@ -39,7 +39,7 @@ export const getProducts = createAsyncThunk(
 
 export const createProduct = createAsyncThunk(
   "create-Product",
-  async (data: IProduct, thunkApi) => {
+  async (data: any, thunkApi) => {
     try {
       return await productService.createProduct(data);
     } catch (error) {

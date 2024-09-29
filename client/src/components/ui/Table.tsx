@@ -101,7 +101,15 @@ function Table({
                       {item.status}
                     </span>
                   ) : column.key === "pictureImg" ? (
-                    <img src={item.pictureImg} alt={item.name} className="w-14 h-14 rounded-full"/>
+                    <img
+                      src={item.pictureImg}
+                      alt={item.name}
+                      className="w-14 h-14 rounded-full"
+                    />
+                  ) : column.key === "images" ? (
+                    item.images.map((img: any) => {
+                      return console.log(img);
+                    })
                   ) : (
                     item[column.key]
                   )}

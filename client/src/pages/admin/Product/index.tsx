@@ -3,13 +3,17 @@ import { FaPlus, FaSearch, FaTimes, FaUpload } from "react-icons/fa";
 import Table from "../../../components/ui/Table";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
-import { getProducts } from "../../../features/product/productSlice";
+import {
+  createProduct,
+  getProducts,
+} from "../../../features/product/productSlice";
 import { Modal } from "../../../components/ui/Modal";
 import { IProduct } from "../../../types/product.types";
 import { getCategories } from "../../../features/category/categorySlice";
 import { BsSearch } from "react-icons/bs";
 import { CiCirclePlus } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 const ProductManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -19,13 +23,11 @@ const ProductManagement = () => {
     productName: "",
     category: "",
     brand: "",
-    tags: "",
     availability: "",
-    isFeatured: false,
   });
 
   const columns = [
-    // { key: "images", label: "Image", sortable: false }, // Hình ảnh sản phẩm
+    { key: "images", label: "Image", sortable: false }, // Hình ảnh sản phẩm
     { key: "productName", label: "Name", sortable: true }, // Tên sản phẩm
     { key: "price", label: "Price", sortable: true }, // Giá sản phẩm
     { key: "category", label: "Category", sortable: true }, // Danh mục sản phẩm
@@ -69,9 +71,13 @@ const ProductManagement = () => {
   }, [dispatch]);
 
   const handleInputChange = (e: any) => {
-    const { name, value } = e.target;
-    setProductInfo({ ...productInfo, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setProductInfo({
+      ...productInfo,
+      [name]: type === "checkbox" ? checked : value,
+    });
     setSearchField({ ...searchField, [name]: value });
+    console.log(productInfo.isFeatured);
   };
 
   const handleImageUpload = (e: any) => {
@@ -107,8 +113,28 @@ const ProductManagement = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = () => {
-    console.log(productInfo);
+  const handleSubmit = async () => {
+    const payload = {
+      productName: productInfo.productName,
+      description: productInfo.description,
+      price: productInfo.price,
+      currency: productInfo.currency,
+      images: productInfo.images,
+      category: productInfo.category,
+      material: productInfo.material,
+      stockQuantity: productInfo.stockQuantity,
+      availability: productInfo.availability,
+      averageRating: productInfo.averageRating,
+      discount: productInfo.discount,
+      isFeatured: productInfo.isFeatured,
+      tags: productInfo.tags,
+      shippingInfo: productInfo.shippingInfo,
+      brand: productInfo.brand,
+    };
+    await dispatch(createProduct(payload));
+    toast.success("Create successfully");
+    dispatch(getProducts());
+    setIsModalOpen(false);
   };
 
   return (
@@ -173,69 +199,27 @@ const ProductManagement = () => {
                 </option>
               ))}
             </select>
-            
           </div>
           <div className="flex items-center gap-4">
             <label
-              htmlFor="category"
+              htmlFor="Availability"
               className="block min-w-[100px] text-sm text-left font-medium text-gray-700"
             >
-              Category
+              Availability
             </label>
             <select
-              name="category"
-              value={searchField.category}
-              id="category-select"
+              name="availability"
+              value={searchField.availability}
+              id="availability"
               onChange={handleInputChange}
               className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
-              {categories.map((el) => (
-                <option value={el.name} key={el._id} className="text-sm">
-                  {el.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center gap-4">
-            <label
-              htmlFor="category"
-              className="block min-w-[100px] text-sm text-left font-medium text-gray-700"
-            >
-              Category
-            </label>
-            <select
-              name="category"
-              value={searchField.category}
-              id="category-select"
-              onChange={handleInputChange}
-              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            >
-              {categories.map((el) => (
-                <option value={el.name} key={el._id} className="text-sm">
-                  {el.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center gap-4">
-            <label
-              htmlFor="category"
-              className="block min-w-[100px] text-sm text-left font-medium text-gray-700"
-            >
-              Category
-            </label>
-            <select
-              name="category"
-              value={searchField.category}
-              id="category-select"
-              onChange={handleInputChange}
-              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            >
-              {categories.map((el) => (
-                <option value={el.name} key={el._id} className="text-sm">
-                  {el.name}
-                </option>
-              ))}
+              <option value={"instock"} className="text-sm">
+                In Stock
+              </option>
+              <option value={"outstock"} className="text-sm">
+                Out Stock
+              </option>
             </select>
           </div>
         </div>
@@ -245,7 +229,10 @@ const ProductManagement = () => {
         <button className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
           <BsSearch className="mr-2" /> Search
         </button>
-        <button className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
+        >
           <FiPlus className="mr-2" /> Add Product
         </button>
       </div>
