@@ -102,21 +102,21 @@ const ProductListingPage = () => {
     setPriceRange([parseInt(e.target.min), parseInt(e.target.max)]);
   };
 
-  const filteredProducts = products
-    .filter(
-      (product: IProduct) =>
-        (selectedCategory === "All" || product.category === selectedCategory) &&
-        product.price >= priceRange[0] &&
-        product.price <= priceRange[1]
-    )
-    .sort((a: any, b: any) => {
-      if (sortBy === "price") {
-        return a.price - b.price;
-      } else if (sortBy === "name") {
-        return a.name.localeCompare(b.name);
-      }
-      return 0;
-    });
+  // const filteredProducts = products
+  //   .filter(
+  //     (product: IProduct) =>
+  //       (selectedCategory === "All" || product.category === selectedCategory) &&
+  //       product.price >= priceRange[0] &&
+  //       product.price <= priceRange[1]
+  //   )
+  //   .sort((a: any, b: any) => {
+  //     if (sortBy === "price") {
+  //       return a.price - b.price;
+  //     } else if (sortBy === "name") {
+  //       return a.name.localeCompare(b.name);
+  //     }
+  //     return 0;
+  //   });
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -190,17 +190,13 @@ const ProductListingPage = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product: IProduct) => (
+              {/* {filteredProducts.map((product: IProduct) => (
                 <Link
                   to={`${product._id}`}
                   key={product._id}
                   className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-105"
                 >
-                  {/* <img
-                    src={product?.images[0]}
-                    alt={product.name}
-                    className="w-full h-48 object-cover"
-                  /> */}
+                 
                   <div className="p-4">
                     <h3 className="text-lg font-semibold mb-2">
                       {product.productName}
@@ -213,7 +209,7 @@ const ProductListingPage = () => {
                     </button>
                   </div>
                 </Link>
-              ))}
+              ))} */}
             </div>
           </section>
         </div>

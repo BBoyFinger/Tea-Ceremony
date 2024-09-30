@@ -7,32 +7,36 @@ const ProductSchema: Schema<IProduct> = new Schema(
     productName: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
+    quantity: { type: Number, required: true, default: 0 },
     currency: { type: String, required: true },
-    images: { type: [String], required: true },
+    images: [
+      {
+        url: { type: String, required: true },
+        title: { type: String, required: true },
+      },
+    ],
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category", // Liên kết với model Category
       required: true,
     },
     material: { type: String, required: true },
-    stockQuantity: { type: Number, required: true },
-    availability: { type: String, required: true },
-
-    averageRating: { type: Number, default: 0 },
-    reviewsCount: { type: Number, default: 0 },
+    stockQuantity: { type: Number, required: true }, // Số lượng hàng tồn kho
+    availability: { type: String, required: true }, // Trạng thái hàng hóa (ví dụ: "còn hàng", "hết hàng")
+    averageRating: { type: Number, default: 0 }, // Điểm đánh giá trung bình của sản phẩm
+    reviewsCount: { type: Number, default: 0 }, // Số lượng đánh giá
     reviews: [
       {
-        user: { type: String, required: true },
-        rating: { type: Number, required: true },
-        comment: { type: String, required: true },
+        user: { type: String, required: true }, // Người dùng đánh giá sản phẩm
+        rating: { type: Number, required: true }, // Số sao mà người dùng đánh giá sản phẩm
+        comment: { type: String, required: true }, // Bình luận của người dùng về sản phẩm
       },
     ],
 
-    discount: { type: Number },
-    isFeatured: { type: Boolean, default: false },
-    tags: { type: [String] },
-    shippingInfo: { type: String, required: true },
-    brand: { type: String, required: true },
+    discount: { type: Number }, // Phần trăm giảm giá (nếu có)
+    isFeatured: { type: Boolean, default: false }, // Xác định sản phẩm có phải là sản phẩm nổi bật hay không
+    shippingInfo: { type: String, required: true }, // Thông tin vận chuyển cho sản phẩm
+    brand: { type: String, required: true }, // Thương hiệu của sản phẩm
   },
   {
     timestamps: true, // tự động tạo `createdAt` và `updatedAt`

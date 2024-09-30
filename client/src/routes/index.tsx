@@ -12,6 +12,7 @@ import UserManagement from "../pages/admin/User";
 import CategoryManagement from "../pages/admin/Category";
 import ProductManagement from "../pages/admin/Product";
 import BlogManagement from "../pages/admin/Blog";
+import OrderManagement from "../pages/admin/Order";
 
 const router = createBrowserRouter([
   {
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
           {
             path: "blogs",
             element: <BlogManagement />,
+          },
+          {
+            path: "orders",
+            element: <OrderManagement />,
           },
           {
             path: "settings",

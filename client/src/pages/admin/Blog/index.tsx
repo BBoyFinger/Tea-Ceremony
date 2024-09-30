@@ -4,9 +4,6 @@ import Table from "../../../components/ui/Table";
 import { IBlog } from "../../../types/blog.type";
 
 const BlogManagement = () => {
-
-
- 
   const [sortBy, setSortBy] = useState<string>("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const handleSort = (key: string) => {
@@ -26,9 +23,7 @@ const BlogManagement = () => {
     // Logic xóa
   };
 
-  const handleSelectItem = () => {
-
-  }
+  const handleSelectItem = () => {};
 
   const columns = [
     { key: "name", label: "Name", sortable: true },
@@ -38,22 +33,31 @@ const BlogManagement = () => {
 
   const blogs = [
     {
-        id: "1", name: "hehe", description: "no des", productCount: 4,
-        
+      id: "1",
+      name: "hehe",
+      description: "no des",
+      productCount: 4,
     },
     {
-        id: "2", name: "hehe", description: "no des", productCount: 4,
-        
+      id: "2",
+      name: "hehe",
+      description: "no des",
+      productCount: 4,
     },
     {
-        id: "3", name: "hehe", description: "no des", productCount: 4,
-        
+      id: "3",
+      name: "hehe",
+      description: "no des",
+      productCount: 4,
     },
-  ]
+  ];
   return (
-    <div>
+    <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">
+        Blogs Management
+      </h1>
       <Table
-        selectedItems={["1","2","3"]}
+        selectedItems={["1", "2", "3"]}
         onSelectItem={handleSelectItem}
         onDeleteSelected={() => {}}
         columns={columns}

@@ -19,7 +19,7 @@ export const productController = {
 
   getAllProducts: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const products = await ProductModel.find();
+      const products = await ProductModel.find().populate("category");
       return res.status(201).json({
         message: "Get product successfully!",
         data: products,

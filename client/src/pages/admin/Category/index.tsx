@@ -33,7 +33,7 @@ const CategoryManagement = () => {
   const categoryState = useSelector(
     (state: RootState) => state.categoryReducer
   );
-  const { categories, isLoading, category } = categoryState;
+  const { categories, isLoading } = categoryState;
 
   useEffect(() => {
     // Simulating API call to fetch categories
@@ -107,9 +107,11 @@ const CategoryManagement = () => {
   };
 
   const handleDeleteCategorySelected = async () => {
-    if (window.confirm("Are you sure you want to delete the selected users?")) {
+    if (
+      window.confirm("Are you sure you want to delete the selected category?")
+    ) {
       await dispatch(deleteCategory(selectedCategories));
-      toast.success("Delete User successfully!");
+      toast.success("Delete Category successfully!");
       dispatch(getCategories());
     }
   };

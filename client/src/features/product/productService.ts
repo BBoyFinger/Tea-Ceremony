@@ -12,10 +12,25 @@ const createProduct = async (data: IProduct) => {
 };
 
 const editProduct = async (data: IProduct) => {
-
+  console.log(data);
   const response = await axiosInstance.put(`/product/${data._id}`, {
-    name: data.productName,
+    productName: data.productName,
+    price: data.price,
     description: data.description,
+    quantity: data.quantity,
+    currency: data.currency, // Thêm currency
+    images: data.images, // Thêm mảng hình ảnh
+    category: data.category, // Thêm danh mục
+    material: data.material, // Thêm chất liệu
+    stockQuantity: data.stockQuantity, // Thêm số lượng tồn kho
+    availability: data.availability, // Thêm trạng thái hàng hóa
+    averageRating: data.averageRating, // Thêm đánh giá trung bình
+    reviewsCount: data.reviewsCount, // Thêm số lượng đánh giá
+    reviews: data.reviews, // Thêm danh sách đánh giá
+    discount: data.discount, // Thêm phần trăm giảm giá
+    isFeatured: data.isFeatured, // Thêm thông tin nổi bật
+    shippingInfo: data.shippingInfo, // Thêm thông tin vận chuyển
+    brand: data.brand, // Thêm thương hiệu
   });
   
   return response.data.data;

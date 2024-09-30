@@ -8,6 +8,7 @@ import {
 } from "react-icons/fi";
 import { Outlet } from "react-router-dom"; // Import Outlet
 import { BiCategoryAlt } from "react-icons/bi";
+import { FiShoppingCart } from "react-icons/fi";
 
 import Logo from "../../assets/logo.svg";
 
@@ -102,6 +103,19 @@ const AdminPanel = () => {
                 <RiBloggerLine />
 
                 <span>Blogs</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/admin-panel/orders" // Cập nhật đường dẫn
+                className={`flex items-center space-x-2 w-full p-2 rounded-md ${
+                  isActiveTab("/admin-panel/orders")
+                    ? "bg-gray-700"
+                    : "hover:bg-gray-700"
+                }`}
+              >
+                <FiShoppingCart />
+                <span>Order</span>
               </Link>
             </li>
             <li>

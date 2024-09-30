@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { FaPlus, FaSearch, FaTimes, FaUpload } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaTimes, FaUpload } from "react-icons/fa";
 import Table from "../../../components/ui/Table";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
@@ -7,18 +7,18 @@ import {
   createProduct,
   deleteProduct,
   getProducts,
+  updateProduct,
 } from "../../../features/product/productSlice";
 import { Modal } from "../../../components/ui/Modal";
 import { IProduct } from "../../../types/product.types";
 import { getCategories } from "../../../features/category/categorySlice";
 import { BsSearch } from "react-icons/bs";
-import { CiCirclePlus } from "react-icons/ci";
+
 import { FiPlus } from "react-icons/fi";
 import { toast } from "react-toastify";
 
 const ProductManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const [searchField, setSearchField] = useState({
     productName: "",
@@ -40,19 +40,25 @@ const ProductManagement = () => {
 
   const dispatch: AppDispatch = useDispatch();
   const productState = useSelector((state: RootState) => state.productReducer);
-  const [selectedProduct, setSelectedProduct] = useState([""]);
+  const [selectedProduct, setSelectedProduct] = useState<string[]>([]);
   const categoryState = useSelector(
     (state: RootState) => state.categoryReducer
   );
   const { categories } = categoryState;
   const { products } = productState;
-  const [productInfo, setProductInfo] = useState<IProduct>({
+  const [productInfo, setProductInfo] = useState<IProduct | null>({
     _id: "",
     productName: "",
     description: "",
     price: 0,
     currency: "USD",
-    images: [],
+    quantity: 0,
+    images: [
+      {
+        url: "",
+        title: "",
+      },
+    ],
     category: "",
     material: "",
     stockQuantity: 0,
@@ -62,7 +68,6 @@ const ProductManagement = () => {
     reviews: [],
     discount: undefined,
     isFeatured: false,
-    tags: [],
     shippingInfo: "",
     brand: "",
   });
@@ -77,44 +82,36 @@ const ProductManagement = () => {
     setProductInfo({
       ...productInfo,
       [name]: type === "checkbox" ? checked : value,
+      images: [{ url: "example.com/image1.jpg", title: "Image 1" }],
     });
   };
 
   const handleSearchInputChange = (e: any) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setSearchField({ ...searchField, [name]: value });
   };
 
   const handleImageUpload = (e: any) => {
     const files = Array.from(e.target.files);
-    const imageUrls = files.map((file: any) => URL.createObjectURL(file));
-    setProductInfo((prev) => ({
+
+    // Tạo các đối tượng cho images với url và title
+    const newImages = files.map((file: any) => ({
+      url: URL.createObjectURL(file),
+      title: file.name, // có thể sử dụng tên file làm title
+    }));
+
+    setProductInfo((prev: any) => ({
       ...prev,
-      images: [...prev.images, ...imageUrls],
+      images: [...prev.images, ...newImages],
     }));
   };
 
-  const handleTagAdd = (e: any) => {
-    if (e.key === "Enter" && e.target.value) {
-      setProductInfo((prev) => ({
-        ...prev,
-        tags: [...prev.tags, e.target.value],
-      }));
-      e.target.value = "";
-    }
-  };
-
-  const handleTagRemove = (tagToRemove: any) => {
-    setProductInfo((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }));
-  };
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  const opentModal = () => {
+  const openModal = (product: IProduct | null = null) => {
+    setProductInfo(product);
     setIsModalOpen(true);
   };
 
@@ -133,31 +130,66 @@ const ProductManagement = () => {
       );
     } else {
       setSelectedProduct([...selectedProduct, id]);
-     
+    }
+  };
+
+  const handleDeleteProductSelected = async () => {
+    if (
+      window.confirm("Are you sure you want to delete the selected products?")
+    ) {
+      await dispatch(deleteProduct(selectedProduct));
+      toast.success("Delete products successfully!");
+      dispatch(getProducts());
     }
   };
 
   const handleSubmit = async () => {
-    const payload = {
-      productName: productInfo.productName,
-      description: productInfo.description,
-      price: productInfo.price,
-      currency: productInfo.currency,
-      images: productInfo.images,
-      category: productInfo.category,
-      material: productInfo.material,
-      stockQuantity: productInfo.stockQuantity,
-      availability: productInfo.availability,
-      averageRating: productInfo.averageRating,
-      discount: productInfo.discount,
-      isFeatured: productInfo.isFeatured,
-      tags: productInfo.tags,
-      shippingInfo: productInfo.shippingInfo,
-      brand: productInfo.brand,
-    };
-    await dispatch(createProduct(payload));
-    toast.success("Create successfully");
-    dispatch(getProducts());
+    if (productInfo?._id) {
+      console.log("edit product");
+      const payload = {
+        _id: productInfo?._id,
+        productName: productInfo.productName,
+        description: productInfo.description,
+        price: productInfo.price,
+        quantity: productInfo.quantity,
+        currency: productInfo.currency,
+        images: productInfo.images,
+        category: productInfo.category,
+        material: productInfo.material,
+        stockQuantity: productInfo.stockQuantity,
+        availability: productInfo.availability,
+        averageRating: productInfo.averageRating,
+        discount: productInfo.discount,
+        isFeatured: productInfo.isFeatured,
+        shippingInfo: productInfo.shippingInfo,
+        brand: productInfo.brand,
+      };
+      await dispatch(updateProduct(payload));
+      toast.success("update product successfully");
+    } else {
+      console.log("add product");
+      const payload = {
+        productName: productInfo?.productName,
+        description: productInfo?.description,
+        price: productInfo?.price,
+        quantity: productInfo?.quantity,
+        currency: productInfo?.currency,
+        images: productInfo?.images,
+        category: productInfo?.category,
+        material: productInfo?.material,
+        stockQuantity: productInfo?.stockQuantity,
+        availability: productInfo?.availability,
+        averageRating: productInfo?.averageRating,
+        discount: productInfo?.discount,
+        isFeatured: productInfo?.isFeatured,
+        shippingInfo: productInfo?.shippingInfo,
+        brand: productInfo?.brand,
+      };
+      await dispatch(createProduct(payload));
+      toast.success("Create product successfully");
+    }
+
+    await dispatch(getProducts());
     setIsModalOpen(false);
   };
 
@@ -254,7 +286,7 @@ const ProductManagement = () => {
           <BsSearch className="mr-2" /> Search
         </button>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => openModal(null)}
           className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
         >
           <FiPlus className="mr-2" /> Add Product
@@ -269,9 +301,9 @@ const ProductManagement = () => {
           selectedItems={selectedProduct}
           itemsPerPage={5}
           onDelete={handleDelete}
-          onEdit={() => {}}
+          onEdit={(product) => openModal(product)}
           onSort={() => {}}
-          onDeleteSelected={() => {}}
+          onDeleteSelected={handleDeleteProductSelected}
           onSelectItem={handleSelectedProduct}
         />
       </div>
@@ -280,11 +312,11 @@ const ProductManagement = () => {
           isOpen={isModalOpen}
           closeModal={closeModal}
           title={`${
-            productInfo?._id !== undefined ? "Create Product" : "Edit Product"
+            productInfo?._id === undefined ? "Create Product" : "Edit Product"
           }`}
           onSubmit={handleSubmit}
           submitText={`${
-            productInfo?._id !== undefined ? "Create Product" : "Edit Product"
+            productInfo?._id === undefined ? "Create Product" : "Edit Product"
           }`}
           cancelText="Cancel"
           className={
@@ -303,7 +335,7 @@ const ProductManagement = () => {
                 type="text"
                 id="productName"
                 name="productName"
-                value={productInfo.productName}
+                value={productInfo?.productName}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 required
@@ -324,7 +356,7 @@ const ProductManagement = () => {
                   type="number"
                   id="price"
                   name="price"
-                  value={productInfo.price}
+                  value={productInfo?.price}
                   onChange={handleInputChange}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 pl-6 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="0.00"
@@ -333,7 +365,7 @@ const ProductManagement = () => {
                   <select
                     id="currency"
                     name="currency"
-                    value={productInfo.currency}
+                    value={productInfo?.currency}
                     onChange={handleInputChange}
                     className="h-full rounded-md border-transparent bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
                   >
@@ -355,10 +387,28 @@ const ProductManagement = () => {
                 id="description"
                 name="description"
                 rows={3}
-                value={productInfo.description}
+                value={productInfo?.description}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               ></textarea>
+            </div>
+
+            <div>
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Quantity
+              </label>
+              <input
+                type="number"
+                name="quantity"
+                id="quantity"
+                onChange={handleInputChange}
+                placeholder="Enter quantity"
+                value={productInfo?.quantity}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
 
             <div>
@@ -371,7 +421,7 @@ const ProductManagement = () => {
               <select
                 id="category"
                 name="category"
-                value={productInfo.category}
+                value={productInfo?.category}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
@@ -397,7 +447,7 @@ const ProductManagement = () => {
                 type="text"
                 id="material"
                 name="material"
-                value={productInfo.material}
+                value={productInfo?.material}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
@@ -414,7 +464,7 @@ const ProductManagement = () => {
                 type="number"
                 id="stockQuantity"
                 name="stockQuantity"
-                value={productInfo.stockQuantity}
+                value={productInfo?.stockQuantity}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 min="0"
@@ -431,7 +481,7 @@ const ProductManagement = () => {
               <select
                 id="availability"
                 name="availability"
-                value={productInfo.availability}
+                value={productInfo?.availability}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
@@ -451,7 +501,7 @@ const ProductManagement = () => {
                 type="number"
                 id="discount"
                 name="discount"
-                value={productInfo.discount}
+                value={productInfo?.discount}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 min="0"
@@ -470,7 +520,7 @@ const ProductManagement = () => {
                 type="text"
                 id="brand"
                 name="brand"
-                value={productInfo.brand}
+                value={productInfo?.brand}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 min="0"
@@ -488,40 +538,10 @@ const ProductManagement = () => {
                 id="shippingInfo"
                 name="shippingInfo"
                 rows={2}
-                value={productInfo.shippingInfo}
+                value={productInfo?.shippingInfo}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               ></textarea>
-            </div>
-
-            <div className="col-span-full">
-              <label className="block text-sm font-medium text-gray-700">
-                Tags
-              </label>
-              <div className="mt-1 flex flex-wrap gap-2">
-                {productInfo.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
-                  >
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => handleTagRemove(tag)}
-                      className="ml-1 inline-flex text-indigo-400 focus:outline-none"
-                    >
-                      <span className="sr-only">Remove tag</span>
-                      <FaTimes size={12} />
-                    </button>
-                  </span>
-                ))}
-                <input
-                  type="text"
-                  onKeyDown={handleTagAdd}
-                  placeholder="Add a tag"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
             </div>
 
             <div className="col-span-full">
@@ -553,21 +573,23 @@ const ProductManagement = () => {
                   </p>
                 </div>
               </div>
-              {productInfo.images.length > 0 && (
+              {productInfo && productInfo.images.length > 0 && (
                 <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
                   {productInfo.images.map((image, index) => (
                     <div key={index} className="relative">
                       <img
-                        src={image}
-                        alt={`Uploaded image ${index + 1}`}
+                        src={image?.url}
+                        alt={`Uploaded image ${image?.title}`}
                         className="h-24 w-full object-cover rounded-md"
                       />
                       <button
                         type="button"
                         onClick={() =>
-                          setProductInfo((prev) => ({
+                          setProductInfo((prev: any) => ({
                             ...prev,
-                            images: prev.images.filter((_, i) => i !== index),
+                            images: prev.images.filter(
+                              (_: any, i: any) => i !== index
+                            ),
                           }))
                         }
                         className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none"
@@ -583,7 +605,7 @@ const ProductManagement = () => {
                   id="isFeatured"
                   name="isFeatured"
                   type="checkbox"
-                  checked={productInfo.isFeatured}
+                  checked={productInfo?.isFeatured}
                   onChange={handleInputChange}
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                 />
