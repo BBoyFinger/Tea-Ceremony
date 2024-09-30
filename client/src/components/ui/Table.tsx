@@ -20,7 +20,7 @@ interface TableProps {
   selectedItems: string[];
   onSort: (key: string) => void;
   onEdit: (item: any) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string[]) => void;
   onDeleteSelected: () => void;
   onSelectItem: (id: string) => void;
   itemsPerPage: number;
@@ -107,9 +107,7 @@ function Table({
                       className="w-14 h-14 rounded-full"
                     />
                   ) : column.key === "images" ? (
-                    item.images.map((img: any) => {
-                      return console.log(img);
-                    })
+                    <img src={item.images[0]} alt="" className="w-20 h-20" />
                   ) : (
                     item[column.key]
                   )}

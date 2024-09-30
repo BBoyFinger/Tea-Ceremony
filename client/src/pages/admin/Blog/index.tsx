@@ -22,7 +22,7 @@ const BlogManagement = () => {
     // Logic chỉnh sửa
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string[]) => {
     // Logic xóa
   };
 

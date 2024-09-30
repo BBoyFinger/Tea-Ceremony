@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import {
   createProduct,
+  deleteProduct,
   getProducts,
 } from "../../../features/product/productSlice";
 import { Modal } from "../../../components/ui/Modal";
@@ -39,6 +40,7 @@ const ProductManagement = () => {
 
   const dispatch: AppDispatch = useDispatch();
   const productState = useSelector((state: RootState) => state.productReducer);
+  const [selectedProduct, setSelectedProduct] = useState([""]);
   const categoryState = useSelector(
     (state: RootState) => state.categoryReducer
   );
@@ -76,8 +78,11 @@ const ProductManagement = () => {
       ...productInfo,
       [name]: type === "checkbox" ? checked : value,
     });
+  };
+
+  const handleSearchInputChange = (e: any) => {
+    const { name, value, type, checked } = e.target;
     setSearchField({ ...searchField, [name]: value });
-    console.log(productInfo.isFeatured);
   };
 
   const handleImageUpload = (e: any) => {
@@ -111,6 +116,25 @@ const ProductManagement = () => {
 
   const opentModal = () => {
     setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id: string[]) => {
+    if (window.confirm("Are u sure delete this product?")) {
+      await dispatch(deleteProduct(id));
+      toast.success("Delete Product Successfully!");
+      dispatch(getProducts());
+    }
+  };
+
+  const handleSelectedProduct = (id: string) => {
+    if (selectedProduct.includes(id)) {
+      setSelectedProduct(
+        selectedProduct.filter((productId) => productId !== id)
+      );
+    } else {
+      setSelectedProduct([...selectedProduct, id]);
+     
+    }
   };
 
   const handleSubmit = async () => {
@@ -157,7 +181,7 @@ const ProductManagement = () => {
               id="productName"
               name="productName"
               value={searchField.productName}
-              onChange={handleInputChange}
+              onChange={handleSearchInputChange}
               className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               placeholder="Enter name"
             />
@@ -174,7 +198,7 @@ const ProductManagement = () => {
               id="brand"
               name="brand"
               value={searchField.brand}
-              onChange={handleInputChange}
+              onChange={handleSearchInputChange}
               className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               placeholder="Enter brand"
             />
@@ -190,7 +214,7 @@ const ProductManagement = () => {
               name="category"
               value={searchField.category}
               id="category-select"
-              onChange={handleInputChange}
+              onChange={handleSearchInputChange}
               className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
               {categories.map((el) => (
@@ -211,7 +235,7 @@ const ProductManagement = () => {
               name="availability"
               value={searchField.availability}
               id="availability"
-              onChange={handleInputChange}
+              onChange={handleSearchInputChange}
               className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
               <option value={"instock"} className="text-sm">
@@ -242,13 +266,13 @@ const ProductManagement = () => {
           data={products}
           sortBy=""
           sortOrder="asc"
-          selectedItems={["1"]}
+          selectedItems={selectedProduct}
           itemsPerPage={5}
-          onDelete={() => {}}
+          onDelete={handleDelete}
           onEdit={() => {}}
           onSort={() => {}}
           onDeleteSelected={() => {}}
-          onSelectItem={() => {}}
+          onSelectItem={handleSelectedProduct}
         />
       </div>
       <div>
