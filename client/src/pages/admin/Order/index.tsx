@@ -1,14 +1,70 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import Table from "../../../components/ui/Table";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import { BsSearch } from "react-icons/bs";
 
 type Props = {};
 
 const OrderManagement = (props: Props) => {
+  const [selectedOrders, setselectedOrders] = useState<string[]>([]);
+  const [searchField, setSearchField] = useState({
+    orderNumber: "",
+    customerName: "",
+    orderDate: "",
+    status: "",
+  });
+  const [dateRange, setDateRange] = useState({ start: "", end: "" });
 
-  const column = [
-    { key: "name", label: "Name", sortable: true },
-  ]
+  const handleDateRangeChange = (e: any) => {
+    setDateRange({ ...dateRange, [e.target.name]: e.target.value });
+  };
+
+  const [itemsPerPage, setitemsPerPage] = useState<number>(0);
+  const [orders, setOrders] = useState([
+    {
+      id: 1,
+      orderNumber: "ORD001",
+      customerName: "John Doe",
+      status: "Pending",
+      total: 150.0,
+      date: "2023-06-01",
+    },
+    {
+      id: 2,
+      orderNumber: "ORD002",
+      customerName: "Jane Smith",
+      status: "Shipped",
+      total: 250.0,
+      date: "2023-06-02",
+    },
+    {
+      id: 3,
+      orderNumber: "ORD003",
+      customerName: "Bob Johnson",
+      status: "Delivered",
+      total: 100.0,
+      date: "2023-06-03",
+    },
+  ]);
+  const [sortBy, setSortBy] = useState<string>("");
+  const orderState = useSelector((state: RootState) => state.orderReducer);
+  const {} = orderState;
+
+  const columns = [
+    { key: "orederNumber", label: "Order Number", sortable: true },
+    { key: "customerName", label: "Customer Name", sortable: true },
+    { key: "status", label: "Status", sortable: true },
+    { key: "total", label: "Total", sortable: true },
+    { key: "createdAt", label: "Date", sortable: true },
+  ];
+
+  const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    setSearchField({ ...searchField, [value]: name });
+  };
+
   function openModal(arg0: null): void {
     throw new Error("Function not implemented.");
   }
@@ -28,27 +84,98 @@ const OrderManagement = (props: Props) => {
   function handleDeleteOrderSelected(): void {
     throw new Error("Function not implemented.");
   }
+  const [statusFilter, setStatusFilter] = useState("all");
 
+  const handleStatusFilter = (e: any) => {
+    setStatusFilter(e.target.value);
+  };
   return (
     <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
         Orders Management
       </h1>
-      {/* Search */}
-      <div className="mb-4 flex justify-between items-center">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search categories"
-            className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <FiSearch className="absolute left-3 top-3 text-gray-400" />
+      {/* Search Field */}
+      <div className="max-w-md">
+        <div className="mb-4 flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <label
+              htmlFor="searchName"
+              className="min-w-[100px] text-sm text-left font-medium text-gray-700 mb-1"
+            >
+              Search Order
+            </label>
+            <input
+              type="text"
+              id="customerName"
+              name="customerName"
+              value={searchField.customerName}
+              onChange={handleSearchInputChange}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              placeholder="Enter name"
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <label
+              htmlFor="category"
+              className="block min-w-[100px] text-sm text-left font-medium text-gray-700"
+            >
+              Statuses
+            </label>
+            <select
+              name="category"
+              value={searchField.status}
+              id="status-select"
+              onChange={handleStatusFilter}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            >
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-4">
+            <label
+              htmlFor="Availability"
+              className="block min-w-[100px] text-sm text-left font-medium text-gray-700"
+            >
+              Start Date
+            </label>
+            <input
+              type="date"
+              name="start"
+              value={dateRange.start}
+              onChange={handleDateRangeChange}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <label
+              htmlFor="Availability"
+              className="block min-w-[100px] text-sm text-left font-medium text-gray-700"
+            >
+              End Date
+            </label>
+            <input
+              type="date"
+              name="end"
+              value={dateRange.end}
+              onChange={handleDateRangeChange}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            />
+          </div>
         </div>
+      </div>
+      {/* Button */}
+      <div className="flex items-center justify-end mb-2 gap-4">
+        <button className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
+          <BsSearch className="mr-2" /> Search
+        </button>
         <button
           onClick={() => openModal(null)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
+          className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
         >
-          <FiPlus className="mr-2" /> Add Order
+          <FiPlus className="mr-2" /> Add Product
         </button>
       </div>
       {/* Table */}
@@ -60,9 +187,8 @@ const OrderManagement = (props: Props) => {
           onEdit={(Order) => openModal(Order)}
           onDelete={(id) => handleDeleteOrder(id)}
           onDeleteSelected={handleDeleteOrderSelected}
-          itemsPerPage={orders.length}
+          itemsPerPage={itemsPerPage}
           sortBy={sortBy}
-          sortOrder={sortOrder}
           columns={columns}
           data={orders}
         />

@@ -53,22 +53,26 @@ export interface IProduct {
   brand: string; // thương hiệu
 }
 
+interface IOrderProduct {
+  product: mongoose.Schema.Types.ObjectId;
+  quantity: number;
+  price: number;
+}
+
+interface IShippingAddress {
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+}
+
 export interface IOrder {
   user: mongoose.Schema.Types.ObjectId;
-  products: {
-    product: mongoose.Schema.Types.ObjectId;
-    quantity: number;
-    price: number;
-  }[];
+  products: IOrderProduct[];
   totalPrice: number;
-  status: string;
-  paymentMethod: string;
-  shippingAddress: {
-    address: string;
-    city: string;
-    postalCode: string;
-    country: string;
-  };
-  createdAt: Date;
-  updatedAt: Date;
+  status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
+  paymentMethod: "Credit Card" | "PayPal" | "Cash On Delivery";
+  shippingAddress: IShippingAddress;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

@@ -16,7 +16,7 @@ interface TableProps {
   columns: TableColumn[];
   data: any[];
   sortBy: string;
-  sortOrder: "asc" | "desc";
+  sortOrder?: "asc" | "desc";
   selectedItems: string[];
   onSort: (key: string) => void;
   onEdit: (item: any) => void;
@@ -46,7 +46,7 @@ function Table({
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   // Lấy danh sách các mục hiện tại
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+  // const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
   // Hàm phân trang
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -76,7 +76,7 @@ function Table({
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {data.map((item: any) => (
+          {data?.map((item: any) => (
             <tr key={item.id}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <input

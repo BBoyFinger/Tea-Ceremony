@@ -16,9 +16,11 @@ import { BsSearch } from "react-icons/bs";
 
 import { FiPlus } from "react-icons/fi";
 import { toast } from "react-toastify";
+import uploadImage from "../../../utils/uploadImage";
 
 const ProductManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [UploadImageInput, setUploadImageInput] = useState("");
 
   const [searchField, setSearchField] = useState({
     productName: "",
@@ -91,19 +93,21 @@ const ProductManagement = () => {
     setSearchField({ ...searchField, [name]: value });
   };
 
-  const handleImageUpload = (e: any) => {
-    const files = Array.from(e.target.files);
+  const handleImageUpload = async (e: any) => {
+    const file = e.target.files[0];
+    setUploadImageInput(file.name);
 
-    // Tạo các đối tượng cho images với url và title
-    const newImages = files.map((file: any) => ({
-      url: URL.createObjectURL(file),
-      title: file.name, // có thể sử dụng tên file làm title
-    }));
+    const uploadImageFormCloudinary = await uploadImage(file);
 
-    setProductInfo((prev: any) => ({
-      ...prev,
-      images: [...prev.images, ...newImages],
-    }));
+    setProductInfo((prev) => {
+      return {
+        ...prev,
+        images: [
+          ...(prev?.images || []),
+          { url: uploadImageFormCloudinary.url, title: file.name },
+        ],
+      };
+    });
   };
 
   const closeModal = () => {
