@@ -4,6 +4,10 @@ import { ICategory } from "../../types/category.types";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { getCategories } from "../../features/category/categorySlice";
+import { getProducts } from "../../features/product/productSlice";
+import { Link } from "react-router-dom";
+import { IProduct } from "../../types/product.types";
+import ProductsList from "../../components/ProductList";
 
 const ProductListingPage = () => {
   // const [categories, setCategories] = useState<ICategory[]>([]);
@@ -17,8 +21,10 @@ const ProductListingPage = () => {
   const categoryState = useSelector(
     (state: RootState) => state.categoryReducer
   );
+  const productState = useSelector((state: RootState) => state.productReducer);
 
   const { categories } = categoryState;
+  const { products } = productState;
 
   useEffect(() => {
     // Simulating API call to fetch products and categories
@@ -85,6 +91,7 @@ const ProductListingPage = () => {
 
     // fetchData();
     dispatch(getCategories());
+    dispatch(getProducts());
   }, [dispatch]);
 
   const handleCategoryChange = (category: any) => {
@@ -150,9 +157,7 @@ const ProductListingPage = () => {
           </aside>
 
           <section className="flex-grow">
-            <div>
-              
-            </div>
+            <div></div>
             <div className="mb-4 flex flex-wrap items-center justify-between">
               <div className="w-full md:w-auto mb-4 md:mb-0">
                 <label htmlFor="sort" className="mr-2">
@@ -189,27 +194,8 @@ const ProductListingPage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* {filteredProducts.map((product: IProduct) => (
-                <Link
-                  to={`${product._id}`}
-                  key={product._id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-105"
-                >
-                 
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold mb-2">
-                      {product.productName}
-                    </h3>
-                    <p className="text-gray-600 mb-2">
-                      ${product.price.toFixed(2)}
-                    </p>
-                    <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-300">
-                      Add to Cart
-                    </button>
-                  </div>
-                </Link>
-              ))} */}
+            <div className="">
+              <ProductsList products={products} />
             </div>
           </section>
         </div>
