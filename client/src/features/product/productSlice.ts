@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import { IProduct } from "../../types/product.types";
 import { productService } from "./productService";
 
@@ -70,6 +70,8 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
+export const resetProductState = createAction("Reset_product");
+
 const productSlice = createSlice({
   name: "product",
   initialState: initialState,
@@ -117,7 +119,8 @@ const productSlice = createSlice({
         state.isSuccess = false;
         state.isError = true;
         state.message = action.error.message as string;
-      });
+      })
+      .addCase(resetProductState, () => initialState);
   },
 });
 

@@ -7,6 +7,7 @@ import {
   createProduct,
   deleteProduct,
   getProducts,
+  resetProductState,
   updateProduct,
 } from "../../../features/product/productSlice";
 import { Modal } from "../../../components/ui/Modal";
@@ -47,13 +48,19 @@ const ProductManagement = () => {
     (state: RootState) => state.categoryReducer
   );
   const { categories } = categoryState;
-  const { products } = productState;
-  const [productInfo, setProductInfo] = useState<IProduct | null>({
+  const {
+    products,
+    isError,
+    isSuccess,
+    createdProduct,
+    updatedProduct,
+    message,
+  } = productState;
+  const [productInfo, setProductInfo] = useState<any | null>({
     _id: "",
     productName: "",
     description: "",
     price: 0,
-    currency: "USD",
     quantity: 0,
     images: [
       {
@@ -64,27 +71,40 @@ const ProductManagement = () => {
     category: "",
     material: "",
     stockQuantity: 0,
-    availability: "",
+    availability: "In Stock",
     averageRating: 0,
     reviewsCount: 0,
     reviews: [],
     discount: undefined,
     isFeatured: false,
-    shippingInfo: "",
     brand: "",
   });
 
   useEffect(() => {
     dispatch(getProducts());
     dispatch(getCategories());
+    dispatch(resetProductState());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isSuccess && createdProduct) {
+      toast.success("Add product Successfully");
+    }
+
+    if (isSuccess && updatedProduct) {
+      toast.success("Updated product successfully!");
+    }
+
+    if (isError) {
+      toast.error(message);
+    }
+  }, [isError, isSuccess, createdProduct, updatedProduct]);
 
   const handleInputChange = (e: any) => {
     const { name, value, type, checked } = e.target;
     setProductInfo({
       ...productInfo,
       [name]: type === "checkbox" ? checked : value,
-      images: [{ url: "example.com/image1.jpg", title: "Image 1" }],
     });
   };
 
@@ -95,11 +115,14 @@ const ProductManagement = () => {
 
   const handleImageUpload = async (e: any) => {
     const file = e.target.files[0];
-    setUploadImageInput(file.name);
+
+    setUploadImageInput(file?.name);
 
     const uploadImageFormCloudinary = await uploadImage(file);
 
-    setProductInfo((prev) => {
+    console.log("url", uploadImageFormCloudinary.url);
+
+    setProductInfo((prev: any) => {
       return {
         ...prev,
         images: [
@@ -156,7 +179,6 @@ const ProductManagement = () => {
         description: productInfo.description,
         price: productInfo.price,
         quantity: productInfo.quantity,
-        currency: productInfo.currency,
         images: productInfo.images,
         category: productInfo.category,
         material: productInfo.material,
@@ -165,11 +187,10 @@ const ProductManagement = () => {
         averageRating: productInfo.averageRating,
         discount: productInfo.discount,
         isFeatured: productInfo.isFeatured,
-        shippingInfo: productInfo.shippingInfo,
         brand: productInfo.brand,
       };
       await dispatch(updateProduct(payload));
-      toast.success("update product successfully");
+      await dispatch(resetProductState());
     } else {
       console.log("add product");
       const payload = {
@@ -177,7 +198,6 @@ const ProductManagement = () => {
         description: productInfo?.description,
         price: productInfo?.price,
         quantity: productInfo?.quantity,
-        currency: productInfo?.currency,
         images: productInfo?.images,
         category: productInfo?.category,
         material: productInfo?.material,
@@ -186,11 +206,10 @@ const ProductManagement = () => {
         averageRating: productInfo?.averageRating,
         discount: productInfo?.discount,
         isFeatured: productInfo?.isFeatured,
-        shippingInfo: productInfo?.shippingInfo,
         brand: productInfo?.brand,
       };
       await dispatch(createProduct(payload));
-      toast.success("Create product successfully");
+      await dispatch(resetProductState());
     }
 
     await dispatch(getProducts());
@@ -290,7 +309,10 @@ const ProductManagement = () => {
           <BsSearch className="mr-2" /> Search
         </button>
         <button
-          onClick={() => openModal(null)}
+          onClick={() => {
+            console.log("avali", productInfo?.availability);
+            openModal(null);
+          }}
           className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
         >
           <FiPlus className="mr-2" /> Add Product
@@ -365,18 +387,6 @@ const ProductManagement = () => {
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 pl-6 pr-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="0.00"
                 />
-                <div className="absolute inset-y-0 right-0 flex items-center">
-                  <select
-                    id="currency"
-                    name="currency"
-                    value={productInfo?.currency}
-                    onChange={handleInputChange}
-                    className="h-full rounded-md border-transparent bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
-                  >
-                    <option>USD</option>
-                    <option>VND</option>
-                  </select>
-                </div>
               </div>
             </div>
 
@@ -486,6 +496,8 @@ const ProductManagement = () => {
                 id="availability"
                 name="availability"
                 value={productInfo?.availability}
+                defaultValue={productInfo?.availability}
+                required
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
@@ -532,23 +544,6 @@ const ProductManagement = () => {
             </div>
 
             <div className="col-span-full">
-              <label
-                htmlFor="shippingInfo"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Shipping Information
-              </label>
-              <textarea
-                id="shippingInfo"
-                name="shippingInfo"
-                rows={2}
-                value={productInfo?.shippingInfo}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              ></textarea>
-            </div>
-
-            <div className="col-span-full">
               <label className="block text-sm font-medium text-gray-700">
                 Images
               </label>
@@ -577,9 +572,9 @@ const ProductManagement = () => {
                   </p>
                 </div>
               </div>
-              {productInfo && productInfo.images.length > 0 && (
+              {productInfo?.images?.length > 0 && (
                 <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                  {productInfo.images.map((image, index) => (
+                  {productInfo?.images?.map((image: any, index: any) => (
                     <div key={index} className="relative">
                       <img
                         src={image?.url}
@@ -609,7 +604,7 @@ const ProductManagement = () => {
                   id="isFeatured"
                   name="isFeatured"
                   type="checkbox"
-                  checked={productInfo?.isFeatured}
+                  checked={productInfo?.isFeatured || false}
                   onChange={handleInputChange}
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                 />

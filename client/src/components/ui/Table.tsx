@@ -87,7 +87,10 @@ function Table({
                 />
               </td>
               {columns.map((column) => (
-                <td key={column.key} className="px-6 py-4 whitespace-nowrap">
+                <td
+                  key={`${column.key}-${item.id}`}
+                  className="px-6 py-4 whitespace-nowrap"
+                >
                   {column.key === "createdAt" ? (
                     moment(item[column.key]).format("DD/MM/YYYY")
                   ) : column.key === "status" ? (
@@ -107,7 +110,11 @@ function Table({
                       className="w-14 h-14 rounded-full"
                     />
                   ) : column.key === "images" ? (
-                    <img src={item.images[0]} alt="" className="w-20 h-20" />
+                    <img
+                      src={item.images[0].url}
+                      alt=""
+                      className="w-20 h-20"
+                    />
                   ) : column.key === "category" ? (
                     item.category?.name
                   ) : column.key === "isFeatured" ? (
@@ -115,13 +122,16 @@ function Table({
                       <label className="inline-flex items-center cursor-pointer">
                         <input
                           type="checkbox"
-                          value=""
                           className="sr-only peer"
-                          checked
+                          checked={item.isFeatured}
                         />
                         <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                       </label>
                     </>
+                  ) : column.key === "description" ? (
+                    <span title={item[column.key]}>
+                      {item[column.key]?.substring(0, 50)} ...
+                    </span>
                   ) : (
                     item[column.key]
                   )}

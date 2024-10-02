@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -13,7 +13,6 @@ import { FiUsers, FiDatabase, FiSettings } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { getAllUser } from "../../../features/auth/authSlice";
-import AddProductModal from "../../../components/AddProductComponent";
 
 type Props = {};
 
@@ -24,7 +23,7 @@ const Dashboard = (props: Props) => {
 
   useEffect(() => {
     dispatch(getAllUser());
-  }, []);
+  }, [dispatch]);
   const chartData = [
     { name: "Jan", value: 400 },
     { name: "Feb", value: 300 },

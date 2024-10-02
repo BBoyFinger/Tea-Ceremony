@@ -16,7 +16,6 @@ const editCategory = async (data: ICategory) => {
     name: data.name,
     description: data.description,
   });
-  
   return response.data.data;
 };
 

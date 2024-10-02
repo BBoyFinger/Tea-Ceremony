@@ -9,6 +9,7 @@ import {
   createCategory,
   deleteCategory,
   getCategories,
+  resetCategoryState,
   updateCategory,
 } from "../../../features/category/categorySlice";
 import { Modal } from "../../../components/ui/Modal";
@@ -33,12 +34,35 @@ const CategoryManagement = () => {
   const categoryState = useSelector(
     (state: RootState) => state.categoryReducer
   );
-  const { categories, isLoading } = categoryState;
+  const {
+    categories,
+    isLoading,
+    isError,
+    isSuccess,
+    createdCategory,
+    updatedCategory,
+  } = categoryState;
+
 
   useEffect(() => {
     // Simulating API call to fetch categories
     dispatch(getCategories());
+    dispatch(resetCategoryState())
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isSuccess && createdCategory) {
+      toast.success("Created category successfully");
+    }
+
+    if (isSuccess && updatedCategory) {
+      toast.success("Updated category successfully");
+    }
+
+    if (isError) {
+      toast.error("Something went wrong!");
+    }
+  }, [isSuccess, isError, updatedCategory, createdCategory]);
 
   const handleSearch = (e: any) => {
     setSearchTerm(e.target.value);
@@ -71,7 +95,8 @@ const CategoryManagement = () => {
         description: categoryInfo?.description,
       };
       await dispatch(updateCategory(payload));
-      toast.success("updated category successfully");
+      await dispatch(resetCategoryState())
+      
     } else {
       //create
       const payload = {
@@ -79,9 +104,10 @@ const CategoryManagement = () => {
         description: categoryInfo?.description,
       };
       await dispatch(createCategory(payload));
-      toast.success("Create category successfully");
+      await dispatch(resetCategoryState())
     }
     await dispatch(getCategories());
+    
     closeModal();
   };
 

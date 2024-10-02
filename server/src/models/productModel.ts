@@ -8,7 +8,6 @@ const ProductSchema: Schema<IProduct> = new Schema(
     description: { type: String, required: true },
     price: { type: Number, required: true },
     quantity: { type: Number, required: true, default: 0 },
-    currency: { type: String, required: true },
     images: [
       {
         url: { type: String, required: true },
@@ -35,7 +34,6 @@ const ProductSchema: Schema<IProduct> = new Schema(
 
     discount: { type: Number }, // Phần trăm giảm giá (nếu có)
     isFeatured: { type: Boolean, default: false }, // Xác định sản phẩm có phải là sản phẩm nổi bật hay không
-    shippingInfo: { type: String, required: true }, // Thông tin vận chuyển cho sản phẩm
     brand: { type: String, required: true }, // Thương hiệu của sản phẩm
   },
   {

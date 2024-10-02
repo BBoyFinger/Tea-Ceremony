@@ -26,6 +26,8 @@ const initialState: ICategoryState = {
   message: "",
 };
 
+export const resetCategoryState = createAction("Reset_categoryState");
+
 export const getCategories = createAsyncThunk(
   "categories",
   async (_, thunkApi) => {
@@ -117,7 +119,22 @@ const categorySlice = createSlice({
         state.isSuccess = false;
         state.isError = true;
         state.message = action.error.message as string;
-      });
+      })
+      .addCase(deleteCategory.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteCategory.fulfilled, (state, action) => {
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.isError = false;
+        state.deletedCategory = action.payload;
+      })
+      .addCase(deleteCategory.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.error.message as string;
+      }).addCase(resetCategoryState, () => initialState);
   },
 });
 

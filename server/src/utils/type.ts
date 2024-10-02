@@ -27,7 +27,6 @@ export interface IProduct {
   productName: string;
   description: string;
   price: number;
-  currency: string;
   quantity: number;
   images: [
     {

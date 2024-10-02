@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 
-import { IProduct } from "../../types/product.types";
 import { ICategory } from "../../types/category.types";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { getCategories } from "../../features/category/categorySlice";
 
 const ProductListingPage = () => {
-  const [products, setProducts] = useState<IProduct[]>([]);
   // const [categories, setCategories] = useState<ICategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("popularity");
@@ -88,7 +85,7 @@ const ProductListingPage = () => {
 
     // fetchData();
     dispatch(getCategories());
-  }, []);
+  }, [dispatch]);
 
   const handleCategoryChange = (category: any) => {
     setSelectedCategory(category);
@@ -153,6 +150,9 @@ const ProductListingPage = () => {
           </aside>
 
           <section className="flex-grow">
+            <div>
+              
+            </div>
             <div className="mb-4 flex flex-wrap items-center justify-between">
               <div className="w-full md:w-auto mb-4 md:mb-0">
                 <label htmlFor="sort" className="mr-2">

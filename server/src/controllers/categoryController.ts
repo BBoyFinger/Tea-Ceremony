@@ -2,12 +2,20 @@ import categoryModel from "../models/categoryModel";
 import { Request, Response } from "express";
 import { ICategory } from "../utils/type";
 import HttpStatusCode from "../utils/HttpStatusCode";
+import uploadProductPermission from "../utils/permission";
 
 const categoryController = {
   addCategory: async (req: Request, res: Response): Promise<Response> => {
     const { name, description } = req.body as ICategory;
 
     try {
+      const sessionUserId = req.userId;
+
+      if (!uploadProductPermission(sessionUserId)) {
+        res.status(HttpStatusCode.Unauthorized).json({
+          message: "Permission denied",
+        });
+      }
       const category = await categoryModel.create({ name, description });
       if (!category) {
         return res.status(HttpStatusCode.NotFound).json({
@@ -65,6 +73,13 @@ const categoryController = {
   editCategory: async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
     try {
+      const sessionUserId = req.userId;
+
+      if (!uploadProductPermission(sessionUserId)) {
+        res.status(HttpStatusCode.Unauthorized).json({
+          message: "Permission denied",
+        });
+      }
       const category = await categoryModel.findByIdAndUpdate(id, req.body, {
         new: true,
       });

@@ -18,7 +18,7 @@ export interface IOrder {
   totalPrice: number;
   status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
   paymentMethod: "Credit Card" | "PayPal" | "Cash On Delivery";
-  shippingAddress: IShippingAddress;
   createdAt?: Date;
   updatedAt?: Date;
+  shippingAddress: IShippingAddress;
 }

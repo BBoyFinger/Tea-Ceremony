@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { IUser } from "../utils/type";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import UserModel from "../models/userModel";
+import uploadProductPermission from "../utils/permission";
 
 const authController = {
   userSignUp: async (req: Request, res: Response): Promise<Response> => {
@@ -178,7 +179,13 @@ const authController = {
   getAllUser: async (req: Request, res: Response): Promise<Response> => {
     try {
       const users = await UserModel.find();
+      const sessionUserId = req.userId;
 
+      if (!uploadProductPermission(sessionUserId)) {
+        res.status(HttpStatusCode.Unauthorized).json({
+          message: "Permission denied",
+        });
+      }
       if (!users) {
         throw new Error("Something went wrong ");
       }

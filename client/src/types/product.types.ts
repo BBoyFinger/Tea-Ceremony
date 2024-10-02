@@ -3,9 +3,8 @@ export interface IProduct {
   productName?: string;
   description?: string;
   price?: number;
-  currency?: string;
   quantity?: number;
-  images: { url: string; title: string }[];
+  images?: { url: string; title: string }[];
   category?: string;
   material?: string;
   stockQuantity?: number;
@@ -19,6 +18,5 @@ export interface IProduct {
   }[];
   discount?: number;
   isFeatured?: boolean;
-  shippingInfo?: string;
   brand?: string;
 }

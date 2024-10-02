@@ -1,14 +1,25 @@
 import { Request, Response } from "express";
 import ProductModel from "../models/productModel";
 import HttpStatusCode from "../utils/HttpStatusCode";
+import uploadProductPermission from "../utils/permission";
 
 export const productController = {
   createProduct: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const product = await ProductModel.create(req.body);
-      return res.status(201).json({
+      const sessionUserId = req.userId;
+
+      if (!uploadProductPermission(sessionUserId)) {
+        res.status(HttpStatusCode.Unauthorized).json({
+          message: "Permission denied",
+        });
+      }
+
+      const updateProduct = new ProductModel(req.body);
+      const saveProduct = await updateProduct.save();
+
+      return res.status(HttpStatusCode.Created).json({
         message: "Create product successfully!",
-        data: product,
+        data: saveProduct,
       });
     } catch (error) {
       return res.status(HttpStatusCode.InternalServerError).json({
@@ -19,8 +30,10 @@ export const productController = {
 
   getAllProducts: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const products = await ProductModel.find().populate("category");
-      return res.status(201).json({
+      const products = await ProductModel.find()
+        .populate("category")
+        .sort({ createdAt: -1 });
+      return res.status(HttpStatusCode.OK).json({
         message: "Get product successfully!",
         data: products,
       });
@@ -41,7 +54,7 @@ export const productController = {
         });
       }
 
-      return res.status(201).json({
+      return res.status(HttpStatusCode.OK).json({
         message: "Get product successfully!",
         data: product,
       });
@@ -55,6 +68,14 @@ export const productController = {
   updateProduct: async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
     try {
+
+      const sessionUserId = req.userId;
+
+      if (!uploadProductPermission(sessionUserId)) {
+        res.status(HttpStatusCode.Unauthorized).json({
+          message: "Permission denied",
+        });
+      }
       const updateProduct = await ProductModel.findByIdAndUpdate(id, req.body, {
         new: true,
       });
@@ -64,7 +85,7 @@ export const productController = {
           message: "Product not found!",
         });
       }
-      return res.status(201).json({
+      return res.status(HttpStatusCode.OK).json({
         message: "Updated product successfully!",
         data: updateProduct,
       });
@@ -94,7 +115,7 @@ export const productController = {
         _id: { $in: ids },
       });
 
-      return res.status(201).json({
+      return res.status(HttpStatusCode.OK).json({
         message: `${deleteProducts.deletedCount} products deleted successfully`,
         data: deleteProducts,
       });
