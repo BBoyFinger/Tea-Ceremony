@@ -4,14 +4,19 @@ import { ICategory } from "../../types/category.types";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { getCategories } from "../../features/category/categorySlice";
-import { getProducts } from "../../features/product/productSlice";
-import { Link } from "react-router-dom";
+import {
+  getProductByCategory,
+  getProducts,
+} from "../../features/product/productSlice";
+import { Link, useParams } from "react-router-dom";
 import { IProduct } from "../../types/product.types";
 import ProductsList from "../../components/ProductList";
+import Cart from "../../components/Cart";
 
 const ProductListingPage = () => {
   // const [categories, setCategories] = useState<ICategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  // State để lưu danh mục đã chọn
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("popularity");
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -24,79 +29,21 @@ const ProductListingPage = () => {
   const productState = useSelector((state: RootState) => state.productReducer);
 
   const { categories } = categoryState;
-  const { products } = productState;
+  const { products, productByCategory } = productState;
 
   useEffect(() => {
-    // Simulating API call to fetch products and categories
-    // const fetchData = async () => {
-    //   // const productsData: IProduct[] = [
-    //   //   {
-    //   //     _id: "1",
-    //   //     name: "Product 1",
-    //   //     price: 99.99,
-    //   //     category: "Electronics",
-    //   //     images: []
-    //   //   },
-    //   //   {
-    //   //     _id: "2",
-    //   //     name: "Product 2",
-    //   //     price: 149.99,
-    //   //     category: "Clothing",
-    //   //     images:
-    //   //       "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1305&q=80",
-    //   //   },
-    //   //   {
-    //   //     _id: "3",
-    //   //     name: "Product 3",
-    //   //     price: 199.99,
-    //   //     category: "Home",
-    //   //     images:
-    //   //       "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-    //   //   },
-    //   //   {
-    //   //     _id: "4",
-    //   //     name: "Product 4",
-    //   //     price: 79.99,
-    //   //     category: "Electronics",
-    //   //     images:
-    //   //       "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-    //   //   },
-    //   //   {
-    //   //     _id: "5",
-    //   //     name: "Product 5",
-    //   //     price: 129.99,
-    //   //     category: "Clothing",
-    //   //     images:
-    //   //       "https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80",
-    //   //   },
-    //   //   {
-    //   //     _id: "6",
-    //   //     name: "Product 6",
-    //   //     price: 249.99,
-    //   //     category: "Home",
-    //   //     images:
-    //   //       "https://images.unsplash.com/photo-1523575708161-ad0fc2a9b951?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-    //   //   },
-    //   // ];
-    //   const categoriesData = [
-    //     { _id: 1, name: "All" },
-    //     { _id: 2, name: "Electronics" },
-    //     { _id: 3, name: "Clothing" },
-    //     { _id: 4, name: "Home" },
-    //   ];
-
-    //   // setProducts(productsData);
-    //   // setCategories(categoriesData);
-    // };
-
-    // fetchData();
     dispatch(getCategories());
     dispatch(getProducts());
   }, [dispatch]);
 
-  const handleCategoryChange = (category: any) => {
-    setSelectedCategory(category);
-  };
+  // Cập nhật selectedCategory khi categories thay đổi
+  useEffect(() => {
+    if (categories.length > 0) {
+      const firstCategory = categories[0].name; // Lấy tên danh mục đầu tiên
+      setSelectedCategory(firstCategory as string); // Cập nhật selectedCategory
+      dispatch(getProductByCategory(firstCategory as string)); // Lấy sản phẩm theo danh mục đầu tiên
+    }
+  }, [categories, dispatch]); // Chạy effect này khi categories thay đổi
 
   const handleSortChange = (e: any) => {
     setSortBy(e.target.value);
@@ -104,6 +51,11 @@ const ProductListingPage = () => {
 
   const handlePriceRangeChange = (e: any) => {
     setPriceRange([parseInt(e.target.min), parseInt(e.target.max)]);
+  };
+
+  const handleCategoryChange = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    dispatch(getProductByCategory(categoryName)); // Gọi API để lấy sản phẩm theo danh mục
   };
 
   // const filteredProducts = products
@@ -125,11 +77,24 @@ const ProductListingPage = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <main className="container mx-auto px-4 py-8">
+        <div >
+          {categories.map((category: ICategory) =>
+            selectedCategory === category.name ? (
+              <>
+              <div className="flex flex-col gap-3">
+                <h1 className="font-semibold text-3xl">{category.name}</h1>
+                <p className="text-lg">{category.description}</p>
+              </div>
+              <div className=" clear-both w-full h-[1px] my-12 bg-[#d7d9dd]"></div>
+              </>
+            ) : (
+              ""
+            )
+          )}
+        </div>
         <div className="flex flex-col md:flex-row">
           <aside
-            className={`w-full md:w-64 bg-white p-4 rounded-lg shadow-md mb-4 md:mb-0 md:mr-4 transition-all duration-300 ${
-              isSidebarOpen ? "md:translate-x-0" : "md:-translate-x-full"
-            }`}
+            className={`w-full md:w-64 bg-white  rounded-lg shadow-md mb-4 md:mb-0 md:mr-4 transition-all duration-300`}
           >
             <button
               className="md:hidden w-full bg-blue-500 text-white py-2 px-4 rounded mb-4"
@@ -137,27 +102,36 @@ const ProductListingPage = () => {
             >
               {isSidebarOpen ? "Close Categories" : "Open Categories"}
             </button>
-            <h2 className="text-xl font-semibold mb-4">Categories</h2>
-            <ul>
-              {categories.map((category: ICategory) => (
-                <li key={category._id} className="mb-2">
-                  <button
-                    className={`w-full text-left py-2 px-4 rounded ${
-                      selectedCategory === category.name
-                        ? "bg-blue-500 text-white"
-                        : "hover:bg-gray-100"
-                    }`}
-                    onClick={() => handleCategoryChange(category.name)}
-                  >
-                    {category.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <h2 className="text-xl p-4 font-semibold hidden lg:block">
+              Categories
+            </h2>
+            <div
+              className={`max-h-60 md:max-h-[300px] lg:max-h-full overflow-auto lg:overflow-hidden transition-all duration-300 ${
+                isSidebarOpen ? "h-auto" : "h-0 lg:h-full md:h-full"
+              }`}
+            >
+              <ul>
+                {categories.map((category: ICategory) => (
+                  <li key={category._id} className="mb-2">
+                    <button
+                      className={`w-full text-left py-2 px-4 ${
+                        selectedCategory === category.name
+                          ? "bg-[#eee] text-[#666] border-l-4 border-solid border-[#7E792A]"
+                          : "hover:bg-gray-100"
+                      }`}
+                      onClick={() =>
+                        category.name && handleCategoryChange(category.name)
+                      }
+                    >
+                      {category.name || "Unknown Category"}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </aside>
 
           <section className="flex-grow">
-            <div></div>
             <div className="mb-4 flex flex-wrap items-center justify-between">
               <div className="w-full md:w-auto mb-4 md:mb-0">
                 <label htmlFor="sort" className="mr-2">
@@ -195,7 +169,16 @@ const ProductListingPage = () => {
             </div>
 
             <div className="">
-              <ProductsList products={products} />
+              {productByCategory && productByCategory.length > 0 ? (
+                // Nếu có sản phẩm theo category, hiển thị chúng
+                <ProductsList products={productByCategory} />
+              ) : products && products.length > 0 ? (
+                // Nếu không có sản phẩm theo category, hiển thị danh sách toàn bộ sản phẩm
+                <ProductsList products={products} />
+              ) : (
+                // Nếu không có sản phẩm nào, hiển thị một thông báo hoặc phần tử trống
+                <div>No products available</div>
+              )}
             </div>
           </section>
         </div>

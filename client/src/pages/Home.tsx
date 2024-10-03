@@ -1,10 +1,25 @@
 import React from "react";
 import { FaArrowRight, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Cart from "../components/Cart";
+import SpecialProduct from "../components/SpecialProduct";
+import { AppDispatch, RootState } from "../store/store";
+import { useDispatch, useSelector } from "react-redux";
 
 type Props = {};
 
 const Home = (props: Props) => {
+  const dispatch: AppDispatch = useDispatch();
+  const productState = useSelector((state: RootState) => state.productReducer);
+  const {
+    products,
+    isError,
+    isSuccess,
+    createdProduct,
+    updatedProduct,
+    message,
+  } = productState;
+
   const categories = [
     {
       name: "Tea Sets",
@@ -262,6 +277,8 @@ const Home = (props: Props) => {
           </div>
         </div>
       </section>
+
+      <SpecialProduct products={products} title={"Best Sellers"}/>
     </div>
   );
 };

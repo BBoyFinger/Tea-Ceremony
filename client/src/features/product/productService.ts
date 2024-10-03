@@ -11,9 +11,6 @@ const createProduct = async (data: IProduct) => {
   return response.data.data;
 };
 
-
-
-
 const editProduct = async (data: IProduct) => {
   console.log(data);
   const response = await axiosInstance.put(`/product/${data._id}`, {
@@ -34,9 +31,19 @@ const editProduct = async (data: IProduct) => {
     isFeatured: data.isFeatured, // Thêm thông tin nổi bật
     brand: data.brand, // Thêm thương hiệu
   });
-  
+
   return response.data.data;
 };
+
+const getProductByCategory = async (category: string) => {
+  const respose = await axiosInstance.get(`/products/category/${category}`);
+  return respose.data.data;
+};
+
+const getProductById = async (id: any) => {
+  const response = await axiosInstance.get(`/product/${id}`);
+  return response.data.data
+}
 
 const deleteProduct = async (ids: string[]) => {
   const response = await axiosInstance.delete("/product", {
@@ -50,4 +57,6 @@ export const productService = {
   createProduct,
   editProduct,
   deleteProduct,
+  getProductByCategory,
+  getProductById
 };

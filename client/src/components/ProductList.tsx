@@ -4,7 +4,7 @@ import { IProduct } from "../types/product.types";
 
 const ProductsList: React.FC<{ products: IProduct[] }> = ({ products }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
         <Link
           to={`/products/${product._id}`}
@@ -16,61 +16,36 @@ const ProductsList: React.FC<{ products: IProduct[] }> = ({ products }) => {
               <img
                 src={product.images[0].url}
                 alt={product.images[0].title}
-                className="w-full h-48 object-cover mb-4"
+                className="w-full h-48 object-fill mb-2"
               />
             )}
-            <h3 className="text-lg font-semibold mb-2">
+            <h3 className="text-base capitalize font-medium mb-1">
               {product.productName}
             </h3>
             {product.discount && (
-              <p className="text-red-500 mb-2">
-                Sale: $
-                {product.price &&
-                  (
-                    product.price -
-                    product.price * (product.discount / 100)
-                  ).toFixed(2)}
-              </p>
+              <div className="flex justify-between">
+                <p className="text-[#a66920] mb-2 font-semibold text-sm">
+                  Sale: $
+                  {product.price &&
+                    product.price - product.price * (product.discount / 100)}
+                </p>
+                <div className="flex items-center mb-2">
+                  <p className="text-sm text-gray-500 font-medium">
+                    Rating: {product.averageRating} / 5
+                  </p>
+                  <p className="ml-2 text-sm text-gray-500 font-medium">
+                    ({product.reviewsCount} reviews)
+                  </p>
+                </div>
+              </div>
             )}
             {!product.discount && (
-              <p className="text-gray-600 mb-2">${product.price}</p>
-            )}
-            {/* {product.discount && (
-              <p className="text-red-500 mb-2">
-                Sale: $
-                {product.price &&
-                  (
-                    product.price -
-                    product.price * (product.discount / 100)
-                  ).toFixed(2)}
+              <p className="text-[#a66920] mb-2 font-semibold text-sm">
+                only ${product.price}
               </p>
             )}
-            {!product.discount && (
-              <p className="text-gray-600 mb-2">${product.price}</p>
-            )}
-            <p className="text-sm text-gray-500 mb-2">{product.description}</p>
-            <p className="text-sm text-gray-500 mb-2">
-              Category: {product.category}
-            </p>
-            <p className="text-sm text-gray-500 mb-2">
-              Material: {product.material}
-            </p>
-            {product.stockQuantity ? (
-              <p className="text-sm text-green-600">
-                In Stock: {product.stockQuantity}
-              </p>
-            ) : (
-              <p className="text-sm text-red-600">Out of Stock</p>
-            )}
-            <div className="flex items-center mb-2">
-              <p className="text-sm text-gray-500">
-                Rating: {product.averageRating} / 5
-              </p>
-              <p className="ml-2 text-sm text-gray-500">
-                ({product.reviewsCount} reviews)
-              </p>
-            </div> */}
-            <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-300">
+
+            <button className="bg-[#f05338] w-full text-white py-2 px-4 rounded hover:bg-[#f04138] transition-colors duration-300">
               Add to Cart
             </button>
           </div>

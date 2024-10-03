@@ -6,6 +6,7 @@ interface IProductState {
   product: IProduct | null;
   products: IProduct[];
   isLoading: boolean;
+  productByCategory: any;
   updatedProduct: any;
   deletedProduct: any;
   createdProduct: any;
@@ -17,6 +18,7 @@ interface IProductState {
 const initialState: IProductState = {
   product: null,
   products: [],
+  productByCategory: [],
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -31,6 +33,28 @@ export const getProducts = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       return await productService.getProducts();
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getProductById = createAsyncThunk(
+  "get-productById",
+  async (id: string, thunkApi) => {
+    try {
+      return await productService.getProductById(id);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getProductByCategory = createAsyncThunk(
+  "get-productCategory",
+  async (category: string, thunkApi) => {
+    try {
+      return await productService.getProductByCategory(category);
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }
@@ -118,6 +142,36 @@ const productSlice = createSlice({
       .addCase(updateProduct.rejected, (state, action) => {
         state.isSuccess = false;
         state.isError = true;
+        state.message = action.error.message as string;
+      })
+      .addCase(getProductByCategory.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductByCategory.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.productByCategory = action.payload;
+      })
+      .addCase(getProductByCategory.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error.message as string;
+      })
+      .addCase(getProductById.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.product = action.payload;
+      })
+      .addCase(getProductById.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
         state.message = action.error.message as string;
       })
       .addCase(resetProductState, () => initialState);

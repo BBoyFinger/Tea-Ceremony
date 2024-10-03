@@ -28,6 +28,7 @@ router.put("/product/:id", authMiddleware, productController.updateProduct);
 router.delete("/product", authMiddleware, productController.deleteProducts);
 router.get("/product", productController.getAllProducts);
 router.get("/product/:id", productController.getProductById);
+router.get("/products/category/:category", productController.getProductByCategory);
 
 //Order
 router.post("/order", authMiddleware, orderController.createOrder);
@@ -35,5 +36,6 @@ router.put("/order/:id", authMiddleware, orderController.updateOrder);
 router.delete("/order", authMiddleware, orderController.deleteOrders);
 router.get("/order", orderController.getAllOrders);
 router.get("/order/:id", orderController.getOrderById);
+
 
 export default router;

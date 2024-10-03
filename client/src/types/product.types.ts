@@ -5,7 +5,11 @@ export interface IProduct {
   price?: number;
   quantity?: number;
   images?: { url: string; title: string }[];
-  category?: string;
+  category?: {
+    name: string;
+    desription: string;
+    productCount: 0;
+  };
   material?: string;
   stockQuantity?: number;
   availability?: string;

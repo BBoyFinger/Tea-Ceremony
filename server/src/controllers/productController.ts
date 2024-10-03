@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import ProductModel from "../models/productModel";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import uploadProductPermission from "../utils/permission";
+import categoryModel from "../models/categoryModel";
 
 export const productController = {
   createProduct: async (req: Request, res: Response): Promise<Response> => {
@@ -44,10 +45,41 @@ export const productController = {
     }
   },
 
+  getProductByCategory: async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    try {
+      const categoryName = req.params.category;
+
+      const category = await categoryModel.findOne({
+        name: { $regex: new RegExp(categoryName, "i") },
+      });
+      if (!category) {
+        return res.status(HttpStatusCode.NotFound).json({
+          message: "Category not found",
+        });
+      }
+      // Tìm sản phẩm dựa trên category
+      const products = await ProductModel.find({
+        category: category._id,
+      }).populate("category");
+
+      return res.status(HttpStatusCode.OK).json({
+        message: "Get Product by Category Successfully",
+        data: products,
+      });
+    } catch (error) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error,
+      });
+    }
+  },
+
   getProductById: async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
     try {
-      const product = await ProductModel.findById(id);
+      const product = await ProductModel.findById(id).populate('category');
       if (!product) {
         return res.status(HttpStatusCode.NotFound).json({
           message: "Product not found",
@@ -68,7 +100,6 @@ export const productController = {
   updateProduct: async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
     try {
-
       const sessionUserId = req.userId;
 
       if (!uploadProductPermission(sessionUserId)) {
