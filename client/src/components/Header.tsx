@@ -19,6 +19,8 @@ const Header = (props: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  console.log(user?.role);
+
   const handleLogout = async () => {
     const response = await axiosInstance.get("/logout");
 
@@ -85,13 +87,15 @@ const Header = (props: Props) => {
                       >
                         Admin Panel
                       </Link>
-                    ): (
+                    ) : user?.role === ROLE.CUSTOMER ? (
                       <Link
                         to={"/profile"}
                         className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
                       >
                         Profile
                       </Link>
+                    ) : (
+                      ""
                     )}
                   </nav>
                 </div>

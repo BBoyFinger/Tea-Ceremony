@@ -19,6 +19,8 @@ interface RegisterForm {
 
 const SignUp = (props: Props) => {
   const navigate = useNavigate();
+  const defaultAvatar =
+    "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg";
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
@@ -27,21 +29,21 @@ const SignUp = (props: Props) => {
     email: "",
     password: "",
     confirmPassword: "",
-    pictureImg: "",
+    pictureImg: defaultAvatar,
   });
 
   const handleUploadUploadPic = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
-    const imagePic = await imageToBase64(file);
 
-    setData((pre: any) => {
-      return {
+    if (file) {
+      const imagePic = (await imageToBase64(file)) as string;
+      setData((pre) => ({
         ...pre,
         pictureImg: imagePic,
-      };
-    });
+      }));
+    }
   };
 
   const handleOnchange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +76,7 @@ const SignUp = (props: Props) => {
   };
 
   return (
-    <section id="login">
+    <section id="signup">
       <div className="container bg-white mx-auto max-w-[600px]">
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm relative overflow-hidden">
