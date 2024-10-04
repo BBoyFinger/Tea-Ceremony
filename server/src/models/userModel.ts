@@ -24,11 +24,11 @@ const userSchema: Schema<IUser> = new Schema(
     },
     status: {
       type: String,
-      default: "Active"
+      default: "Active",
     },
     role: {
       type: String,
-      default: "GENERAL",
+      default: "CUSTOMER",
     },
   },
   {
