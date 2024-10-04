@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Logo from "./Logo";
 import { IoSearchOutline } from "react-icons/io5";
 import { PiUserCircleLight } from "react-icons/pi";
@@ -11,6 +11,7 @@ import { RootState } from "../store/store";
 import { setUserDetails } from "../features/auth/authSlice";
 import { Menu, MenuButton, MenuItems } from "@headlessui/react";
 import { ROLE } from "../utils/User";
+import Context from "../context";
 
 type Props = {};
 
@@ -18,6 +19,7 @@ const Header = (props: Props) => {
   const user = useSelector((state: RootState) => state.authReducer.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const context = useContext(Context);
 
   const handleLogout = async () => {
     const response = await axiosInstance.get("/logout");

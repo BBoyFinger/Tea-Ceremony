@@ -36,13 +36,16 @@ export const getAllUser = createAsyncThunk("user", async (_, thunkApi) => {
   }
 });
 
-export const addCart = createAsyncThunk("addToCart", async (data, thunkApi) => {
-  try {
-    return await authService.addToCart(data);
-  } catch (error) {
-    return thunkApi.rejectWithValue(error);
+export const addCart = createAsyncThunk(
+  "addToCart",
+  async (productId: string, thunkApi) => {
+    try {
+      return await authService.addToCart(productId);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
   }
-});
+);
 
 export const updateUser = createAsyncThunk(
   "user/update-user",

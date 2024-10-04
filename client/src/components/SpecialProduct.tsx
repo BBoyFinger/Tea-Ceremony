@@ -1,14 +1,21 @@
 import React from "react";
 import { IProduct } from "../types/product.types";
 import { Link } from "react-router-dom";
+import { LuShoppingCart } from "react-icons/lu";
 
 type Props = {
   title: String;
   products: IProduct[];
   isLoading: Boolean;
+  handleAddToCart: (id: any) => void;
 };
 
-const SpecialProduct = ({ title, products, isLoading }: Props) => {
+const SpecialProduct = ({
+  title,
+  products,
+  isLoading,
+  handleAddToCart,
+}: Props) => {
   return (
     <section className="bg-white ">
       <div className="container mx-auto px-4">
@@ -51,7 +58,13 @@ const SpecialProduct = ({ title, products, isLoading }: Props) => {
                 </>
               ))
             : products.map((product) => (
-                <>
+                <div className="relative transition-transform duration-300 transform hover:scale-105 cursor-pointer">
+                  <div className="absolute top-4 right-4 p-2 bg-slate-100 rounded-full cursor-pointer z-50">
+                    <LuShoppingCart
+                      className="w-5 h-5"
+                      onClick={() => handleAddToCart(product._id)}
+                    />
+                  </div>
                   <Link
                     to={`/products/${product._id}`}
                     className="transition-transform duration-300 transform hover:scale-105 cursor-pointer"
@@ -62,6 +75,7 @@ const SpecialProduct = ({ title, products, isLoading }: Props) => {
                       className="w-[full] h-auto object-contain mb-2"
                     />
                     <h2 className="capitalize">{product.productName}</h2>
+
                     <div className="flex items-center justify-between">
                       <div className="flex items-center justify-between">
                         <p className="text-[#a66920] font-semibold text-sm">
@@ -89,7 +103,7 @@ const SpecialProduct = ({ title, products, isLoading }: Props) => {
                       </div>
                     </div>
                   </Link>
-                </>
+                </div>
               ))}
         </div>
       </div>

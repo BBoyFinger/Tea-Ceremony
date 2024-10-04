@@ -17,8 +17,10 @@ const updateUserRole = async (data: any) => {
   return response.data.data;
 };
 
-const addToCart = async (data: any) => {
-  const response = await axiosInstance.post("/addToCart", data);
+const addToCart = async (productId: any) => {
+  const response = await axiosInstance.post("/addToCart", {
+    productId: productId,
+  });
   return response.data.data;
 };
 

@@ -12,20 +12,25 @@ import {
   getProductNewArrivals,
 } from "../features/product/productSlice";
 import { ImSpinner3 } from "react-icons/im";
+import { addCart } from "../features/auth/authSlice";
+import { toast } from "react-toastify";
 
 type Props = {};
 
 const Home = (props: Props) => {
   const dispatch: AppDispatch = useDispatch();
   const productState = useSelector((state: RootState) => state.productReducer);
+  const authState = useSelector((state: RootState) => state.authReducer);
 
   const {
     bestReviewProduct,
     bestSellerProduct,
     featuredProdct,
     newArrivalProduct,
-    isLoading
+    isLoading,
   } = productState;
+
+  const { addToCart } = authState;
 
   useEffect(() => {
     dispatch(getFeaturedProducts());
@@ -56,6 +61,13 @@ const Home = (props: Props) => {
         "https://www.adagio.com/images5/products_index_retina/pu_erh_coffee.jpg",
     },
   ];
+
+  const handleAddToCart = async (productId: string) => {
+    const response = await dispatch(addCart(productId));
+    console.log(response);
+  };
+
+  console.log(addToCart);
 
   return (
     <div className="bg-white min-h-screen">
@@ -127,14 +139,14 @@ const Home = (props: Props) => {
                 key={index}
                 products={item.products}
                 title={item.title}
-                isLoading = {isLoading}
+                isLoading={isLoading}
+                handleAddToCart={handleAddToCart}
               />
             </>
           ))}
         </>
       )}
       <div className="container clear-both w-full h-[1px] my-[20px] bg-[#d7d9dd]"></div>
-      
     </div>
   );
 };

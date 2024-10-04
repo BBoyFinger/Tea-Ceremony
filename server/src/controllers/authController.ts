@@ -272,15 +272,12 @@ const authController = {
       const { productId } = req.body;
       const user = req.userId;
 
-      const isProductAvailable = await addToCartModel.find({
-        productId: productId,
-      });
+      const isProductAvailable = await addToCartModel.find({ productId });
 
-      if(isProductAvailable){
+      if (isProductAvailable) {
         return res.status(HttpStatusCode.OK).json({
           message: "Already exist in Add to cart",
-
-        })
+        });
       }
 
       const payload = {
@@ -289,14 +286,34 @@ const authController = {
         userId: user,
       };
 
-      const newAddToCart = new addToCartModel(payload)
+      const newAddToCart = new addToCartModel(payload);
       const saveProduct = await newAddToCart.save();
 
       return res.status(HttpStatusCode.Created).json({
         message: "Product added to cart!",
-        data: saveProduct
-      })
+        data: saveProduct,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: error.message || error,
+        error: true,
+        sucess: false,
+      });
+    }
+  },
+  countAddToCart: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const userId = req.userId;
+      const count = await addToCartModel.countDocuments({
+        userId: userId,
+      });
 
+      return res.status(HttpStatusCode.OK).json({
+        data: {
+          count: count,
+        },
+        message: "OK",
+      });
     } catch (error: any) {
       return res.status(500).json({
         message: error.message || error,

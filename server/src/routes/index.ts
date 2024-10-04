@@ -16,6 +16,11 @@ router.get("/user", authMiddleware, authController.getAllUser);
 router.delete("/users", authMiddleware, authController.deleteUsers);
 router.post("/update-user", authMiddleware, authController.updateUser);
 router.post("/addtocart", authMiddleware, authController.addToCart);
+router.get(
+  "/countAddToCartProduct",
+  authMiddleware,
+  authController.countAddToCart
+);
 
 //Category
 router.post("/category", authMiddleware, categoryController.addCategory);
