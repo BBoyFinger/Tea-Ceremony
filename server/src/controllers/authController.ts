@@ -5,6 +5,7 @@ import { IUser } from "../utils/type";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import UserModel from "../models/userModel";
 import uploadProductPermission from "../utils/permission";
+import addToCartModel from "../models/cartProduct";
 
 const authController = {
   userSignUp: async (req: Request, res: Response): Promise<Response> => {
@@ -258,6 +259,44 @@ const authController = {
         success: true,
         error: false,
       });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: error.message || error,
+        error: true,
+        sucess: false,
+      });
+    }
+  },
+  addToCart: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { productId } = req.body;
+      const user = req.userId;
+
+      const isProductAvailable = await addToCartModel.find({
+        productId: productId,
+      });
+
+      if(isProductAvailable){
+        return res.status(HttpStatusCode.OK).json({
+          message: "Already exist in Add to cart",
+
+        })
+      }
+
+      const payload = {
+        productId: productId,
+        quantity: 1,
+        userId: user,
+      };
+
+      const newAddToCart = new addToCartModel(payload)
+      const saveProduct = await newAddToCart.save();
+
+      return res.status(HttpStatusCode.Created).json({
+        message: "Product added to cart!",
+        data: saveProduct
+      })
+
     } catch (error: any) {
       return res.status(500).json({
         message: error.message || error,

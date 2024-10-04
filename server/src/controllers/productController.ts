@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import ProductModel from "../models/productModel";
 import HttpStatusCode from "../utils/HttpStatusCode";
 import uploadProductPermission from "../utils/permission";
-import categoryModel from "../models/categoryModel";
+import CategoryModel from "../models/categoryModel";
 
 export const productController = {
   createProduct: async (req: Request, res: Response): Promise<Response> => {
@@ -52,7 +52,7 @@ export const productController = {
     try {
       const categoryName = req.params.category;
 
-      const category = await categoryModel.findOne({
+      const category = await CategoryModel.findOne({
         name: { $regex: new RegExp(categoryName, "i") },
       });
       if (!category) {
@@ -76,10 +76,95 @@ export const productController = {
     }
   },
 
+  getProductNewArrivals: async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    try {
+      const newArrivals = await ProductModel.find()
+        .sort({ createdAt: -1 })
+        .limit(5);
+      return res.status(HttpStatusCode.OK).json({
+        message: "Get Product new arrivals successfully",
+        data: newArrivals,
+      });
+    } catch (error) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error,
+      });
+    }
+  },
+
+  getProductBestSellers: async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    try {
+      const category = await CategoryModel.findOne({ name: "Best Sellers" });
+
+      if (!category) {
+        return res.status(HttpStatusCode.NotFound).json({
+          message: "Category 'Best Sellers' not found",
+        });
+      }
+
+      const bestSellers = await ProductModel.find({
+        category: category._id,
+      }).limit(5);
+
+      return res.status(HttpStatusCode.OK).json({
+        message: "Get Product new arrivals successfully",
+        data: bestSellers,
+      });
+    } catch (error) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error,
+      });
+    }
+  },
+
+  getFeaturedProducts: async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    try {
+      const featuredProduct = await ProductModel.find({
+        isFeatured: true,
+      }).limit(5);
+      return res.status(HttpStatusCode.OK).json({
+        message: "Get Product fearture successfully",
+        data: featuredProduct,
+      });
+    } catch (error) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error,
+      });
+    }
+  },
+
+  getProductBestReviews: async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    try {
+      const bestReviews = await ProductModel.find()
+        .sort({ reviewsCount: -1 })
+        .limit(5);
+      return res.status(HttpStatusCode.OK).json({
+        message: "Get Product best reviews successfully",
+        data: bestReviews,
+      });
+    } catch (error) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error,
+      });
+    }
+  },
+
   getProductById: async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
     try {
-      const product = await ProductModel.findById(id).populate('category');
+      const product = await ProductModel.findById(id).populate("category");
       if (!product) {
         return res.status(HttpStatusCode.NotFound).json({
           message: "Product not found",

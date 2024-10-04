@@ -4,12 +4,15 @@ import {
   FaFacebook,
   FaTwitter,
   FaPinterest,
+  FaStar,
+  FaStarHalf,
 } from "react-icons/fa";
 import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { useParams } from "react-router-dom";
 import { getProductById } from "../../features/product/productSlice";
+import RelatedProducts from "../../components/RelatedProduct";
 
 const ProductDetailPage = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -29,25 +32,28 @@ const ProductDetailPage = () => {
 
   const relatedProducts = [
     {
-      id: 1,
+      id: "1",
       name: "Wireless Earbuds",
       price: 89.99,
-      image:
+      image: [
         "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+      ],
     },
     {
-      id: 2,
+      id: "2",
       name: "Noise-Cancelling Headphones",
       price: 249.99,
-      image:
+      image: [
         "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+      ],
     },
     {
-      id: 3,
+      id: "3",
       name: "Bluetooth Speaker",
       price: 129.99,
-      image:
+      image: [
         "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+      ],
     },
   ];
 
@@ -109,7 +115,14 @@ const ProductDetailPage = () => {
           </p>
           <h1 className="text-2xl font-medium mb-2">{product?.productName}</h1>
           <p className="text-base font-semibold mb-2">${product?.price}</p>
-          <p className="text-gray-600 text-base mb-2">{product?.description}</p>
+
+          <div className="text-yellow-500 flex items-center gap-1">
+            <FaStar />
+            <FaStar />
+            <FaStar />
+            <FaStar />
+            <FaStarHalf />
+          </div>
 
           {/* Add to Cart Section */}
           <div className="flex items-center gap-4 mb-2">
@@ -120,9 +133,18 @@ const ProductDetailPage = () => {
               onChange={(e) => setQuantity(parseInt(e.target.value))}
               className="w-[50%] px-2 py-1 border rounded-md"
             />
+          </div>
+
+          <div className="flex items-center gap-3">
             <button
               onClick={handleAddToCart}
-              className="bg-[#f05338] w-[50%]  text-white py-1 px-3 rounded hover:bg-[#f04138] transition-colors duration-300"
+              className="border-2 border-[#f05338] text-black min-w-[120px] hover:text-white py-1 px-3 rounded hover:bg-[#f04138] transition-colors duration-300"
+            >
+              Buy
+            </button>
+            <button
+              onClick={handleAddToCart}
+              className="border-2 border-[#f05338] text-white min-w-[120px] hover:text-red-500 py-1 px-3 rounded hover:bg-white bg-[#f04138] transition-colors duration-300"
             >
               Add to Cart
             </button>
@@ -133,6 +155,10 @@ const ProductDetailPage = () => {
               {product?.stockQuantity} Items in Stock
             </span>
           </div>
+
+          <p className="text-gray-600 text-base mb-2">
+            Description: {product?.description}
+          </p>
 
           {/* Social Sharing */}
           <div className="flex space-x-4 mb-8">
@@ -174,34 +200,7 @@ const ProductDetailPage = () => {
       </div>
 
       {/* Related Products */}
-      <div className="mt-16">
-        <h2 className="text-2xl font-bold mb-6">Related Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {relatedProducts.map((relatedProduct) => (
-            <div
-              key={relatedProduct.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
-              <img
-                src={relatedProduct.image}
-                alt={relatedProduct.name}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2">
-                  {relatedProduct.name}
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  ${relatedProduct.price.toFixed(2)}
-                </p>
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors w-full">
-                  View Details
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <RelatedProducts relatedProducts={relatedProducts} />
 
       {/* Mini Cart Preview */}
       {showMiniCart && (

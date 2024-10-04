@@ -17,10 +17,16 @@ const updateUserRole = async (data: any) => {
   return response.data.data;
 };
 
+const addToCart = async (data: any) => {
+  const response = await axiosInstance.post("/addToCart", data);
+  return response.data.data;
+};
+
 const authService = {
   getAllUser,
   deleteUsers,
   updateUserRole,
+  addToCart,
 };
 
 export default authService;

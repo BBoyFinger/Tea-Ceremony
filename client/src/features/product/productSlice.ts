@@ -10,6 +10,10 @@ interface IProductState {
   updatedProduct: any;
   deletedProduct: any;
   createdProduct: any;
+  bestReviewProduct: any;
+  bestSellerProduct: any;
+  newArrivalProduct: any;
+  featuredProdct: any;
   isError: boolean;
   isSuccess: boolean;
   message: string;
@@ -25,6 +29,10 @@ const initialState: IProductState = {
   updatedProduct: null,
   deletedProduct: null,
   createdProduct: null,
+  bestReviewProduct: null,
+  bestSellerProduct: null,
+  featuredProdct: null,
+  newArrivalProduct: null,
   message: "",
 };
 
@@ -55,6 +63,50 @@ export const getProductByCategory = createAsyncThunk(
   async (category: string, thunkApi) => {
     try {
       return await productService.getProductByCategory(category);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getProductBestReviews = createAsyncThunk(
+  "get-productBestReviews",
+  async (_, thunkApi) => {
+    try {
+      return await productService.getProductBestReviews();
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getProductBestSellers = createAsyncThunk(
+  "get-productBestSellers",
+  async (_, thunkApi) => {
+    try {
+      return await productService.getProductBestSellers();
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getProductNewArrivals = createAsyncThunk(
+  "get-productNewArrivals",
+  async (_, thunkApi) => {
+    try {
+      return await productService.getProductNewArrivals();
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getFeaturedProducts = createAsyncThunk(
+  "get-productFeatured",
+  async (_, thunkApi) => {
+    try {
+      return await productService.getFeaturedProducts();
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }
@@ -169,6 +221,66 @@ const productSlice = createSlice({
         state.product = action.payload;
       })
       .addCase(getProductById.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error.message as string;
+      })
+      .addCase(getProductBestReviews.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductBestReviews.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.bestReviewProduct = action.payload;
+      })
+      .addCase(getProductBestReviews.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error.message as string;
+      })
+      .addCase(getProductBestSellers.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductBestSellers.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.bestSellerProduct = action.payload;
+      })
+      .addCase(getProductBestSellers.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error.message as string;
+      })
+      .addCase(getProductNewArrivals.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductNewArrivals.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.newArrivalProduct = action.payload;
+      })
+      .addCase(getProductNewArrivals.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error.message as string;
+      })
+      .addCase(getFeaturedProducts.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getFeaturedProducts.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.featuredProdct = action.payload;
+      })
+      .addCase(getFeaturedProducts.rejected, (state, action) => {
         state.isError = true;
         state.isSuccess = false;
         state.isLoading = false;

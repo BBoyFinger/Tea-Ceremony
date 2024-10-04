@@ -18,6 +18,7 @@ import { BsSearch } from "react-icons/bs";
 import { FiPlus } from "react-icons/fi";
 import { toast } from "react-toastify";
 import uploadImage from "../../../utils/uploadImage";
+import { ImSpinner3 } from "react-icons/im";
 
 const ProductManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -55,6 +56,7 @@ const ProductManagement = () => {
     createdProduct,
     updatedProduct,
     message,
+    isLoading,
   } = productState;
   const [productInfo, setProductInfo] = useState<any | null>({
     _id: "",
@@ -84,7 +86,7 @@ const ProductManagement = () => {
     dispatch(getProducts());
     dispatch(getCategories());
     dispatch(resetProductState());
-  }, [dispatch]);
+  }, [dispatch, isLoading]);
 
   useEffect(() => {
     if (isSuccess && createdProduct) {
@@ -618,6 +620,14 @@ const ProductManagement = () => {
             </div>
           </div>
         </Modal>
+        {isLoading && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg flex items-center flex-col">
+              <ImSpinner3 className="animate-spin w-[40px] h-[40px]" />
+              <p className="mt-4 text-gray-700">Loading...</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

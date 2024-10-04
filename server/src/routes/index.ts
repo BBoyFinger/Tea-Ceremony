@@ -4,6 +4,7 @@ import { authMiddleware } from "../middleware/authMiddleware";
 import categoryController from "../controllers/categoryController";
 import { productController } from "../controllers/productController";
 import orderController from "../controllers/orderController";
+import addToCartModel from "../models/cartProduct";
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ router.get("/logout", authController.userLogout);
 router.get("/user", authMiddleware, authController.getAllUser);
 router.delete("/users", authMiddleware, authController.deleteUsers);
 router.post("/update-user", authMiddleware, authController.updateUser);
+router.post("/addtocart", authMiddleware, authController.addToCart);
 
 //Category
 router.post("/category", authMiddleware, categoryController.addCategory);
@@ -28,7 +30,14 @@ router.put("/product/:id", authMiddleware, productController.updateProduct);
 router.delete("/product", authMiddleware, productController.deleteProducts);
 router.get("/product", productController.getAllProducts);
 router.get("/product/:id", productController.getProductById);
-router.get("/products/category/:category", productController.getProductByCategory);
+router.get(
+  "/products/category/:category",
+  productController.getProductByCategory
+);
+router.get("/products/best-sellers", productController.getProductBestSellers);
+router.get("/products/best-reviewed", productController.getProductBestReviews);
+router.get("/products/new-arrivals", productController.getProductNewArrivals);
+router.get("/products/product-featured", productController.getFeaturedProducts);
 
 //Order
 router.post("/order", authMiddleware, orderController.createOrder);
@@ -36,6 +45,5 @@ router.put("/order/:id", authMiddleware, orderController.updateOrder);
 router.delete("/order", authMiddleware, orderController.deleteOrders);
 router.get("/order", orderController.getAllOrders);
 router.get("/order/:id", orderController.getOrderById);
-
 
 export default router;

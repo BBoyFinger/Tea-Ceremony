@@ -2,12 +2,12 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { User } from "../../types/user.types";
 import authService from "./authService";
 
-
 interface AuthState {
   user: User | null;
   users: User[];
   isLoading: boolean;
   updatedUser: any;
+  addToCart: any;
   deleteUser: any;
   isError: boolean;
   isSuccess: boolean;
@@ -22,6 +22,7 @@ const initialState: AuthState = {
   isSuccess: false,
   deleteUser: null,
   updatedUser: null,
+  addToCart: null,
   message: "",
 };
 
@@ -30,6 +31,14 @@ export const resetState = createAction("Reset_all");
 export const getAllUser = createAsyncThunk("user", async (_, thunkApi) => {
   try {
     return await authService.getAllUser();
+  } catch (error) {
+    return thunkApi.rejectWithValue(error);
+  }
+});
+
+export const addCart = createAsyncThunk("addToCart", async (data, thunkApi) => {
+  try {
+    return await authService.addToCart(data);
   } catch (error) {
     return thunkApi.rejectWithValue(error);
   }
@@ -103,9 +112,23 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.isError = false;
         state.updatedUser = action.payload;
-        
       })
       .addCase(updateUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error.message || "";
+      })
+      .addCase(addCart.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(addCart.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.addToCart = action.payload;
+      })
+      .addCase(addCart.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;

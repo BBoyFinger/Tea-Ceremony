@@ -33,7 +33,7 @@ function App() {
       <Context.Provider value={{ fetchUserDetails }}>
         <ToastContainer />
         <Header />
-        <main className="bg-white/80">
+        <main className="bg-white">
           <Outlet />
         </main>
         <Footer />

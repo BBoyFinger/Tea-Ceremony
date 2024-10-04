@@ -40,10 +40,30 @@ const getProductByCategory = async (category: string) => {
   return respose.data.data;
 };
 
+const getProductBestReviews = async () => {
+  const respose = await axiosInstance.get(`/products/best-reviewed`);
+  return respose.data.data;
+};
+
+const getProductBestSellers = async () => {
+  const respose = await axiosInstance.get(`/products/best-sellers`);
+  return respose.data.data;
+};
+
+const getProductNewArrivals = async () => {
+  const respose = await axiosInstance.get(`/products/new-arrivals`);
+  return respose.data.data;
+};
+
+const getFeaturedProducts = async () => {
+  const respose = await axiosInstance.get(`/products/product-featured`);
+  return respose.data.data;
+};
+
 const getProductById = async (id: any) => {
   const response = await axiosInstance.get(`/product/${id}`);
-  return response.data.data
-}
+  return response.data.data;
+};
 
 const deleteProduct = async (ids: string[]) => {
   const response = await axiosInstance.delete("/product", {
@@ -58,5 +78,9 @@ export const productService = {
   editProduct,
   deleteProduct,
   getProductByCategory,
-  getProductById
+  getProductById,
+  getFeaturedProducts,
+  getProductBestReviews,
+  getProductBestSellers,
+  getProductNewArrivals,
 };

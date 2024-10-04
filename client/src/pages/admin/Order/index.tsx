@@ -4,6 +4,7 @@ import Table from "../../../components/ui/Table";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { BsSearch } from "react-icons/bs";
+import { ImSpinner3 } from "react-icons/im";
 
 type Props = {};
 
@@ -50,7 +51,7 @@ const OrderManagement = (props: Props) => {
   ]);
   const [sortBy, setSortBy] = useState<string>("");
   const orderState = useSelector((state: RootState) => state.orderReducer);
-  const {} = orderState;
+  const { isLoading } = orderState;
 
   const columns = [
     { key: "orederNumber", label: "Order Number", sortable: true },
@@ -193,6 +194,14 @@ const OrderManagement = (props: Props) => {
           data={orders}
         />
       </div>
+      {isLoading && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg flex items-center flex-col">
+            <ImSpinner3 className="animate-spin w-[40px] h-[40px]" />
+            <p className="mt-4 text-gray-700">Loading...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

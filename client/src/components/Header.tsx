@@ -19,8 +19,6 @@ const Header = (props: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log(user?.role);
-
   const handleLogout = async () => {
     const response = await axiosInstance.get("/logout");
 
