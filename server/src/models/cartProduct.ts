@@ -1,10 +1,13 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { IProduct } from "../utils/type";
 
 // Tạo schema cho product
 const addToCart = new Schema(
   {
-    productId: String,
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product"
+    },
     quantity: Number,
     userId: String,
   },

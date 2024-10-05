@@ -8,6 +8,7 @@ import addToCartModel from "../models/cartProduct";
 
 const router = express.Router();
 
+router.post("/addtocart", authMiddleware, authController.addToCart);
 router.post("/signup", authController.userSignUp);
 router.post("/signin", authController.userSignIn);
 router.get("/user-detail", authMiddleware, authController.userDetail);
@@ -15,12 +16,23 @@ router.get("/logout", authController.userLogout);
 router.get("/user", authMiddleware, authController.getAllUser);
 router.delete("/users", authMiddleware, authController.deleteUsers);
 router.post("/update-user", authMiddleware, authController.updateUser);
-router.post("/addtocart", authMiddleware, authController.addToCart);
 router.get(
   "/countAddToCartProduct",
   authMiddleware,
   authController.countAddToCart
 );
+router.get(
+  "/view-cart-product",
+  authMiddleware,
+  authController.viewProductCart
+);
+
+router.post(
+  "/update-cart-product",
+  authMiddleware,
+  authController.updateAddToCartProduct
+);
+
 
 //Category
 router.post("/category", authMiddleware, categoryController.addCategory);

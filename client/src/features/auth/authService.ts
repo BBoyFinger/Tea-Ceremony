@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosConfig";
 
 const getAllUser = async () => {
@@ -18,8 +19,44 @@ const updateUserRole = async (data: any) => {
 };
 
 const addToCart = async (productId: any) => {
-  const response = await axiosInstance.post("/addToCart", {
-    productId: productId,
+  try {
+    const response = await axiosInstance.post("/addToCart", {
+      productId: productId,
+    });
+
+    if (response.data.success) {
+      toast.success(response.data.message);
+    }
+
+    if (response.data.error) {
+      toast.error(response.data.message);
+    }
+
+    return response.data.data;
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      // Display the message from the server response
+      toast.error(error.response.data.message || "An error occurred");
+    } else {
+      toast.error("An unexpected error occurred");
+    }
+  }
+};
+
+const userAddToCart = async () => {
+  const response = await axiosInstance.get("/countAddToCartProduct");
+  return response.data.data;
+};
+
+const viewProductCart = async () => {
+  const response = await axiosInstance.get("/view-cart-product");
+  return response.data.data;
+};
+
+const updateCartProduct = async (productId: string, newQuantity: number) => {
+  const response = await axiosInstance.post("/update-cart-product", {
+    _id: productId,
+    quantity: newQuantity,
   });
   return response.data.data;
 };
@@ -29,6 +66,9 @@ const authService = {
   deleteUsers,
   updateUserRole,
   addToCart,
+  userAddToCart,
+  viewProductCart,
+  updateCartProduct
 };
 
 export default authService;

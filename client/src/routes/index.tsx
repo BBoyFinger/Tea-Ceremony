@@ -13,6 +13,7 @@ import CategoryManagement from "../pages/admin/Category";
 import ProductManagement from "../pages/admin/Product";
 import BlogManagement from "../pages/admin/Blog";
 import OrderManagement from "../pages/admin/Order";
+import CartPage from "../pages/Cart";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/sign-up",
         element: <SignUp />,
+      },
+      {
+        path: "/cart",
+        element: <CartPage />,
       },
       {
         path: "/admin-panel",
@@ -73,7 +78,7 @@ const router = createBrowserRouter([
         path: "/products",
         element: <ProductListingPage />,
       },
-      
+
       {
         path: "/products/:id",
         element: <ProductDetailPage />,

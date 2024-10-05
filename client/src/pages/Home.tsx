@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaArrowRight, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import Cart from "../components/Cart";
+import Cart from "../components/ShoppingCart";
 import SpecialProduct from "../components/SpecialProduct";
 import { AppDispatch, RootState } from "../store/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +14,7 @@ import {
 import { ImSpinner3 } from "react-icons/im";
 import { addCart } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
+import Context from "../context";
 
 type Props = {};
 
@@ -30,7 +31,8 @@ const Home = (props: Props) => {
     isLoading,
   } = productState;
 
-  const { addToCart } = authState;
+  const { addToCart, isError, isSuccess } = authState;
+  const context = useContext(Context);
 
   useEffect(() => {
     dispatch(getFeaturedProducts());
@@ -63,11 +65,9 @@ const Home = (props: Props) => {
   ];
 
   const handleAddToCart = async (productId: string) => {
-    const response = await dispatch(addCart(productId));
-    console.log(response);
+    await dispatch(addCart(productId));
+    context?.fetchUserAddToCart();
   };
-
-  console.log(addToCart);
 
   return (
     <div className="bg-white min-h-screen">

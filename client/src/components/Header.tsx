@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Logo from "./Logo";
 import { IoSearchOutline } from "react-icons/io5";
 import { PiUserCircleLight } from "react-icons/pi";
@@ -7,19 +7,23 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosConfig";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
-import { setUserDetails } from "../features/auth/authSlice";
+import { AppDispatch, RootState } from "../store/store";
+import { setUserDetails, viewProductCart } from "../features/auth/authSlice";
 import { Menu, MenuButton, MenuItems } from "@headlessui/react";
 import { ROLE } from "../utils/User";
 import Context from "../context";
+import Cart from "./ShoppingCart";
 
 type Props = {};
 
 const Header = (props: Props) => {
-  const user = useSelector((state: RootState) => state.authReducer.user);
-  const dispatch = useDispatch();
+
+  const userState = useSelector((state: RootState) => state.authReducer);
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const context = useContext(Context);
+
+  const { user, productsCart } = userState;
 
   const handleLogout = async () => {
     const response = await axiosInstance.get("/logout");
@@ -35,13 +39,17 @@ const Header = (props: Props) => {
     navigate("/login");
   };
 
+  useEffect(() => {
+    dispatch(viewProductCart());
+  }, []);
+
   return (
     <header className="h-24 shadow-2xl bg-[#db8f32]">
       <div className="container h-full flex justify-between items-center  text-white">
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <Logo width={100} height={100} />
-          <span className="text-xl">Teaware Shop</span>
+          <span className="text-xl hidden md:inline-block">Teaware Shop</span>
         </Link>
         {/* Search */}
         <div className="hidden lg:flex w-full items-center justify-between max-w-sm border rounded-full pl-2 focus-within:shadow">
@@ -105,12 +113,16 @@ const Header = (props: Props) => {
 
           {/* Cart*/}
           <div className=" text-2xl relative cursor-pointer">
-            <span>
-              <HiOutlineShoppingBag />
-            </span>
-            <div className="bg-[#bd3030] text-white w-4 h-4 p-1 flex items-center justify-center rounded-full absolute -top-1 -right-2">
-              <p className="text-xs">0</p>
-            </div>
+            <Cart
+              count={context?.userAddToCart?.count}
+              userId={user?._id}
+              products={productsCart}
+            />
+            {/* {user?._id && (
+              <div className="bg-[#bd3030] text-white w-4 h-4 p-1 flex items-center justify-center rounded-full absolute -top-1 -right-2">
+                <p className="text-xs">{context?.userAddToCart?.count}</p>
+              </div>
+            )} */}
           </div>
           <div className="">
             {user?._id ? (

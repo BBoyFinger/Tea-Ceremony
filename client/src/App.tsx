@@ -3,15 +3,18 @@ import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axiosInstance from "./utils/axiosConfig";
 import Context from "./context";
-import { useDispatch } from "react-redux";
-import { setUserDetails } from "./features/auth/authSlice";
-import { AppDispatch } from "./store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserDetails, userAddCart, viewProductCart } from "./features/auth/authSlice";
+import { AppDispatch, RootState } from "./store/store";
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
+  const authState = useSelector((state: RootState) => state.authReducer);
+  const { userAddToCart } = authState;
+
   const fetchUserDetails = async (): Promise<void> => {
     try {
       const response = await axiosInstance.get("/user-detail");
@@ -24,13 +27,25 @@ function App() {
     }
   };
 
+  const fetchUserAddToCart = async (): Promise<void> => {
+    try {
+      await dispatch(userAddCart()); // Dispatch the thunk
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  };
+
   useEffect(() => {
     fetchUserDetails();
-  }, []);
+    fetchUserAddToCart();
+    dispatch(viewProductCart())
+  }, [dispatch]);
 
   return (
     <>
-      <Context.Provider value={{ fetchUserDetails }}>
+      <Context.Provider
+        value={{ fetchUserDetails, userAddToCart, fetchUserAddToCart }}
+      >
         <ToastContainer />
         <Header />
         <main className="bg-white">

@@ -11,7 +11,7 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { IProduct } from "../../types/product.types";
 import ProductsList from "../../components/ProductList";
-import Cart from "../../components/Cart";
+import Cart from "../../components/ShoppingCart";
 
 const ProductListingPage = () => {
   // const [categories, setCategories] = useState<ICategory[]>([]);

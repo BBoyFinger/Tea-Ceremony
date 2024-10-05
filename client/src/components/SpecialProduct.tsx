@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { IProduct } from "../types/product.types";
 import { Link } from "react-router-dom";
 import { LuShoppingCart } from "react-icons/lu";
+import Context from "../context";
 
 type Props = {
   title: String;
@@ -16,6 +17,7 @@ const SpecialProduct = ({
   isLoading,
   handleAddToCart,
 }: Props) => {
+  
   return (
     <section className="bg-white ">
       <div className="container mx-auto px-4">

@@ -152,7 +152,7 @@ const authController = {
         success: true,
       });
     } catch (error: any) {
-      return res.status(500).json({
+      return res.status(HttpStatusCode.InternalServerError).json({
         message: error.message || error,
         error: true,
         sucess: false,
@@ -169,7 +169,7 @@ const authController = {
         data: [],
       });
     } catch (error: any) {
-      return res.status(500).json({
+      return res.status(HttpStatusCode.InternalServerError).json({
         message: error.message || error,
         error: true,
         sucess: false,
@@ -179,7 +179,7 @@ const authController = {
 
   getAllUser: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const users = await UserModel.find();
+      const users = await UserModel.find().select("-pictureImg");
       const sessionUserId = req.userId;
 
       if (!uploadProductPermission(sessionUserId)) {
@@ -198,7 +198,7 @@ const authController = {
         sucess: false,
       });
     } catch (error: any) {
-      return res.status(500).json({
+      return res.status(HttpStatusCode.InternalServerError).json({
         message: error.message || error,
         error: true,
         sucess: false,
@@ -231,7 +231,7 @@ const authController = {
         message: `${deleteManyUsers.deletedCount} users deleted successfully`,
       });
     } catch (error: any) {
-      return res.status(500).json({
+      return res.status(HttpStatusCode.InternalServerError).json({
         message: error.message || error,
         error: true,
         sucess: false,
@@ -260,7 +260,7 @@ const authController = {
         error: false,
       });
     } catch (error: any) {
-      return res.status(500).json({
+      return res.status(HttpStatusCode.InternalServerError).json({
         message: error.message || error,
         error: true,
         sucess: false,
@@ -272,11 +272,13 @@ const authController = {
       const { productId } = req.body;
       const user = req.userId;
 
-      const isProductAvailable = await addToCartModel.find({ productId });
+      const isProductAvailable = await addToCartModel.findOne({ productId });
 
       if (isProductAvailable) {
         return res.status(HttpStatusCode.OK).json({
           message: "Already exist in Add to cart",
+          success: false,
+          error: true,
         });
       }
 
@@ -292,9 +294,11 @@ const authController = {
       return res.status(HttpStatusCode.Created).json({
         message: "Product added to cart!",
         data: saveProduct,
+        success: true,
+        error: false,
       });
     } catch (error: any) {
-      return res.status(500).json({
+      return res.status(HttpStatusCode.InternalServerError).json({
         message: error.message || error,
         error: true,
         sucess: false,
@@ -315,7 +319,57 @@ const authController = {
         message: "OK",
       });
     } catch (error: any) {
-      return res.status(500).json({
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message || error,
+        error: true,
+        sucess: false,
+      });
+    }
+  },
+  viewProductCart: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const userId = req.userId;
+
+      const allProduct = await addToCartModel
+        .find({
+          userId: userId,
+        })
+        .populate("productId");
+
+      return res.status(HttpStatusCode.OK).json({
+        data: allProduct,
+        message: "OK",
+      });
+    } catch (error: any) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message || error,
+        error: true,
+        sucess: false,
+      });
+    }
+  },
+  updateAddToCartProduct: async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    try {
+      const userId = req.userId;
+      const addToCartProductId = req.body._id;
+      const qty = req.body.quantity;
+      
+      const updateProduct = await addToCartModel.updateOne(
+        { _id: addToCartProductId, userId },
+        {
+          ...(qty && { quantity: qty }),
+        }
+      );
+
+      return res.status(HttpStatusCode.OK).json({
+        message: "Product Updated Successfully",
+        data: updateProduct,
+      });
+    } catch (error: any) {
+      return res.status(HttpStatusCode.InternalServerError).json({
         message: error.message || error,
         error: true,
         sucess: false,
