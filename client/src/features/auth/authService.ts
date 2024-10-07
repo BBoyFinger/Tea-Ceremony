@@ -61,6 +61,13 @@ const updateCartProduct = async (productId: string, newQuantity: number) => {
   return response.data.data;
 };
 
+const deleteCartProduct = async (productId: string) => {
+  const response = await axiosInstance.post("/delete-cart-product", {
+    _id: productId,
+  });
+  return response.data.data;
+};
+
 const authService = {
   getAllUser,
   deleteUsers,
@@ -68,7 +75,8 @@ const authService = {
   addToCart,
   userAddToCart,
   viewProductCart,
-  updateCartProduct
+  updateCartProduct,
+  deleteCartProduct,
 };
 
 export default authService;

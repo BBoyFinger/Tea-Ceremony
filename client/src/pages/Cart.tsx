@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FaTrash, FaPlus, FaMinus, FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { updateCartProduct, viewProductCart } from "../features/auth/authSlice";
+import {
+  deleteCartProduct,
+  updateCartProduct,
+  viewProductCart,
+} from "../features/auth/authSlice";
+import Context from "../context";
 
 const CartPage = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -36,12 +41,12 @@ const CartPage = () => {
   ]);
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [itemToRemove, setItemToRemove] = useState(null);
+
   useEffect(() => {
     dispatch(viewProductCart());
   }, [dispatch]);
 
+  const context = useContext(Context);
   const increaseQuantity = async (id: any, currentQuantity: number) => {
     const newQuantity = currentQuantity + 1;
     await dispatch(updateCartProduct({ productId: id, newQuantity }));
@@ -56,21 +61,12 @@ const CartPage = () => {
     }
   };
 
-  const removeItem = (id: any) => {
-    setItemToRemove(id);
-    setShowConfirmation(true);
-  };
-
-  const confirmRemove = () => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item.id !== itemToRemove)
-    );
-    setShowConfirmation(false);
-  };
-
-  const cancelRemove = () => {
-    setShowConfirmation(false);
-    setItemToRemove(null);
+  const deleteProductCart = async (id: string) => {
+    if (window.confirm("Are u sure delete this product in cart?")) {
+      await dispatch(deleteCartProduct(id));
+      await dispatch(viewProductCart());
+      context?.fetchUserAddToCart();
+    }
   };
 
   const applyPromoCode = () => {
@@ -145,7 +141,7 @@ const CartPage = () => {
                   )}
                 </p>
                 <button
-                  onClick={() => removeItem(item._id)}
+                  onClick={() => deleteProductCart(item._id)}
                   className="text-red-500 mt-2 flex items-center"
                   aria-label="Remove item"
                 >
@@ -202,27 +198,6 @@ const CartPage = () => {
           </div>
         </div>
       </div>
-      {showConfirmation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg">
-            <p className="mb-4">Are you sure you want to remove this item?</p>
-            <div className="flex justify-end">
-              <button
-                onClick={cancelRemove}
-                className="mr-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmRemove}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

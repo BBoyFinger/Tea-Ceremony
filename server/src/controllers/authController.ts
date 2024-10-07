@@ -356,7 +356,7 @@ const authController = {
       const userId = req.userId;
       const addToCartProductId = req.body._id;
       const qty = req.body.quantity;
-      
+
       const updateProduct = await addToCartModel.updateOne(
         { _id: addToCartProductId, userId },
         {
@@ -367,6 +367,30 @@ const authController = {
       return res.status(HttpStatusCode.OK).json({
         message: "Product Updated Successfully",
         data: updateProduct,
+      });
+    } catch (error: any) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message || error,
+        error: true,
+        sucess: false,
+      });
+    }
+  },
+  deleteAddToCartProduct: async (
+    req: Request,
+    res: Response
+  ): Promise<Response> => {
+    try {
+      const userId = req.userId;
+      const addToCartProductId = req.body._id;
+
+      const deleteProduct = await addToCartModel.deleteOne({
+        _id: addToCartProductId,
+      });
+
+      return res.status(HttpStatusCode.OK).json({
+        message: "Product Deleted from cart Successfully",
+        data: deleteProduct,
       });
     } catch (error: any) {
       return res.status(HttpStatusCode.InternalServerError).json({

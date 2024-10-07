@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { FaArrowRight, FaStar } from "react-icons/fa";
+import React, { useContext, useEffect } from "react";
+
 import { Link } from "react-router-dom";
-import Cart from "../components/ShoppingCart";
 import SpecialProduct from "../components/SpecialProduct";
 import { AppDispatch, RootState } from "../store/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,9 +10,9 @@ import {
   getProductBestSellers,
   getProductNewArrivals,
 } from "../features/product/productSlice";
-import { ImSpinner3 } from "react-icons/im";
+
 import { addCart } from "../features/auth/authSlice";
-import { toast } from "react-toastify";
+
 import Context from "../context";
 
 type Props = {};

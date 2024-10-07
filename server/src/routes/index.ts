@@ -33,6 +33,11 @@ router.post(
   authController.updateAddToCartProduct
 );
 
+router.post(
+  "/delete-cart-product",
+  authMiddleware,
+  authController.deleteAddToCartProduct
+);
 
 //Category
 router.post("/category", authMiddleware, categoryController.addCategory);

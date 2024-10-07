@@ -11,6 +11,7 @@ interface AuthState {
   updatedUser: any;
   addToCart: any;
   deleteUser: any;
+  deletedCartProduct: any;
   updateCartProduct: any;
   isError: boolean;
   isSuccess: boolean;
@@ -26,6 +27,7 @@ const initialState: AuthState = {
   deleteUser: null,
   updatedUser: null,
   updateCartProduct: null,
+  deletedCartProduct: null,
   addToCart: null,
   userAddToCart: null,
   productsCart: null,
@@ -67,11 +69,11 @@ export const userAddCart = createAsyncThunk(
 export const updateCartProduct = createAsyncThunk(
   "userUpdateProductToCart",
   async (
-    { productId, newQuantity }: { productId: string; newQuantity: number },
+    { productId }: { productId: string; newQuantity: number },
     thunkApi
   ) => {
     try {
-      return await authService.updateCartProduct(productId, newQuantity);
+      return await authService.deleteCartProduct(productId);
     } catch (error: any) {
       return thunkApi.rejectWithValue(
         error.response?.data?.message || error.message
@@ -79,6 +81,7 @@ export const updateCartProduct = createAsyncThunk(
     }
   }
 );
+
 export const viewProductCart = createAsyncThunk(
   "userViewProductToCart",
   async (_, thunkApi) => {
@@ -106,6 +109,17 @@ export const deleteUsers = createAsyncThunk(
   async (ids: string[], thunkApi) => {
     try {
       return await authService.deleteUsers(ids);
+    } catch (error) {
+      thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteCartProduct = createAsyncThunk(
+  "delete-product-cart",
+  async (id: string, thunkApi) => {
+    try {
+      return await authService.deleteCartProduct(id);
     } catch (error) {
       thunkApi.rejectWithValue(error);
     }
@@ -225,6 +239,22 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.error.message || "";
       })
+      .addCase(deleteCartProduct.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteCartProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.deletedCartProduct = action.payload;
+      })
+      .addCase(deleteCartProduct.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error.message || "";
+      })
+
       .addCase(resetState, () => initialState);
   },
 });

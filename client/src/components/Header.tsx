@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import Logo from "./Logo";
 import { IoSearchOutline } from "react-icons/io5";
 import { PiUserCircleLight } from "react-icons/pi";
-import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosConfig";
 import { toast } from "react-toastify";
@@ -17,7 +16,6 @@ import Cart from "./ShoppingCart";
 type Props = {};
 
 const Header = (props: Props) => {
-
   const userState = useSelector((state: RootState) => state.authReducer);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,7 +39,11 @@ const Header = (props: Props) => {
 
   useEffect(() => {
     dispatch(viewProductCart());
-  }, []);
+  }, [dispatch]);
+
+  const handleSearch = (e: any) => {
+    const { value } = e.target;
+  };
 
   return (
     <header className="h-24 shadow-2xl bg-[#db8f32]">
@@ -57,6 +59,7 @@ const Header = (props: Props) => {
             type="text"
             placeholder="Search product here..."
             className="w-full outline-none bg-transparent placeholder:text-white text-white"
+            onChange={handleSearch}
           />
           <div className="text-lg min-w-[50px] h-[32px] flex items-center justify-center rounded-r-full bg-[#bd3030] text-white cursor-pointer ">
             <IoSearchOutline />

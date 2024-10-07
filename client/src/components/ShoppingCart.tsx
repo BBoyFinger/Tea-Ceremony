@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FaShoppingBag, FaPlus, FaMinus, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { IProduct } from "../types/product.types";
+import Context from "../context";
 
 interface CartItem {
   count: any;
@@ -10,6 +11,8 @@ interface CartItem {
 }
 
 const ShoppingCart = ({ count, userId, products }: CartItem) => {
+ 
+
   const [isOpen, setIsOpen] = useState(false);
   const [cartItems, setCartItems] = useState([
     {
@@ -97,7 +100,6 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
             ) : (
               <ul className="divide-y divide-gray-200">
                 {products?.map((item: any) => (
-                  
                   <li key={item._id} className="py-6 flex">
                     <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
                       <img
@@ -112,7 +114,7 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
                         <div className="flex justify-between text-base font-medium text-gray-900">
                           <h3>{item.productId?.productName}</h3>
                           <p className="ml-4">
-                            ${(item.productId?.price * item.productId?.quantity)}
+                            ${item.productId?.price * item.productId?.quantity}
                           </p>
                         </div>
                       </div>
