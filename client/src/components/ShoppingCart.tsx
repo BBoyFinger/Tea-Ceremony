@@ -2,7 +2,13 @@ import React, { useState, useEffect, useContext } from "react";
 import { FaShoppingBag, FaPlus, FaMinus, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { IProduct } from "../types/product.types";
+
 import Context from "../context";
+
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
+import { updateCartProduct, viewProductCart } from "../features/auth/authSlice";
+
 
 interface CartItem {
   count: any;
@@ -11,8 +17,13 @@ interface CartItem {
 }
 
 const ShoppingCart = ({ count, userId, products }: CartItem) => {
+<<<<<<< HEAD
  
 
+=======
+  const dispatch: AppDispatch = useDispatch();
+  console.log(products);
+>>>>>>> 18d8c73c4efe1b1946309be59ac28ae9b3fb79e3
   const [isOpen, setIsOpen] = useState(false);
   const [cartItems, setCartItems] = useState([
     {
@@ -33,19 +44,21 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
     },
   ]);
 
-  const toggleCart = () => setIsOpen(!isOpen);
-
-  const updateQuantity = (id: any, change: any) => {
-    setCartItems((prevItems) =>
-      prevItems
-        .map((item) =>
-          item.id === id
-            ? { ...item, quantity: Math.max(0, item.quantity + change) }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
+  const increaseQuantity = async (id: any, currentQuantity: number) => {
+    const newQuantity = currentQuantity + 1;
+    await dispatch(updateCartProduct({ productId: id, newQuantity }));
+    await dispatch(viewProductCart());
   };
+
+  const decreaseQuantity = async (id: any, currentQuantity: number) => {
+    if (currentQuantity >= 2) {
+      const newQuantity = currentQuantity - 1;
+      await dispatch(updateCartProduct({ productId: id, newQuantity }));
+      await dispatch(viewProductCart());
+    }
+  };
+
+  const toggleCart = () => setIsOpen(!isOpen);
 
   const removeItem = (id: any) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
@@ -121,7 +134,9 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
                       <div className="flex-1 flex items-end justify-between text-sm">
                         <div className="flex items-center">
                           <button
-                            onClick={() => updateQuantity(item.id, -1)}
+                            onClick={() =>
+                              decreaseQuantity(item._id, item.quantity)
+                            }
                             className="text-gray-500 focus:outline-none focus:text-gray-600"
                             aria-label="Decrease quantity"
                           >
@@ -129,7 +144,9 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
                           </button>
                           <p className="mx-2 text-gray-700">{item.quantity}</p>
                           <button
-                            onClick={() => updateQuantity(item.id, 1)}
+                            onClick={() =>
+                              increaseQuantity(item._id, item.quantity)
+                            }
                             className="text-gray-500 focus:outline-none focus:text-gray-600"
                             aria-label="Increase quantity"
                           >

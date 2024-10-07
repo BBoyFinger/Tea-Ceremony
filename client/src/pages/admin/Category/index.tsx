@@ -23,6 +23,21 @@ const CategoryManagement = () => {
     description: "",
     _id: "",
   });
+  const validateCategoryInfo = (categoryInfo: ICategory) => {
+    if (!categoryInfo.name) {
+      return "Name is required";
+    }
+    if (categoryInfo.name.length < 3) {
+      return "Name must be at least 3 characters long";
+    }
+    if (!categoryInfo.description) {
+      return "Description is required";
+    }
+    if (categoryInfo.description.length < 10) {
+      return "Description must be at least 10 characters long";
+    }
+    return null;
+  };
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,11 +58,10 @@ const CategoryManagement = () => {
     updatedCategory,
   } = categoryState;
 
-
   useEffect(() => {
     // Simulating API call to fetch categories
     dispatch(getCategories());
-    dispatch(resetCategoryState())
+    dispatch(resetCategoryState());
   }, [dispatch]);
 
   useEffect(() => {
@@ -87,6 +101,11 @@ const CategoryManagement = () => {
   };
 
   const handleSubmit = async () => {
+    const validationError = validateCategoryInfo(categoryInfo!);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
     if (categoryInfo?._id) {
       //Edit
       const payload = {
@@ -95,8 +114,7 @@ const CategoryManagement = () => {
         description: categoryInfo?.description,
       };
       await dispatch(updateCategory(payload));
-      await dispatch(resetCategoryState())
-      
+      await dispatch(resetCategoryState());
     } else {
       //create
       const payload = {
@@ -104,10 +122,10 @@ const CategoryManagement = () => {
         description: categoryInfo?.description,
       };
       await dispatch(createCategory(payload));
-      await dispatch(resetCategoryState())
+      await dispatch(resetCategoryState());
     }
     await dispatch(getCategories());
-    
+
     closeModal();
   };
 
