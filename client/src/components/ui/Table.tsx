@@ -111,7 +111,7 @@ function Table({
                     />
                   ) : column.key === "images" ? (
                     <img
-                      src={item.images[0].url}
+                      src={item.images[0]?.url}
                       alt=""
                       className="w-20 h-20"
                     />

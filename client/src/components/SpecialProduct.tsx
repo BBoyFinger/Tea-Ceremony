@@ -72,8 +72,8 @@ const SpecialProduct = ({
                     className="transition-transform duration-300 transform hover:scale-105 cursor-pointer"
                   >
                     <img
-                      src={product.images && product.images[0].url}
-                      alt={product.images && product.images[0].title}
+                      src={product.images && product.images[0]?.url}
+                      alt={product.images && product.images[0]?.title}
                       className="w-[full] h-auto object-contain mb-2"
                     />
                     <h2 className="capitalize">{product.productName}</h2>

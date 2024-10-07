@@ -5,7 +5,7 @@ import { IProduct } from "../utils/type";
 const ProductSchema: Schema<IProduct> = new Schema(
   {
     productName: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String, required: false },
     price: { type: Number, required: true },
     quantity: { type: Number, required: true, default: 0 },
     images: [
@@ -19,7 +19,7 @@ const ProductSchema: Schema<IProduct> = new Schema(
       ref: "Category", // Liên kết với model Category
       required: true,
     },
-    material: { type: String, required: true },
+    material: { type: String, required: false },
     stockQuantity: { type: Number, required: true }, // Số lượng hàng tồn kho
     availability: { type: String, required: true }, // Trạng thái hàng hóa (ví dụ: "còn hàng", "hết hàng")
     averageRating: { type: Number, default: 0 }, // Điểm đánh giá trung bình của sản phẩm

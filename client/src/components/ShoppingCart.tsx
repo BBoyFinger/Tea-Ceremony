@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { FaShoppingBag, FaPlus, FaMinus, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { IProduct } from "../types/product.types";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
+import { updateCartProduct, viewProductCart } from "../features/auth/authSlice";
 
 interface CartItem {
   count: any;
@@ -10,6 +13,8 @@ interface CartItem {
 }
 
 const ShoppingCart = ({ count, userId, products }: CartItem) => {
+  const dispatch: AppDispatch = useDispatch();
+  console.log(products);
   const [isOpen, setIsOpen] = useState(false);
   const [cartItems, setCartItems] = useState([
     {
@@ -30,19 +35,21 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
     },
   ]);
 
-  const toggleCart = () => setIsOpen(!isOpen);
-
-  const updateQuantity = (id: any, change: any) => {
-    setCartItems((prevItems) =>
-      prevItems
-        .map((item) =>
-          item.id === id
-            ? { ...item, quantity: Math.max(0, item.quantity + change) }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
+  const increaseQuantity = async (id: any, currentQuantity: number) => {
+    const newQuantity = currentQuantity + 1;
+    await dispatch(updateCartProduct({ productId: id, newQuantity }));
+    await dispatch(viewProductCart());
   };
+
+  const decreaseQuantity = async (id: any, currentQuantity: number) => {
+    if (currentQuantity >= 2) {
+      const newQuantity = currentQuantity - 1;
+      await dispatch(updateCartProduct({ productId: id, newQuantity }));
+      await dispatch(viewProductCart());
+    }
+  };
+
+  const toggleCart = () => setIsOpen(!isOpen);
 
   const removeItem = (id: any) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
@@ -97,7 +104,6 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
             ) : (
               <ul className="divide-y divide-gray-200">
                 {products?.map((item: any) => (
-                  
                   <li key={item._id} className="py-6 flex">
                     <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
                       <img
@@ -112,14 +118,16 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
                         <div className="flex justify-between text-base font-medium text-gray-900">
                           <h3>{item.productId?.productName}</h3>
                           <p className="ml-4">
-                            ${(item.productId?.price * item.productId?.quantity)}
+                            ${item.productId?.price * item.productId?.quantity}
                           </p>
                         </div>
                       </div>
                       <div className="flex-1 flex items-end justify-between text-sm">
                         <div className="flex items-center">
                           <button
-                            onClick={() => updateQuantity(item.id, -1)}
+                            onClick={() =>
+                              decreaseQuantity(item._id, item.quantity)
+                            }
                             className="text-gray-500 focus:outline-none focus:text-gray-600"
                             aria-label="Decrease quantity"
                           >
@@ -127,7 +135,9 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
                           </button>
                           <p className="mx-2 text-gray-700">{item.quantity}</p>
                           <button
-                            onClick={() => updateQuantity(item.id, 1)}
+                            onClick={() =>
+                              increaseQuantity(item._id, item.quantity)
+                            }
                             className="text-gray-500 focus:outline-none focus:text-gray-600"
                             aria-label="Increase quantity"
                           >

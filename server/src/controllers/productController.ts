@@ -15,8 +15,8 @@ export const productController = {
         });
       }
 
-      const updateProduct = new ProductModel(req.body);
-      const saveProduct = await updateProduct.save();
+      const createProduct = new ProductModel(req.body);
+      const saveProduct = await createProduct.save();
 
       return res.status(HttpStatusCode.Created).json({
         message: "Create product successfully!",

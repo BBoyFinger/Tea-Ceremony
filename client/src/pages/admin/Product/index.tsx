@@ -21,8 +21,11 @@ import uploadImage from "../../../utils/uploadImage";
 import { ImSpinner3 } from "react-icons/im";
 
 const ProductManagement = () => {
+  const dispatch: AppDispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [UploadImageInput, setUploadImageInput] = useState("");
+  const defaultProduct =
+    "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg";
 
   const [searchField, setSearchField] = useState({
     productName: "",
@@ -42,7 +45,6 @@ const ProductManagement = () => {
     { key: "createdAt", label: "Created Date", sortable: true }, // Ngày tạo
   ];
 
-  const dispatch: AppDispatch = useDispatch();
   const productState = useSelector((state: RootState) => state.productReducer);
   const [selectedProduct, setSelectedProduct] = useState<string[]>([]);
   const categoryState = useSelector(
@@ -66,8 +68,8 @@ const ProductManagement = () => {
     quantity: 0,
     images: [
       {
-        url: "",
-        title: "",
+        url: defaultProduct,
+        title: "Default Image ",
       },
     ],
     category: "",
@@ -81,6 +83,58 @@ const ProductManagement = () => {
     isFeatured: false,
     brand: "",
   });
+
+  const validateProductForm = (product: IProduct): string | null => {
+    if (!product.productName || product.productName.trim() === "") {
+      return "Product name is required and Product name must be gather then 5 character";
+    }
+
+    if (product.productName.length < 5) {
+      return "Name must be at least 5 characters long";
+    }
+
+    if (!product.price || product.price <= 0) {
+      return "Price must be greater than zero.";
+    }
+
+    if (!product.quantity || product.quantity < 0) {
+      return "Quantity must be zero or greater.";
+    }
+
+    if (!product.category || typeof product.category !== "string") {
+      return "Category is required.";
+    }
+
+    if (!product.stockQuantity || product.stockQuantity < 0) {
+      return "Stock Quantity must be zero or greater.";
+    }
+
+    if (!product.availability || typeof product.availability !== "string") {
+      return "Availability is required.";
+    }
+
+    if (product.images && product.images.length > 0) {
+      for (let i = 0; i < product.images.length; i++) {
+        if (!product.images[i].url) {
+          return `Image URL is required for image ${i + 1}.`;
+        }
+      }
+    }
+
+    if (product.stockQuantity && product.stockQuantity < 0) {
+      return "Stock quantity must be zero or greater.";
+    }
+
+    if (product.discount && (product.discount < 0 || product.discount > 100)) {
+      return "Discount must be between 0 and 100.";
+    }
+
+    if (!product.brand || product.brand.trim() === "") {
+      return "Brand is required.";
+    }
+
+    return null;
+  };
 
   useEffect(() => {
     dispatch(getProducts());
@@ -118,17 +172,25 @@ const ProductManagement = () => {
   const handleImageUpload = async (e: any) => {
     const file = e.target.files[0];
 
+    if (!file) {
+      // Nếu không có file nào được chọn, không làm gì cả
+      return;
+    }
+
     setUploadImageInput(file?.name);
 
     const uploadImageFormCloudinary = await uploadImage(file);
 
-    console.log("url", uploadImageFormCloudinary.url);
-
     setProductInfo((prev: any) => {
+      // Lọc ra hình ảnh mặc định nếu nó đã có trong mảng
+      // const updatedImages = prev.images.filter(
+      //   (image: any) => image.url !== defaultProduct
+      // );
+
       return {
         ...prev,
         images: [
-          ...(prev?.images || []),
+          // ...updatedImages,
           { url: uploadImageFormCloudinary.url, title: file.name },
         ],
       };
@@ -173,6 +235,12 @@ const ProductManagement = () => {
   };
 
   const handleSubmit = async () => {
+    const error = validateProductForm(productInfo);
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
     if (productInfo?._id) {
       console.log("edit product");
       const payload = {
@@ -186,7 +254,6 @@ const ProductManagement = () => {
         material: productInfo.material,
         stockQuantity: productInfo.stockQuantity,
         availability: productInfo.availability,
-        averageRating: productInfo.averageRating,
         discount: productInfo.discount,
         isFeatured: productInfo.isFeatured,
         brand: productInfo.brand,
@@ -197,15 +264,14 @@ const ProductManagement = () => {
       console.log("add product");
       const payload = {
         productName: productInfo?.productName,
-        description: productInfo?.description,
+        description: productInfo.description,
         price: productInfo?.price,
         quantity: productInfo?.quantity,
         images: productInfo?.images,
         category: productInfo?.category,
-        material: productInfo?.material,
+        material: productInfo.material,
         stockQuantity: productInfo?.stockQuantity,
         availability: productInfo?.availability,
-        averageRating: productInfo?.averageRating,
         discount: productInfo?.discount,
         isFeatured: productInfo?.isFeatured,
         brand: productInfo?.brand,
@@ -295,6 +361,9 @@ const ProductManagement = () => {
               onChange={handleSearchInputChange}
               className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
+              <option defaultValue={""} className="text-sm">
+                Select availability
+              </option>
               <option value={"instock"} className="text-sm">
                 In Stock
               </option>
@@ -437,7 +506,9 @@ const ProductManagement = () => {
               <select
                 id="category"
                 name="category"
-                value={productInfo?.category}
+                value={
+                  productInfo?.category ? productInfo.category.toString() : ""
+                }
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
@@ -497,14 +568,24 @@ const ProductManagement = () => {
               <select
                 id="availability"
                 name="availability"
-                value={productInfo?.availability}
-                defaultValue={productInfo?.availability}
+                value={
+                  productInfo?.availability
+                    ? productInfo.availability.toString()
+                    : ""
+                }
                 required
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="In Stock">In Stock</option>
-                <option value="Out of Stock">Out of Stock</option>
+                <option defaultValue="" className="text-sm">
+                  Select availability
+                </option>
+                <option value="In Stock" className="text-sm">
+                  In Stock
+                </option>
+                <option value="Out of Stock" className="text-sm">
+                  Out of Stock
+                </option>
               </select>
             </div>
 
