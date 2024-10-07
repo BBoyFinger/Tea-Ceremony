@@ -44,7 +44,6 @@ const CartPage = () => {
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
-  
 
   useEffect(() => {
     dispatch(viewProductCart());

@@ -12,6 +12,7 @@ import { Menu, MenuButton, MenuItems } from "@headlessui/react";
 import { ROLE } from "../utils/User";
 import Context from "../context";
 import Cart from "./ShoppingCart";
+import ProductSearch from "./SearchProduct";
 
 type Props = {};
 
@@ -54,7 +55,7 @@ const Header = (props: Props) => {
           <span className="text-xl hidden md:inline-block">Teaware Shop</span>
         </Link>
         {/* Search */}
-        <div className="hidden lg:flex w-full items-center justify-between max-w-sm border rounded-full pl-2 focus-within:shadow">
+        {/* <div className="hidden lg:flex w-full items-center justify-between max-w-sm border rounded-full pl-2 focus-within:shadow">
           <input
             type="text"
             placeholder="Search product here..."
@@ -64,7 +65,8 @@ const Header = (props: Props) => {
           <div className="text-lg min-w-[50px] h-[32px] flex items-center justify-center rounded-r-full bg-[#bd3030] text-white cursor-pointer ">
             <IoSearchOutline />
           </div>
-        </div>
+        </div> */}
+        <ProductSearch />
         {/* Cart User */}
         <div className="flex gap-4 items-center justify-center">
           <div className="">

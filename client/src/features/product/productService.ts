@@ -40,6 +40,13 @@ const getProductByCategory = async (category: string) => {
   return respose.data.data;
 };
 
+const searchProducts = async (query: string) => {
+  const response = await axiosInstance.get(`products/search`, {
+    params: { query },
+  });
+  return response.data.data;
+};
+
 const getProductBestReviews = async () => {
   const respose = await axiosInstance.get(`/products/best-reviewed`);
   return respose.data.data;
@@ -83,4 +90,5 @@ export const productService = {
   getProductBestReviews,
   getProductBestSellers,
   getProductNewArrivals,
+  searchProducts,
 };

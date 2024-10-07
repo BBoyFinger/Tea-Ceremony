@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { searchProduct } from "../features/product/productSlice";
+import { IProduct } from "../types/product.types";
+import { Link } from "react-router-dom";
 
 const ProductSearch = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const productState = useSelector((state: RootState) => state.productReducer);
+  const { searchProducts } = productState;
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [error, setError] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null);
 
@@ -23,34 +31,28 @@ const ProductSearch = () => {
 
   useEffect(() => {
     if (searchTerm.length > 0) {
-      const filteredSuggestions = dummyProducts.filter((product) =>
-        product.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions);
-      setError(filteredSuggestions.length === 0 ? "No results found" : "");
-    } else {
-      setSuggestions([]);
-      setError("");
+      dispatch(searchProduct(searchTerm));
     }
   }, [searchTerm]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
+    const { value } = e.target;
     setSearchTerm(e.target.value);
   };
 
   const handleClearInput = () => {
     setSearchTerm("");
     setSuggestions([]);
-    setError("");
-    inputRef.current.focus();
+
+    // inputRef.current.focus();
   };
 
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = (suggestion: any) => {
     setSearchTerm(suggestion);
     setSuggestions([]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     // Implement search logic here
     console.log("Searching for:", searchTerm);
@@ -58,7 +60,7 @@ const ProductSearch = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-4">
-      <form onSubmit={handleSubmit} className="relative">
+      <form onSubmit={handleSubmit}>
         <div className="relative">
           <input
             ref={inputRef}
@@ -69,7 +71,7 @@ const ProductSearch = () => {
             onBlur={() => setTimeout(() => setIsFocused(false), 200)}
             placeholder="Search products..."
             aria-label="Search products"
-            className="w-full py-3 px-4 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ease-in-out shadow-sm"
+            className="hidden md:inline-block min-w-96 py-2 px-3 pr-12 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ease-in-out shadow-sm"
           />
           {searchTerm && (
             <button
@@ -83,28 +85,43 @@ const ProductSearch = () => {
           )}
           <button
             type="submit"
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
+            className="absolute hidden md:inline-block right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
             aria-label="Submit search"
           >
             <FaSearch />
           </button>
         </div>
-        {error && (
-          <p className="text-red-500 mt-2 text-sm animate-pulse">{error}</p>
-        )}
-        {isFocused && suggestions.length > 0 && (
-          <ul className="absolute z-10 w-full bg-white mt-1 rounded-lg shadow-lg border border-gray-200 max-h-60 overflow-y-auto">
-            {suggestions.map((suggestion, index) => (
-              <li
-                key={index}
-                onClick={() => handleSuggestionClick(suggestion)}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-150 ease-in-out"
-              >
-                {suggestion}
-              </li>
-            ))}
-          </ul>
-        )}
+
+        {isFocused && searchProducts.length > 0 ? (
+          <div className="absolute min-h-[420px] w-full z-[9999] bg-white left-0 top-[95px] py-4 px-3 ">
+            <div className="container grid grid-cols-3 lg:grid-cols-8 items-center justify-center ">
+              {searchProducts.map((product: IProduct) => (
+                <Link
+                  to={`products/${product._id}`}
+                  key={product._id}
+                  className="min-w-36 container leading-5 flex gap-3 flex-col justify-center items-center"
+                >
+                  <div className="">
+                    <img
+                      src={product.images && product?.images[0]?.url}
+                      alt={product.images && product?.images[0]?.title}
+                      className="w-full h-auto object-contain rounded-3xl"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-black">{product.productName}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : isFocused && searchProducts.length === 0 ? (
+          <div className="absolute min-h-[420px] w-full z-[9999] bg-white left-0 top-[95px] py-4 px-3 ">
+            <div className="container grid grid-cols-3 lg:grid-cols-8 items-center justify-center ">
+              <p className="text-red-600">No product found!</p>
+            </div>
+          </div>
+        ) : null}
       </form>
     </div>
   );

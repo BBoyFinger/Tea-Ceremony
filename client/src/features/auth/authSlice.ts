@@ -69,11 +69,11 @@ export const userAddCart = createAsyncThunk(
 export const updateCartProduct = createAsyncThunk(
   "userUpdateProductToCart",
   async (
-    { productId }: { productId: string; newQuantity: number },
+    { productId, newQuantity }: { productId: string; newQuantity: number },
     thunkApi
   ) => {
     try {
-      return await authService.deleteCartProduct(productId);
+      return await authService.updateCartProduct(productId, newQuantity);
     } catch (error: any) {
       return thunkApi.rejectWithValue(
         error.response?.data?.message || error.message

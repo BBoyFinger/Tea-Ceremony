@@ -7,8 +7,7 @@ import Context from "../context";
 
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { updateCartProduct, viewProductCart } from "../features/auth/authSlice";
-
+import { deleteCartProduct, updateCartProduct, viewProductCart } from "../features/auth/authSlice";
 
 interface CartItem {
   count: any;
@@ -17,13 +16,8 @@ interface CartItem {
 }
 
 const ShoppingCart = ({ count, userId, products }: CartItem) => {
-<<<<<<< HEAD
- 
-
-=======
   const dispatch: AppDispatch = useDispatch();
-  console.log(products);
->>>>>>> 18d8c73c4efe1b1946309be59ac28ae9b3fb79e3
+
   const [isOpen, setIsOpen] = useState(false);
   const [cartItems, setCartItems] = useState([
     {
@@ -51,6 +45,7 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
   };
 
   const decreaseQuantity = async (id: any, currentQuantity: number) => {
+    
     if (currentQuantity >= 2) {
       const newQuantity = currentQuantity - 1;
       await dispatch(updateCartProduct({ productId: id, newQuantity }));
@@ -60,8 +55,11 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
 
   const toggleCart = () => setIsOpen(!isOpen);
 
-  const removeItem = (id: any) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  const removeProduct = (id: any) => {
+    if(window.confirm("Are u want to delete this product in cart?")){
+      dispatch(deleteCartProduct(id));
+      dispatch(viewProductCart());
+    }
   };
 
   const getTotalPrice = () =>
@@ -89,7 +87,7 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
         <FaShoppingBag className="w-6 h-6" />
         {userId && (
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-            {count}
+            {count }
           </span>
         )}
       </button>
@@ -157,7 +155,7 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
                         <div className="flex">
                           <button
                             type="button"
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => removeProduct(item._id)}
                             className="font-medium text-indigo-600 hover:text-indigo-500"
                           >
                             Remove

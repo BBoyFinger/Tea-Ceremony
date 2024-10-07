@@ -29,6 +29,26 @@ export const productController = {
     }
   },
 
+  searchProduct: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const {query} = req.query;
+
+      const products = await ProductModel.find({
+        $or: [
+          { productName: { $regex: query, $options: 'i' } }, // 'i' để không phân biệt chữ hoa, chữ thường
+        ]
+      })
+      return res.status(HttpStatusCode.OK).json({
+        message: "Search product Successfully",
+        data: products
+      })
+    } catch (error) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error,
+      });
+    }
+  },
+
   getAllProducts: async (req: Request, res: Response): Promise<Response> => {
     try {
       const products = await ProductModel.find()

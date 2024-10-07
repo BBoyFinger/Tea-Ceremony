@@ -25,7 +25,7 @@ const Home = (props: Props) => {
   const {
     bestReviewProduct,
     bestSellerProduct,
-    featuredProdct,
+    featuredProduct,
     newArrivalProduct,
     isLoading,
   } = productState;
@@ -123,14 +123,14 @@ const Home = (props: Props) => {
         { products: bestSellerProduct, title: "Best Sellers" },
         { products: newArrivalProduct, title: "Newest Additions" },
         { products: bestReviewProduct, title: "Best Reviewed" },
-        { products: featuredProdct, title: "Featured Product" },
+        { products: featuredProduct, title: "Featured Product" },
       ].every((item) => item.products?.length > 0) && (
         <>
           {[
             { products: bestSellerProduct, title: "Best Sellers" },
             { products: newArrivalProduct, title: "Newest Additions" },
             { products: bestReviewProduct, title: "Best Reviewed" },
-            { products: featuredProdct, title: "Featured Product" },
+            { products: featuredProduct, title: "Featured Product" },
           ].map((item, index) => (
             <>
               <div className="container clear-both w-full h-[1px] my-[20px] bg-[#d7d9dd]"></div>

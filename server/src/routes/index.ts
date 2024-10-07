@@ -52,6 +52,7 @@ router.put("/product/:id", authMiddleware, productController.updateProduct);
 router.delete("/product", authMiddleware, productController.deleteProducts);
 router.get("/product", productController.getAllProducts);
 router.get("/product/:id", productController.getProductById);
+router.get("/products/search/", productController.searchProduct);
 router.get(
   "/products/category/:category",
   productController.getProductByCategory

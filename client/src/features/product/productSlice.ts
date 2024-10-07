@@ -6,6 +6,7 @@ interface IProductState {
   product: IProduct | null;
   products: IProduct[];
   isLoading: boolean;
+  searchProducts: [];
   productByCategory: any;
   updatedProduct: any;
   deletedProduct: any;
@@ -13,7 +14,7 @@ interface IProductState {
   bestReviewProduct: any;
   bestSellerProduct: any;
   newArrivalProduct: any;
-  featuredProdct: any;
+  featuredProduct: any;
   isError: boolean;
   isSuccess: boolean;
   message: string;
@@ -24,6 +25,7 @@ const initialState: IProductState = {
   products: [],
   productByCategory: [],
   isLoading: false,
+  searchProducts: [],
   isError: false,
   isSuccess: false,
   updatedProduct: null,
@@ -31,7 +33,7 @@ const initialState: IProductState = {
   createdProduct: null,
   bestReviewProduct: null,
   bestSellerProduct: null,
-  featuredProdct: null,
+  featuredProduct: null,
   newArrivalProduct: null,
   message: "",
 };
@@ -52,6 +54,17 @@ export const getProductById = createAsyncThunk(
   async (id: string, thunkApi) => {
     try {
       return await productService.getProductById(id);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const searchProduct = createAsyncThunk(
+  "search-product",
+  async (query: string, thunkApi) => {
+    try {
+      return await productService.searchProducts(query);
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }
@@ -278,9 +291,24 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
-        state.featuredProdct = action.payload;
+        state.featuredProduct = action.payload;
       })
       .addCase(getFeaturedProducts.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.message = action.error.message as string;
+      })
+      .addCase(searchProduct.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(searchProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.searchProducts = action.payload;
+      })
+      .addCase(searchProduct.rejected, (state, action) => {
         state.isError = true;
         state.isSuccess = false;
         state.isLoading = false;
