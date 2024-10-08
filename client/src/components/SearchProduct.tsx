@@ -16,18 +16,6 @@ const ProductSearch = () => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef(null);
 
-  const dummyProducts = [
-    "Smartphone",
-    "Laptop",
-    "Headphones",
-    "Smart Watch",
-    "Tablet",
-    "Camera",
-    "Bluetooth Speaker",
-    "Gaming Console",
-    "Fitness Tracker",
-    "Wireless Earbuds",
-  ];
 
   useEffect(() => {
     if (searchTerm.length > 0) {
@@ -77,7 +65,7 @@ const ProductSearch = () => {
             onBlur={() => setTimeout(() => setIsFocused(false), 200)}
             placeholder="Search products..."
             aria-label="Search products"
-            className="md:inline-block w-full xl:min-w-96 py-2 px-3 pr-12 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ease-in-out shadow-sm"
+            className=" w-full xl:min-w-96 py-2 px-3 pr-12 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ease-in-out shadow-sm"
           />
           {searchTerm && (
             <button

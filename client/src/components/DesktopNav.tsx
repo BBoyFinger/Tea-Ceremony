@@ -1,11 +1,29 @@
-import React from 'react'
+import React from "react";
+import { Link } from "react-router-dom";
 
-type Props = {}
+type Props = {};
 
 const DesktopNav = (props: Props) => {
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Products", path: "/products" },
+    { name: "Blog", path: "/blog" },
+    { name: "About Us", path: "/about" },
+    { name: "Contact", path: "/contact" },
+  ];
   return (
-    <div>DesktopNav</div>
-  )
-}
+    <div className="bg-[#db8f32]">
+      <nav className="shadow-2xl text-white">
+        <ul className="hidden lg:flex flex-row justify-center items-center gap-6 text-base">
+          {navLinks.map((link) => (
+            <li key={link.path} className="py-[10px]">
+              <Link to={link.path}>{link.name}</Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  );
+};
 
-export default DesktopNav
+export default DesktopNav;

@@ -5,6 +5,8 @@ import {
   RiContactsBook3Line,
   RiProductHuntLine,
 } from "react-icons/ri";
+import { CiLogin } from "react-icons/ci";
+
 import Logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
 
@@ -54,6 +56,11 @@ const MobileNav = (props: Props) => {
       path: "/contact",
       icon: <RiContactsBook3Line />,
     },
+    {
+      name: "Login",
+      path: "/login",
+      icon: <CiLogin />,
+    },
   ];
   return (
     <>
@@ -64,7 +71,7 @@ const MobileNav = (props: Props) => {
       >
         <div className="container mx-auto px-4">
           <button
-            className="md:hidden text-white hover:text-blue-600 transition-colors duration-300"
+            className="lg:hidden text-white hover:text-blue-600 transition-colors duration-300"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
