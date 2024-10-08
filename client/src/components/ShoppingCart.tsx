@@ -3,40 +3,37 @@ import { FaShoppingBag, FaPlus, FaMinus, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { IProduct } from "../types/product.types";
 
-import Context from "../context";
-
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
-import { deleteCartProduct, updateCartProduct, viewProductCart } from "../features/auth/authSlice";
+import {
+  deleteCartProduct,
+  updateCartProduct,
+} from "../features/auth/authSlice";
 
 interface CartItem {
   count: any;
   userId: any;
   products: any;
+  viewProductCart: any;
 }
 
-const ShoppingCart = ({ count, userId, products }: CartItem) => {
+const ShoppingCart = ({
+  count,
+  userId,
+  products,
+  viewProductCart,
+}: CartItem) => {
   const dispatch: AppDispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Premium Headphones",
-      price: 199.99,
-      quantity: 1,
-      image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    },
-    {
-      id: 2,
-      name: "Smartwatch",
-      price: 299.99,
-      quantity: 2,
-      image:
-        "https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1399&q=80",
-    },
-  ]);
+
+  const fetchViewCart = async () => {
+    await dispatch(viewProductCart());
+  };
+
+  useEffect(() => {
+    fetchViewCart();
+  }, [dispatch]);
 
   const increaseQuantity = async (id: any, currentQuantity: number) => {
     const newQuantity = currentQuantity + 1;
@@ -45,7 +42,6 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
   };
 
   const decreaseQuantity = async (id: any, currentQuantity: number) => {
-    
     if (currentQuantity >= 2) {
       const newQuantity = currentQuantity - 1;
       await dispatch(updateCartProduct({ productId: id, newQuantity }));
@@ -56,16 +52,11 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
   const toggleCart = () => setIsOpen(!isOpen);
 
   const removeProduct = (id: any) => {
-    if(window.confirm("Are u want to delete this product in cart?")){
+    if (window.confirm("Are u want to delete this product in cart?")) {
       dispatch(deleteCartProduct(id));
       dispatch(viewProductCart());
     }
   };
-
-  const getTotalPrice = () =>
-    cartItems
-      .reduce((total, item) => total + item.price * item.quantity, 0)
-      .toFixed(2);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -87,7 +78,7 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
         <FaShoppingBag className="w-6 h-6" />
         {userId && (
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-            {count }
+            {count}
           </span>
         )}
       </button>
@@ -171,7 +162,7 @@ const ShoppingCart = ({ count, userId, products }: CartItem) => {
             <div className="mt-8">
               <div className="flex justify-between text-base font-medium text-gray-900">
                 <p>Subtotal</p>
-                <p>${getTotalPrice()}</p>
+                <p>$ 120</p>
               </div>
               <p className="mt-0.5 text-sm text-gray-500">
                 Shipping and taxes calculated at checkout.

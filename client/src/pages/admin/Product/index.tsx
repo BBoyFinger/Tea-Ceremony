@@ -24,6 +24,16 @@ const ProductManagement = () => {
   const dispatch: AppDispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [UploadImageInput, setUploadImageInput] = useState("");
+  const [productName, setProductName] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+
+  const filter = {
+    productName: productName,
+    minPrice: minPrice,
+    maxPrice: maxPrice,
+  };
+
   const defaultProduct =
     "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg";
 
@@ -137,7 +147,7 @@ const ProductManagement = () => {
   };
 
   useEffect(() => {
-    dispatch(getProducts());
+    dispatch(getProducts(filter));
     dispatch(getCategories());
     dispatch(resetProductState());
   }, [dispatch, isLoading]);
@@ -210,7 +220,7 @@ const ProductManagement = () => {
     if (window.confirm("Are u sure delete this product?")) {
       await dispatch(deleteProduct(id));
       toast.success("Delete Product Successfully!");
-      dispatch(getProducts());
+      dispatch(getProducts(filter));
     }
   };
 
@@ -230,7 +240,7 @@ const ProductManagement = () => {
     ) {
       await dispatch(deleteProduct(selectedProduct));
       toast.success("Delete products successfully!");
-      dispatch(getProducts());
+      dispatch(getProducts(filter));
     }
   };
 
@@ -280,7 +290,7 @@ const ProductManagement = () => {
       await dispatch(resetProductState());
     }
 
-    await dispatch(getProducts());
+    await dispatch(getProducts(filter));
     setIsModalOpen(false);
   };
 

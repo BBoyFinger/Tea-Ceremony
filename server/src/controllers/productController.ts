@@ -4,6 +4,14 @@ import HttpStatusCode from "../utils/HttpStatusCode";
 import uploadProductPermission from "../utils/permission";
 import CategoryModel from "../models/categoryModel";
 
+interface Filter {
+  productName?: { $regex: string; $options: string };
+  price?: {
+    $gte?: number;
+    $lte?: number;
+  };
+}
+
 export const productController = {
   createProduct: async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -31,17 +39,19 @@ export const productController = {
 
   searchProduct: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const {query} = req.query;
+      const { query } = req.query;
 
       const products = await ProductModel.find({
         $or: [
-          { productName: { $regex: query, $options: 'i' } }, // 'i' để không phân biệt chữ hoa, chữ thường
-        ]
-      })
+          {
+            productName: { $regex: query, $options: "i" },
+          }, // 'i' để không phân biệt chữ hoa, chữ thường
+        ],
+      });
       return res.status(HttpStatusCode.OK).json({
         message: "Search product Successfully",
-        data: products
-      })
+        data: products,
+      });
     } catch (error) {
       return res.status(HttpStatusCode.InternalServerError).json({
         message: error,
@@ -51,7 +61,23 @@ export const productController = {
 
   getAllProducts: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const products = await ProductModel.find()
+      const { minPrice, maxPrice } = req.query;
+
+      const productName = typeof req.query.productName === 'string' ? req.query.productName : '';
+
+      let filter: Filter = {};
+
+      // Lọc theo tên sản phẩm (nếu có)
+      if (productName) {
+        filter.productName = { $regex: productName, $options: "i" };
+      }
+
+      if (minPrice || maxPrice) {
+        filter.price = {};
+        if (minPrice) filter.price.$gte = Number(minPrice);
+        if (maxPrice) filter.price.$lte = Number(maxPrice);
+      }
+      const products = await ProductModel.find(filter)
         .populate("category")
         .sort({ createdAt: -1 });
       return res.status(HttpStatusCode.OK).json({

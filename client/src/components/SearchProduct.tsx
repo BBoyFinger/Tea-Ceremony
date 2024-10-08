@@ -35,6 +35,17 @@ const ProductSearch = () => {
     }
   }, [searchTerm]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: any) => {
+      if (event.key === "Escape" && isFocused) {
+        setIsFocused(false);
+        setSearchTerm("");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isFocused]);
+
   const handleInputChange = (e: any) => {
     const { value } = e.target;
     setSearchTerm(e.target.value);
@@ -47,11 +58,6 @@ const ProductSearch = () => {
     // inputRef.current.focus();
   };
 
-  const handleSuggestionClick = (suggestion: any) => {
-    setSearchTerm(suggestion);
-    setSuggestions([]);
-  };
-
   const handleSubmit = (e: any) => {
     e.preventDefault();
     // Implement search logic here
@@ -59,7 +65,7 @@ const ProductSearch = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
+    <div className="max-w-3xl mx-auto h-auto">
       <form onSubmit={handleSubmit}>
         <div className="relative">
           <input
@@ -71,7 +77,7 @@ const ProductSearch = () => {
             onBlur={() => setTimeout(() => setIsFocused(false), 200)}
             placeholder="Search products..."
             aria-label="Search products"
-            className="hidden md:inline-block min-w-96 py-2 px-3 pr-12 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ease-in-out shadow-sm"
+            className="md:inline-block w-full xl:min-w-96 py-2 px-3 pr-12 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ease-in-out shadow-sm"
           />
           {searchTerm && (
             <button
@@ -85,7 +91,7 @@ const ProductSearch = () => {
           )}
           <button
             type="submit"
-            className="absolute hidden md:inline-block right-3 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
+            className="absolute md:inline-block right-3 top-1/2 transform -translate-y-1/2 bg-[#a66920] text-white p-2 rounded-full hover:bg-[#a66a25f0] focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ease-in-out"
             aria-label="Submit search"
           >
             <FaSearch />
@@ -99,7 +105,7 @@ const ProductSearch = () => {
                 <Link
                   to={`products/${product._id}`}
                   key={product._id}
-                  className="min-w-36 container leading-5 flex gap-3 flex-col justify-center items-center"
+                  className="min-w-36 container leading-5 flex gap-3 flex-col justify-center items-center group  font-normal transition-transform duration-300 transform hover:scale-105"
                 >
                   <div className="">
                     <img
@@ -109,7 +115,9 @@ const ProductSearch = () => {
                     />
                   </div>
                   <div>
-                    <p className="text-black">{product.productName}</p>
+                    <p className="text-black group-hover:text-[#a66920]">
+                      {product.productName}
+                    </p>
                   </div>
                 </Link>
               ))}
@@ -117,7 +125,7 @@ const ProductSearch = () => {
           </div>
         ) : isFocused && searchProducts.length === 0 ? (
           <div className="absolute min-h-[420px] w-full z-[9999] bg-white left-0 top-[95px] py-4 px-3 ">
-            <div className="container grid grid-cols-3 lg:grid-cols-8 items-center justify-center ">
+            <div className="container flex items-center justify-center ">
               <p className="text-red-600">No product found!</p>
             </div>
           </div>

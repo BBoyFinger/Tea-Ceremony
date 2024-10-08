@@ -11,43 +11,11 @@ import Context from "../context";
 
 const CartPage = () => {
   const dispatch: AppDispatch = useDispatch();
+
   const authState = useSelector((state: RootState) => state.authReducer);
   const { productsCart } = authState;
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Stylish Sunglasses",
-      price: 79.99,
-      quantity: 1,
-      image:
-        "https://images.unsplash.com/photo-1572635196237-14b3f281503f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1160&q=80",
-    },
-    {
-      id: 2,
-      name: "Leather Watch",
-      price: 129.99,
-      quantity: 2,
-      image:
-        "https://images.unsplash.com/photo-1524592094714-0f0654e20314?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1159&q=80",
-    },
-    {
-      id: 3,
-      name: "Wireless Earbuds",
-      price: 99.99,
-      quantity: 1,
-      image:
-        "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1161&q=80",
-    },
-  ]);
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
-
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [itemToRemove, setItemToRemove] = useState(null);
-
-  useEffect(() => {
-    dispatch(viewProductCart());
-  }, [dispatch]);
 
   const context = useContext(Context);
   const increaseQuantity = async (id: any, currentQuantity: number) => {
@@ -64,11 +32,15 @@ const CartPage = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(viewProductCart());
+  }, [dispatch]);
+
   const deleteProductCart = async (id: string) => {
     if (window.confirm("Are u sure delete this product in cart?")) {
       await dispatch(deleteCartProduct(id));
       await dispatch(viewProductCart());
-      context?.fetchUserAddToCart();
+      await context?.fetchUserAddToCart();
     }
   };
 
@@ -80,21 +52,6 @@ const CartPage = () => {
       setDiscount(0);
     }
   };
-
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-  const total = subtotal - discount;
-
-  useEffect(() => {
-    // Add animation class to newly added items
-    const newItem = document.querySelector(".cart-item:last-child");
-    if (newItem) {
-      newItem.classList.add("animate-fade-in");
-      setTimeout(() => newItem.classList.remove("animate-fade-in"), 500);
-    }
-  }, [cartItems]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -139,9 +96,7 @@ const CartPage = () => {
               <div className="text-right">
                 <p className="font-semibold">
                   $
-                  {(item.productId?.price * item.productId?.quantity).toFixed(
-                    2
-                  )}
+                  {(item.productId?.price * item.productId?.quantity)}
                 </p>
                 <button
                   onClick={() => deleteProductCart(item._id)}
@@ -159,17 +114,17 @@ const CartPage = () => {
             <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
             <div className="flex justify-between mb-2">
               <span>Subtotal:</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span></span>
             </div>
             {discount > 0 && (
               <div className="flex justify-between mb-2 text-green-600">
                 <span>Discount:</span>
-                <span>-${discount.toFixed(2)}</span>
+                <span>-${discount}</span>
               </div>
             )}
             <div className="flex justify-between font-semibold text-lg mt-4">
               <span>Total:</span>
-              <span>${total.toFixed(2)}</span>
+              <span></span>
             </div>
             <div className="mt-6">
               <label htmlFor="promo-code" className="block mb-2">

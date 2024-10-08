@@ -8,7 +8,7 @@ interface LogoPropsType {
 
 const Logo: React.FC<LogoPropsType> = ({ width, height }) => {
   return (
-    <div>
+    <div className="hidden xl:flex">
       <img
         src={logoImage}
         alt="logo"

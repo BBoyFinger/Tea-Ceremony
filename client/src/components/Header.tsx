@@ -13,6 +13,7 @@ import { ROLE } from "../utils/User";
 import Context from "../context";
 import Cart from "./ShoppingCart";
 import ProductSearch from "./SearchProduct";
+import MobileNav from "./MobileNav";
 
 type Props = {};
 
@@ -42,114 +43,137 @@ const Header = (props: Props) => {
     dispatch(viewProductCart());
   }, [dispatch]);
 
-  const handleSearch = (e: any) => {
-    const { value } = e.target;
-  };
-
   return (
-    <header className="h-24 shadow-2xl bg-[#db8f32]">
-      <div className="container h-full flex justify-between items-center  text-white">
-        {/* Logo */}
-        <Link to="/" className="flex items-center">
-          <Logo width={100} height={100} />
-          <span className="text-xl hidden md:inline-block">Teaware Shop</span>
-        </Link>
-        {/* Search */}
-        {/* <div className="hidden lg:flex w-full items-center justify-between max-w-sm border rounded-full pl-2 focus-within:shadow">
-          <input
-            type="text"
-            placeholder="Search product here..."
-            className="w-full outline-none bg-transparent placeholder:text-white text-white"
-            onChange={handleSearch}
-          />
-          <div className="text-lg min-w-[50px] h-[32px] flex items-center justify-center rounded-r-full bg-[#bd3030] text-white cursor-pointer ">
-            <IoSearchOutline />
-          </div>
-        </div> */}
-        <ProductSearch />
-        {/* Cart User */}
-        <div className="flex gap-4 items-center justify-center">
-          <div className="">
-            {/* User */}
-            <Menu as={"div"} className="relative text-left">
-              <div className="flex items-center">
-                {user?.pictureImg ? (
-                  <MenuButton className="cursor-pointer text-3xl">
-                    <img
-                      src={user?.pictureImg}
-                      className="w-10 h-10 rounded-full"
-                      alt={user?.name}
-                    />
-                  </MenuButton>
-                ) : (
-                  <div className="cursor-pointer text-3xl">
-                    <PiUserCircleLight />
-                  </div>
-                )}
+    <div>
+      <header className=" shadow-2xl bg-[#db8f32]">
+        <div className="container h-full text-white">
+          {/* Mobile */}
+          <div className="pt-1 pb-3">
+            <div className="flex justify-between items-center">
+              <MobileNav />
+              <div>
+                <Link to="/" className="flex items-center">
+                  <Logo width={100} height={100} />
+                  <span className="text-2xl font-semibold uppercase md:inline-block">
+                    Teaware Shop
+                  </span>
+                </Link>
               </div>
-              <MenuItems
-                transition
-                className="absolute left-0 z-20 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-              >
-                <div className="py-1">
-                  <nav>
-                    {user?.role === ROLE.ADMIN ? (
-                      <Link
-                        to={"/admin-panel"}
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
-                      >
-                        Admin Panel
-                      </Link>
-                    ) : user?.role === ROLE.CUSTOMER ? (
-                      <Link
-                        to={"/profile"}
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
-                      >
-                        Profile
-                      </Link>
-                    ) : (
-                      ""
-                    )}
-                  </nav>
-                </div>
-              </MenuItems>
-            </Menu>
+
+              <div className=" text-2xl relative cursor-pointer">
+                <Cart
+                  count={context?.userAddToCart?.count}
+                  userId={user?._id}
+                  products={productsCart}
+                  viewProductCart={viewProductCart}
+                />
+              </div>
+            </div>
+            {/* Search */}
+            <div className="xl:hidden">
+              <ProductSearch />
+            </div>
           </div>
 
-          {/* Cart*/}
-          <div className=" text-2xl relative cursor-pointer">
-            <Cart
-              count={context?.userAddToCart?.count}
-              userId={user?._id}
-              products={productsCart}
-            />
-            {/* {user?._id && (
-              <div className="bg-[#bd3030] text-white w-4 h-4 p-1 flex items-center justify-center rounded-full absolute -top-1 -right-2">
-                <p className="text-xs">{context?.userAddToCart?.count}</p>
-              </div>
-            )} */}
-          </div>
-          <div className="">
-            {user?._id ? (
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 rounded-full font-bold bg-[#bd3030] hover:opacity-[0.9] text-white "
-              >
-                {" "}
-                Logout{" "}
-              </button>
-            ) : (
-              <Link
-                to={"/login"}
-                className="px-4 py-2 rounded-full font-bold bg-[#bd3030] hover:opacity-[0.9] text-white "
-              >
-                Login
-              </Link>
-            )}
+          {/* Cart User */}
+          <div className="hidden sm:flex gap-4 items-center justify-center">
+            <div className="">
+              {/* User */}
+              <Menu as={"div"} className="relative text-left">
+                <div className="flex items-center">
+                  {user?.pictureImg ? (
+                    <MenuButton className="cursor-pointer text-3xl">
+                      <img
+                        src={user?.pictureImg}
+                        className="w-10 h-10 rounded-full"
+                        alt={user?.name}
+                      />
+                    </MenuButton>
+                  ) : (
+                    <div className="cursor-pointer text-3xl">
+                      <PiUserCircleLight />
+                    </div>
+                  )}
+                </div>
+                <MenuItems
+                  transition
+                  className="absolute left-0 z-20 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                >
+                  <div className="py-1">
+                    <nav>
+                      {user?.role === ROLE.ADMIN ? (
+                        <Link
+                          to={"/admin-panel"}
+                          className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+                        >
+                          Admin Panel
+                        </Link>
+                      ) : user?.role === ROLE.CUSTOMER ? (
+                        <Link
+                          to={"/profile"}
+                          className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
+                        >
+                          Profile
+                        </Link>
+                      ) : (
+                        ""
+                      )}
+                    </nav>
+                  </div>
+                </MenuItems>
+              </Menu>
+            </div>
+
+            {/* Cart*/}
+            <div className=" text-2xl relative cursor-pointer">
+              <Cart
+                count={context?.userAddToCart?.count}
+                userId={user?._id}
+                products={productsCart}
+                viewProductCart={viewProductCart}
+              />
+            </div>
+            <div className="">
+              {user?._id ? (
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 rounded-full font-bold bg-[#bd3030] hover:opacity-[0.9] text-white "
+                >
+                  {" "}
+                  Logout{" "}
+                </button>
+              ) : (
+                <Link
+                  to={"/login"}
+                  className="px-4 py-2 rounded-full font-bold bg-[#bd3030] hover:opacity-[0.9] text-white "
+                >
+                  Login
+                </Link>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <nav className="hidden shadow-2xl bg-[#da9643] text-white">
+        <ul className="flex flex-row justify-center items-center gap-6 text-base">
+          <li className="py-[10px]">
+            <Link to={"/"}>Home</Link>
+          </li>
+          <li className="py-[10px]">
+            <Link to={"/products"}>Products</Link>
+          </li>
+          <li className="py-[10px]">
+            <Link to={"/blog"}>Blog</Link>
+          </li>
+          <li className="py-[10px]">
+            <Link to={"/about"}>About Us</Link>
+          </li>
+          <li className="py-[10px]">
+            <Link to={"/contact"}>Contact</Link>
+          </li>
+        </ul>
+      </nav>
+    </div>
   );
 };
 

@@ -17,9 +17,12 @@ const ProductListingPage = () => {
   // const [categories, setCategories] = useState<ICategory[]>([]);
   // State để lưu danh mục đã chọn
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState("popularity");
+  const [sortBy, setSortBy] = useState("");
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [productName, setProductName] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   const dispatch: AppDispatch = useDispatch();
 
@@ -31,9 +34,15 @@ const ProductListingPage = () => {
   const { categories } = categoryState;
   const { products, productByCategory } = productState;
 
+  const filter = {
+    productName: productName,
+    minPrice: minPrice,
+    maxPrice: maxPrice,
+  };
+
   useEffect(() => {
     dispatch(getCategories());
-    dispatch(getProducts());
+    dispatch(getProducts(filter));
   }, [dispatch]);
 
   // Cập nhật selectedCategory khi categories thay đổi
@@ -46,12 +55,11 @@ const ProductListingPage = () => {
   }, [categories, dispatch]); // Chạy effect này khi categories thay đổi
 
   const handleSortChange = (e: any) => {
-    setSortBy(e.target.value);
+    const { value } = e.target;
+    if (value === "asc") {
+    }
   };
 
-  const handlePriceRangeChange = (e: any) => {
-    setPriceRange([parseInt(e.target.min), parseInt(e.target.max)]);
-  };
 
   const handleCategoryChange = (categoryName: string) => {
     setSelectedCategory(categoryName);
@@ -77,15 +85,15 @@ const ProductListingPage = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <main className="container mx-auto px-4 py-8">
-        <div >
+        <div>
           {categories.map((category: ICategory) =>
             selectedCategory === category.name ? (
               <>
-              <div className="flex flex-col gap-3">
-                <h1 className="font-semibold text-3xl">{category.name}</h1>
-                <p className="text-lg">{category.description}</p>
-              </div>
-              <div className=" clear-both w-full h-[1px] my-12 bg-[#d7d9dd]"></div>
+                <div className="flex flex-col gap-3">
+                  <h1 className="font-semibold text-3xl">{category.name}</h1>
+                  <p className="text-lg">{category.description}</p>
+                </div>
+                <div className=" clear-both w-full h-[1px] my-12 bg-[#d7d9dd]"></div>
               </>
             ) : (
               ""
@@ -111,6 +119,14 @@ const ProductListingPage = () => {
               }`}
             >
               <ul>
+                <li className="mb-2">
+                  <button
+                    className={`w-full text-left py-2 px-4 text-[#666] border-l-4 hover:bg-gray-100"
+                      `}
+                  >
+                    All
+                  </button>
+                </li>
                 {categories.map((category: ICategory) => (
                   <li key={category._id} className="mb-2">
                     <button
@@ -149,22 +165,26 @@ const ProductListingPage = () => {
                 </select>
               </div>
               <div className="w-full md:w-auto">
-                <label htmlFor="priceRange" className="mr-2">
-                  Price Range:
-                </label>
-                <input
-                  type="range"
-                  id="priceRange"
-                  className="w-full md:w-64"
-                  min="0"
-                  max="1000"
-                  step="10"
-                  value={priceRange[1]}
-                  onChange={handlePriceRangeChange}
-                />
-                <span className="ml-2">
-                  ${priceRange[0]} - ${priceRange[1]}
-                </span>
+                <form>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="sortBy"
+                      value={"asc"}
+                      onChange={handleSortChange}
+                    />
+                    <label htmlFor="">Price - Low to High</label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="sortBy"
+                      value={"dsc"}
+                      onChange={handleSortChange}
+                    />
+                    <label htmlFor="">Price - High to Low</label>
+                  </div>
+                </form>
               </div>
             </div>
 

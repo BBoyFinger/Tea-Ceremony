@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FaShoppingCart,
   FaFacebook,
@@ -11,55 +11,37 @@ import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { useParams } from "react-router-dom";
-import { getProductById } from "../../features/product/productSlice";
+import {
+  getProductByCategory,
+  getProductById,
+} from "../../features/product/productSlice";
 import RelatedProducts from "../../components/RelatedProduct";
+import Context from "../../context";
+import { addCart } from "../../features/auth/authSlice";
 
 const ProductDetailPage = () => {
+  const context = useContext(Context);
+
   const [currentImage, setCurrentImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [showMiniCart, setShowMiniCart] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const productState = useSelector((state: RootState) => state.productReducer);
-  const { product } = productState;
+  const { product, productByCategory } = productState;
 
   const params = useParams();
 
   useEffect(() => {
+    dispatch(getProductByCategory("Best Sellers"));
     if (params.id) {
       dispatch(getProductById(params.id));
     }
   }, [params.id]);
 
-  const relatedProducts = [
-    {
-      id: "1",
-      name: "Wireless Earbuds",
-      price: 89.99,
-      image: [
-        "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      ],
-    },
-    {
-      id: "2",
-      name: "Noise-Cancelling Headphones",
-      price: 249.99,
-      image: [
-        "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      ],
-    },
-    {
-      id: "3",
-      name: "Bluetooth Speaker",
-      price: 129.99,
-      image: [
-        "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      ],
-    },
-  ];
 
-  const handleAddToCart = () => {
-    setShowMiniCart(true);
-    setTimeout(() => setShowMiniCart(false), 3000);
+  const handleAddToCart = async (productId: string) => {
+    await dispatch(addCart(productId));
+    context?.fetchUserAddToCart();
   };
 
   const renderStars = (rating: any) => {
@@ -136,14 +118,11 @@ const ProductDetailPage = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={handleAddToCart}
-              className="border-2 border-[#f05338] text-black min-w-[120px] hover:text-white py-1 px-3 rounded hover:bg-[#f04138] transition-colors duration-300"
-            >
+            <button className="border-2 border-[#f05338] text-black min-w-[120px] hover:text-white py-1 px-3 rounded hover:bg-[#f04138] transition-colors duration-300">
               Buy
             </button>
             <button
-              onClick={handleAddToCart}
+              onClick={() => handleAddToCart(product?._id || "")}
               className="border-2 border-[#f05338] text-white min-w-[120px] hover:text-red-500 py-1 px-3 rounded hover:bg-white bg-[#f04138] transition-colors duration-300"
             >
               Add to Cart
@@ -200,17 +179,7 @@ const ProductDetailPage = () => {
       </div>
 
       {/* Related Products */}
-      <RelatedProducts relatedProducts={relatedProducts} />
-
-      {/* Mini Cart Preview */}
-      {showMiniCart && (
-        <div className="fixed top-4 right-4 bg-white p-4 rounded-md shadow-md">
-          <div className="flex items-center">
-            <FaShoppingCart className="text-blue-500 mr-2" />
-            <p>Item added to cart!</p>
-          </div>
-        </div>
-      )}
+      <RelatedProducts relatedProducts={productByCategory} />
     </div>
   );
 };

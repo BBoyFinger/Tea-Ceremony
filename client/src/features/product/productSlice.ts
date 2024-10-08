@@ -40,9 +40,9 @@ const initialState: IProductState = {
 
 export const getProducts = createAsyncThunk(
   "get-products",
-  async (_, thunkApi) => {
+  async (query: any, thunkApi) => {
     try {
-      return await productService.getProducts();
+      return await productService.getProducts(query);
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }

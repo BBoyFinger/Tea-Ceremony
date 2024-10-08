@@ -7,7 +7,11 @@ import { useEffect, useState } from "react";
 import axiosInstance from "./utils/axiosConfig";
 import Context from "./context";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserDetails, userAddCart, viewProductCart } from "./features/auth/authSlice";
+import {
+  setUserDetails,
+  userAddCart,
+  viewProductCart,
+} from "./features/auth/authSlice";
 import { AppDispatch, RootState } from "./store/store";
 
 function App() {
@@ -35,10 +39,18 @@ function App() {
     }
   };
 
+  const fetchViewCart = async (): Promise<void> => {
+    try {
+      await dispatch(viewProductCart());
+    } catch (error) {
+      console.error("Error view to cart:", error);
+    }
+  };
+
   useEffect(() => {
     fetchUserDetails();
     fetchUserAddToCart();
-    dispatch(viewProductCart())
+    fetchViewCart();
   }, [dispatch]);
 
   return (

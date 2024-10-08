@@ -1,10 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 type RelatedProduct = {
-  id: string;
-  name: string;
+  _id: string;
+  productName: string;
   price: number;
-  image: string[];
+  images: {
+    url: string;
+    title: string;
+  }[];
 };
 
 type Props = {
@@ -17,27 +21,28 @@ const RelatedProducts = ({ relatedProducts }: Props) => {
       <h2 className="text-2xl font-bold mb-6">Related Products</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {relatedProducts.map((relatedProduct) => (
-          <div
-            key={relatedProduct.id}
+          <Link
+            to={`/products/${relatedProduct._id}`}
+            key={relatedProduct._id}
             className="bg-white rounded-lg shadow-md overflow-hidden"
           >
             <img
-              src={relatedProduct.image[0]}
-              alt={relatedProduct.name}
+              src={relatedProduct.images[0]?.url}
+              alt={relatedProduct?.images[0]?.title}
               className="w-full h-48 object-cover"
             />
             <div className="p-4">
-              <h3 className="text-lg font-semibold mb-2">
-                {relatedProduct.name}
-              </h3>
-              <p className="text-gray-600 mb-4">
-                ${relatedProduct.price.toFixed(2)}
-              </p>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors w-full">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold mb-2">
+                  {relatedProduct.productName}
+                </h3>
+                <p className="text-gray-600 mb-4">${relatedProduct.price}</p>
+              </div>
+              <button className="bg-[#f04138] text-white px-4 py-2 rounded-md hover:bg-[#f04138] transition-colors w-full">
                 View Details
               </button>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
