@@ -6,7 +6,7 @@ type Props = {};
 const DesktopNav = (props: Props) => {
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Products", path: "/products" },
+    { name: "All Collections", path: "/products" },
     { name: "Blog", path: "/blog" },
     { name: "About Us", path: "/about" },
     { name: "Contact", path: "/contact" },
@@ -14,9 +14,9 @@ const DesktopNav = (props: Props) => {
   return (
     <div className="bg-[#db8f32]">
       <nav className="shadow-2xl text-white">
-        <ul className="hidden lg:flex flex-row justify-center items-center gap-6 text-base">
+        <ul className="hidden lg:flex flex-row justify-center items-center gap-4 text-base">
           {navLinks.map((link) => (
-            <li key={link.path} className="py-[10px]">
+            <li key={link.path} className="py-[10px] px-3">
               <Link to={link.path}>{link.name}</Link>
             </li>
           ))}

@@ -81,8 +81,8 @@ const Header = (props: Props) => {
             <div className="hidden lg:flex justify-between items-center pt-2">
               <div>
                 <Link to="/" className="flex items-center">
-                  <Logo width={100} height={100} />
-                  <span className="text-2xl font-semibold uppercase md:inline-block">
+                  <Logo width={80} height={80} />
+                  <span className="text-xl font-semibold uppercase md:inline-block">
                     Teaware Shop
                   </span>
                 </Link>

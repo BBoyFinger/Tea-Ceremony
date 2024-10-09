@@ -11,9 +11,13 @@ import Dashboard from "../pages/admin/Dashboard";
 import UserManagement from "../pages/admin/User";
 import CategoryManagement from "../pages/admin/Category";
 import ProductManagement from "../pages/admin/Product";
-import BlogManagement from "../pages/admin/Blog";
+
 import OrderManagement from "../pages/admin/Order";
 import CartPage from "../pages/Cart";
+import BlogPage from "../pages/blog";
+import AboutUs from "../pages/about";
+import ContactUs from "../pages/contact";
+import BlogManagement from "../pages/admin/Blog";
 
 const router = createBrowserRouter([
   {
@@ -82,6 +86,18 @@ const router = createBrowserRouter([
       {
         path: "/products/:id",
         element: <ProductDetailPage />,
+      },
+      {
+        path: "/blog",
+        element: <BlogPage />,
+      },
+      {
+        path: "/about",
+        element: <AboutUs />,
+      },
+      {
+        path: "/contact",
+        element: <ContactUs />,
       },
     ],
   },
