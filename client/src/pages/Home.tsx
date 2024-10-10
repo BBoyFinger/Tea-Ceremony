@@ -120,30 +120,23 @@ const Home = (props: Props) => {
       </section>
 
       {[
-        { products: bestSellerProduct, title: "Best Sellers" },
-        { products: newArrivalProduct, title: "Newest Additions" },
         { products: bestReviewProduct, title: "Best Reviewed" },
+        { products: newArrivalProduct, title: "Newest Additions" },
+        { products: bestSellerProduct, title: "Best Sellers" },
         { products: featuredProduct, title: "Featured Product" },
-      ].every((item) => item.products?.length > 0) && (
-        <>
-          {[
-            { products: bestSellerProduct, title: "Best Sellers" },
-            { products: newArrivalProduct, title: "Newest Additions" },
-            { products: bestReviewProduct, title: "Best Reviewed" },
-            { products: featuredProduct, title: "Featured Product" },
-          ].map((item, index) => (
-            <>
+      ].map(
+        (item, index) =>
+          item.products?.length > 0 && (
+            <div key={index}>
               <div className="container clear-both w-full h-[1px] my-[20px] bg-[#d7d9dd]"></div>
               <SpecialProduct
-                key={index}
                 products={item.products}
                 title={item.title}
                 isLoading={isLoading}
                 handleAddToCart={handleAddToCart}
               />
-            </>
-          ))}
-        </>
+            </div>
+          )
       )}
       <div className="container clear-both w-full h-[1px] my-[20px] bg-[#d7d9dd]"></div>
     </div>

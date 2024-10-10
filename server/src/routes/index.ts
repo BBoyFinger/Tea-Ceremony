@@ -5,6 +5,7 @@ import categoryController from "../controllers/categoryController";
 import { productController } from "../controllers/productController";
 import orderController from "../controllers/orderController";
 import addToCartModel from "../models/cartProduct";
+import blogController from "../controllers/blogController";
 
 const router = express.Router();
 
@@ -68,5 +69,12 @@ router.put("/order/:id", authMiddleware, orderController.updateOrder);
 router.delete("/order", authMiddleware, orderController.deleteOrders);
 router.get("/order", orderController.getAllOrders);
 router.get("/order/:id", orderController.getOrderById);
+
+//blog
+router.post("/blog", authMiddleware, blogController.createBlog);
+router.get("/blogs", authMiddleware, blogController.getAllBlogs);
+router.get("/blog", authMiddleware, blogController.getBlogById);
+router.put("/blog/:id", authMiddleware, blogController.updateBlog);
+router.delete("/blog", authMiddleware, blogController.deleteBlogs);
 
 export default router;

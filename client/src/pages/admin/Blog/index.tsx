@@ -4,7 +4,7 @@ import Table from "../../../components/ui/Table";
 import { IBlog } from "../../../types/blog.type";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { Modal } from "../../../components/ui/Modal";
-import { FaSpinner, FaUpload } from "react-icons/fa";
+import { FaUpload } from "react-icons/fa";
 
 interface IError {
   title?: string;
@@ -14,18 +14,22 @@ interface IError {
 const BlogManagement = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState("");
-  const [tags, setTags] = useState([]);
+
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState<IError>({});
-  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [sortBy, setSortBy] = useState<string>("name");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [blogInfo, setBlogInfo] = useState({
     _id: "",
-    name: "",
-    description: "",
+    title: "",
+    content: "",
+    images: [
+      {
+        url: "",
+        title: "",
+      },
+    ],
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -61,24 +65,24 @@ const BlogManagement = () => {
   };
 
   const columns = [
-    { key: "name", label: "Name", sortable: true },
+    { key: "title", label: "Title", sortable: true },
     { key: "content", label: "Content", sortable: true },
   ];
 
   const blogs = [
     {
       id: "1",
-      name: "hehe",
+      title: "hehe",
       content: "no des",
     },
     {
       id: "2",
-      name: "hehe",
+      title: "hehe",
       content: "no des",
     },
     {
       id: "3",
-      name: "hehe",
+      title: "hehe",
       content: "no des",
     },
   ];

@@ -1,5 +1,9 @@
 export interface IBlog {
-    _id: number;
-    name: string;
-  }
-  
+  _id: string;
+  title: string;
+  content: string;
+  images: {
+    url: string;
+    title: string;
+  }[];
+}

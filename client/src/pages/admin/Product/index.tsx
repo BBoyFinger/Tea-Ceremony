@@ -34,9 +34,6 @@ const ProductManagement = () => {
     maxPrice: maxPrice,
   };
 
-  const defaultProduct =
-    "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg";
-
   const [searchField, setSearchField] = useState({
     productName: "",
     category: "",
@@ -78,8 +75,8 @@ const ProductManagement = () => {
     quantity: 0,
     images: [
       {
-        url: defaultProduct,
-        title: "Default Image ",
+        url: "",
+        title: "",
       },
     ],
     category: "",
@@ -125,7 +122,7 @@ const ProductManagement = () => {
 
     if (product.images && product.images.length > 0) {
       for (let i = 0; i < product.images.length; i++) {
-        if (!product.images[i].url) {
+        if (!product.images[i]?.url) {
           return `Image URL is required for image ${i + 1}.`;
         }
       }
@@ -182,27 +179,16 @@ const ProductManagement = () => {
   const handleImageUpload = async (e: any) => {
     const file = e.target.files[0];
 
-    if (!file) {
-      // Nếu không có file nào được chọn, không làm gì cả
-      return;
-    }
-
     setUploadImageInput(file?.name);
 
     const uploadImageFormCloudinary = await uploadImage(file);
 
-    setProductInfo((prev: any) => {
-      // Lọc ra hình ảnh mặc định nếu nó đã có trong mảng
-      // const updatedImages = prev.images.filter(
-      //   (image: any) => image.url !== defaultProduct
-      // );
+    console.log(uploadImageFormCloudinary);
 
+    setProductInfo((prev: any) => {
       return {
         ...prev,
-        images: [
-          // ...updatedImages,
-          { url: uploadImageFormCloudinary.url, title: file.name },
-        ],
+        images: [{ url: uploadImageFormCloudinary.url, title: file.name }],
       };
     });
   };
