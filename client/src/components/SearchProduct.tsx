@@ -88,18 +88,18 @@ const ProductSearch = () => {
 
         {isFocused && searchProducts.length > 0 ? (
           <div className="absolute min-h-[420px] w-full z-[9999] bg-white left-0 top-[95px] py-4 px-3 ">
-            <div className="container grid grid-cols-3 lg:grid-cols-8 items-center justify-center ">
+            <div className="container text-center gap-3 mx-auto grid grid-cols-3 lg:grid-cols-8 items-center justify-center ">
               {searchProducts.map((product: IProduct) => (
                 <Link
                   to={`products/${product._id}`}
                   key={product._id}
-                  className="min-w-36 container leading-5 flex gap-3 flex-col justify-center items-center group  font-normal transition-transform duration-300 transform hover:scale-105"
+                  className="leading-5 flex gap-3 flex-col justify-center items-center group  font-normal transition-transform duration-300 transform hover:scale-105"
                 >
                   <div className="">
                     <img
                       src={product.images && product?.images[0]?.url}
                       alt={product.images && product?.images[0]?.title}
-                      className="w-full h-auto object-contain rounded-3xl"
+                      className="lg:w-full lg:h-auto w-[60px] h-[60px] object-contain rounded-3xl"
                     />
                   </div>
                   <div>

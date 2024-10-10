@@ -7,6 +7,7 @@ import {
   FaLinkedin,
   FaInstagram,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const AboutUs = () => {
   const [expandedSection, setExpandedSection] = useState(null);
@@ -35,7 +36,7 @@ const AboutUs = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <header className="bg-blue-600 text-white text-center py-20">
+      <header className=" text-black text-center py-20">
         <h1 className="text-4xl font-bold mb-4">About Us</h1>
         <p className="text-xl">Discover Our Story and Mission</p>
       </header>
@@ -156,44 +157,11 @@ const AboutUs = () => {
           <p className="text-lg mb-6">
             Join us on our mission to make a difference in the world.
           </p>
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300">
+          <Link to={"/contact"} className="bg-[#f04138] hover:bg-[#f04138] text-white px-8 py-3 rounded-full text-lg font-semibold  transition duration-300">
             Contact Us Today
-          </button>
+          </Link>
         </section>
 
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-4">Connect With Us</h2>
-          <div className="flex justify-center space-x-6">
-            <a
-              href="#"
-              aria-label="Facebook"
-              className="text-blue-600 hover:text-blue-800"
-            >
-              <FaFacebook size={32} />
-            </a>
-            <a
-              href="#"
-              aria-label="Twitter"
-              className="text-blue-400 hover:text-blue-600"
-            >
-              <FaTwitter size={32} />
-            </a>
-            <a
-              href="#"
-              aria-label="LinkedIn"
-              className="text-blue-700 hover:text-blue-900"
-            >
-              <FaLinkedin size={32} />
-            </a>
-            <a
-              href="#"
-              aria-label="Instagram"
-              className="text-pink-600 hover:text-pink-800"
-            >
-              <FaInstagram size={32} />
-            </a>
-          </div>
-        </section>
       </main>
     </div>
   );

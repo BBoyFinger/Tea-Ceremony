@@ -5,16 +5,39 @@ import {
   RiContactsBook3Line,
   RiProductHuntLine,
 } from "react-icons/ri";
-import { CiLogin } from "react-icons/ci";
+import { CiLogin, CiLogout } from "react-icons/ci";
 
 import Logo from "../assets/logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import axiosInstance from "../utils/axiosConfig";
+import { toast } from "react-toastify";
+import { setUserDetails } from "../features/auth/authSlice";
 
 type Props = {};
 
 const MobileNav = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const userState = useSelector((state: RootState) => state.authReducer);
+  const dispatch: AppDispatch = useDispatch();
+  const { user, productsCart } = userState;
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const response = await axiosInstance.get("/logout");
+
+    if (response.data.success) {
+      toast.success(response.data.message);
+      dispatch(setUserDetails(null));
+    }
+
+    if (response.data.error) {
+      toast.error(response.data.message);
+    }
+    navigate("/login");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,17 +123,42 @@ const MobileNav = (props: Props) => {
             <div>
               <img src={Logo} alt="logo" />
             </div>
-            {menuItems.map((item) => (
-              <Link
-                key={item.name}
-                to={`${item.path.toLowerCase()}`}
-                className="flex items-center text-gray-700 hover:text-blue-600 transition-colors duration-300 py-3"
-                onClick={toggleMenu}
-              >
-                <span className="mr-3">{item.icon}</span>
-                {item.name}
-              </Link>
-            ))}
+            {menuItems.map((item) =>
+              item.path === "/login" ? (
+                user?._id ? (
+                  <button
+                    key="logout"
+                    onClick={handleLogout}
+                    className="flex items-center text-gray-700 hover:text-blue-600 transition-colors duration-300 py-3"
+                  >
+                    <span className="mr-3">
+                      <CiLogout/>
+                    </span>
+                    Logout
+                  </button>
+                ) : (
+                  <Link
+                    key="login"
+                    to={item.path}
+                    className="flex items-center text-gray-700 hover:text-blue-600 transition-colors duration-300 py-3"
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    Login
+                  </Link>
+                )
+              ) : (
+                <div key={item.name}>
+                  <Link
+                    to={item.path.toLowerCase()}
+                    className="flex items-center text-gray-700 hover:text-blue-600 transition-colors duration-300 py-3"
+                    onClick={toggleMenu}
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    {item.name}
+                  </Link>
+                </div>
+              )
+            )}
           </nav>
         </div>
       </div>
