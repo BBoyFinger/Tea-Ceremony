@@ -16,6 +16,7 @@ const CartPage = () => {
   const { productsCart } = authState;
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
 
   const context = useContext(Context);
   const increaseQuantity = async (id: any, currentQuantity: number) => {
@@ -35,6 +36,16 @@ const CartPage = () => {
   useEffect(() => {
     dispatch(viewProductCart());
   }, [dispatch]);
+
+  useEffect(() => {
+    let sum = 0;
+    for (let index = 0; index < productsCart.length; index++) {
+      sum +=
+        Number(productsCart[index]?.quantity || 0) *
+        (productsCart[index]?.productId?.price || 0);
+    }
+    setTotalAmount(sum);
+  }, [productsCart]); // Add productsCart as a dependency
 
   const deleteProductCart = async (id: string) => {
     if (window.confirm("Are u sure delete this product in cart?")) {
@@ -95,8 +106,7 @@ const CartPage = () => {
               </div>
               <div className="text-right">
                 <p className="font-semibold">
-                  $
-                  {(item.productId?.price * item.productId?.quantity)}
+                  ${item.productId?.price * item?.quantity}
                 </p>
                 <button
                   onClick={() => deleteProductCart(item._id)}
@@ -112,9 +122,15 @@ const CartPage = () => {
         <div className="md:w-1/3">
           <div className="bg-gray-50 p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
-            <div className="flex justify-between mb-2">
-              <span>Subtotal:</span>
-              <span></span>
+            <div className="flex flex-col justify-between mb-2">
+              {(totalAmount !== null || totalAmount !== 0) && (
+                <>
+                  <h4 className="text-xl font-semibold">
+                    Subtotal: {totalAmount}{" "}
+                  </h4>
+                  <p>Taxes and shipping calcaulated at checkout</p>
+                </>
+              )}
             </div>
             {discount > 0 && (
               <div className="flex justify-between mb-2 text-green-600">
@@ -122,31 +138,7 @@ const CartPage = () => {
                 <span>-${discount}</span>
               </div>
             )}
-            <div className="flex justify-between font-semibold text-lg mt-4">
-              <span>Total:</span>
-              <span></span>
-            </div>
-            <div className="mt-6">
-              <label htmlFor="promo-code" className="block mb-2">
-                Promo Code:
-              </label>
-              <div className="flex">
-                <input
-                  type="text"
-                  id="promo-code"
-                  value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
-                  className="flex-grow px-3 py-2 border rounded-l"
-                  placeholder="Enter promo code"
-                />
-                <button
-                  onClick={applyPromoCode}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600 transition-colors"
-                >
-                  Apply
-                </button>
-              </div>
-            </div>
+
             <button
               className="w-full bg-green-500 text-white py-3 rounded-lg mt-6 hover:bg-green-600 transition-colors flex items-center justify-center"
               onClick={() => alert("Proceeding to checkout")}

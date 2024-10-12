@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -13,13 +13,34 @@ import { FiUsers, FiDatabase, FiSettings } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { getAllUser } from "../../../features/auth/authSlice";
+import { getProducts } from "../../../features/product/productSlice";
 
 type Props = {};
 
 const Dashboard = (props: Props) => {
   const dispatch: AppDispatch = useDispatch();
   const UserState = useSelector((state: RootState) => state.authReducer);
+  const ProductState = useSelector((state: RootState) => state.productReducer);
+  const [totalProduct, setTotalProduct] = useState(0);
   const { users } = UserState;
+  const { products } = ProductState;
+  const [productName, setProductName] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const filter = {
+    productName: productName,
+    minPrice: minPrice,
+    maxPrice: maxPrice,
+  };
+
+  useEffect(() => {
+    let totalProductSum = 0;
+    for (let index = 0; index < products?.length; index++) {
+      totalProductSum += Number(products[index]?.quantity); // Fix here
+    }
+    setTotalProduct(totalProductSum);
+    dispatch(getProducts(filter));
+  }, [products]); // Add products as a dependency
 
   useEffect(() => {
     dispatch(getAllUser());
@@ -35,7 +56,7 @@ const Dashboard = (props: Props) => {
     <div>
       <div className="mb-8">
         <h3 className="text-gray-700 text-3xl font-medium">Dashboard</h3>
-       
+
         <div className="mt-4">
           <div className="flex flex-wrap -mx-6">
             <div className="w-full px-6 sm:w-1/2 xl:w-1/3">
@@ -58,7 +79,7 @@ const Dashboard = (props: Props) => {
                 </div>
                 <div className="mx-5">
                   <h4 className="text-2xl font-semibold text-gray-700">
-                    200,521
+                    {totalProduct}
                   </h4>
                   <div className="text-gray-500">Total Products</div>
                 </div>

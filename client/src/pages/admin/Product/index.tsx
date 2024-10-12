@@ -17,7 +17,7 @@ import { BsSearch } from "react-icons/bs";
 
 import { FiPlus } from "react-icons/fi";
 import { toast } from "react-toastify";
-import uploadImage from "../../../utils/uploadImage";
+import { uploadImageProduct } from "../../../utils/uploadImage";
 import { ImSpinner3 } from "react-icons/im";
 
 const ProductManagement = () => {
@@ -181,9 +181,7 @@ const ProductManagement = () => {
 
     setUploadImageInput(file?.name);
 
-    const uploadImageFormCloudinary = await uploadImage(file);
-
-    console.log(uploadImageFormCloudinary);
+    const uploadImageFormCloudinary = await uploadImageProduct(file);
 
     setProductInfo((prev: any) => {
       return {

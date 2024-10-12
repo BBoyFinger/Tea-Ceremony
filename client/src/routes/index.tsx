@@ -18,6 +18,21 @@ import BlogPage from "../pages/blog";
 import AboutUs from "../pages/about";
 import ContactUs from "../pages/contact";
 import BlogManagement from "../pages/admin/Blog";
+import { Outlet, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+
+const PrivateRoute = ({ children }: { children: JSX.Element }) => {
+  const { user } = useSelector((state: RootState) => state.authReducer);
+
+  return user ? children : <Navigate to="/login" />;
+};
+
+const PublicRoute = ({ children }: { children: JSX.Element }) => {
+  const { user } = useSelector((state: RootState) => state.authReducer);
+
+  return !user ? children : <Navigate to="/" />;
+};
 
 const router = createBrowserRouter([
   {
@@ -30,7 +45,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <Login />,
+        element: (
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        ),
       },
       {
         path: "/forgot-password",
@@ -38,7 +57,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/sign-up",
-        element: <SignUp />,
+        element: (
+          <PublicRoute>
+            <SignUp />
+          </PublicRoute>
+        ),
       },
       {
         path: "/cart",
@@ -46,7 +69,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/admin-panel",
-        element: <AdminPanel />,
+        element: (
+          <PrivateRoute>
+            <AdminPanel />
+          </PrivateRoute>
+        ),
         children: [
           {
             path: "",

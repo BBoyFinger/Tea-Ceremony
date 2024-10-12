@@ -1,26 +1,20 @@
-import React, { useRef, useState } from "react";
+import React, { ChangeEvent, useRef, useState } from "react";
 import Table from "../../../components/ui/Table";
 
 import { IBlog } from "../../../types/blog.type";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { Modal } from "../../../components/ui/Modal";
-import { FaUpload } from "react-icons/fa";
+import { FaTimes, FaUpload } from "react-icons/fa";
+import { uploadImageBlog } from "../../../utils/uploadImage";
+import { AppDispatch, RootState } from "../../../store/store";
+import { useDispatch, useSelector } from "react-redux";
 
-interface IError {
-  title?: string;
-  content?: string;
-  description?: string;
-}
 const BlogManagement = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-
-  const [image, setImage] = useState(null);
-  const [errors, setErrors] = useState<IError>({});
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [sortBy, setSortBy] = useState<string>("name");
+  const dispatch: AppDispatch = useDispatch();
+  const blogs = useSelector((state: RootState) => state.blogReducer.blogs);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [blogInfo, setBlogInfo] = useState({
+  const [selectedBlog, setSelectedBlog] = useState<string[]>([]);
+  const [blogInfo, setBlogInfo] = useState<IBlog | null>({
     _id: "",
     title: "",
     content: "",
@@ -31,15 +25,13 @@ const BlogManagement = () => {
       },
     ],
   });
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const handleSort = (key: string) => {
-    if (sortBy === key) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(key);
-      setSortOrder("asc");
-    }
+  const [UploadImageInput, setUploadImageInput] = useState("");
+
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setBlogInfo({ ...blogInfo, [name]: value });
   };
 
   const handleEdit = (blog: IBlog) => {
@@ -57,56 +49,35 @@ const BlogManagement = () => {
   };
 
   const openModal = (blog: IBlog | null = null) => {
+    setBlogInfo(blog);
     setIsModalOpen(true);
   };
 
-  const handleSearch = (e: any) => {
-    setSearchTerm(e.target.value);
-  };
+  const handleSearch = (e: any) => {};
 
   const columns = [
     { key: "title", label: "Title", sortable: true },
     { key: "content", label: "Content", sortable: true },
   ];
 
-  const blogs = [
-    {
-      id: "1",
-      title: "hehe",
-      content: "no des",
-    },
-    {
-      id: "2",
-      title: "hehe",
-      content: "no des",
-    },
-    {
-      id: "3",
-      title: "hehe",
-      content: "no des",
-    },
-  ];
+  const handleSort = () => {};
 
-  const handleImageUpload = (e: any) => {
+  const handleImageUpload = async (e: any) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => setImage(e.target.result);
-      reader.readAsDataURL(file);
-    }
+
+    setUploadImageInput(file?.name);
+
+    const uploadImageFormCloudinary = await uploadImageBlog(file);
+
+    setBlogInfo((prev: any) => {
+      return {
+        ...prev,
+        images: [{ url: uploadImageFormCloudinary.url, title: file.name }],
+      };
+    });
   };
 
-  const handleSubmit = async () => {
-    console.log("hello");
-    let newErrors: IError = {};
-    if (!title.trim()) newErrors.title = "Title is required";
-    if (!content.trim()) newErrors.content = "Content is required";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-  };
+  const handleSubmit = async () => {};
   return (
     <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
@@ -119,7 +90,7 @@ const BlogManagement = () => {
             type="text"
             placeholder="Search Blogs"
             className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
+            value=""
             onChange={handleSearch}
           />
           <FiSearch className="absolute left-3 top-3 text-gray-400" />
@@ -133,13 +104,13 @@ const BlogManagement = () => {
       </div>
 
       <Table
-        selectedItems={["1", "2", "3"]}
+        selectedItems={selectedBlog}
         onSelectItem={handleSelectItem}
         onDeleteSelected={() => {}}
         columns={columns}
         data={blogs}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
+        sortBy={"sortBy"}
+        sortOrder={"asc"}
         itemsPerPage={20}
         onSort={handleSort}
         onEdit={handleEdit}
@@ -167,14 +138,12 @@ const BlogManagement = () => {
             <input
               type="text"
               id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              name="title"
+              value={blogInfo?.title}
+              onChange={handleInputChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter blog title"
             />
-            {errors.title && (
-              <p className="mt-1 text-sm text-red-500">{errors.title}</p>
-            )}
           </div>
           <div>
             <label
@@ -185,51 +154,69 @@ const BlogManagement = () => {
             </label>
             <textarea
               id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              name="content"
+              value={blogInfo?.content}
+              onChange={handleInputChange}
               rows={4}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Write your blog content here"
             ></textarea>
-            {errors.content && (
-              <p className="mt-1 text-sm text-red-500">{errors.content}</p>
-            )}
           </div>
 
-          <div>
+          <div className="col-span-full">
             <label className="block text-sm font-medium text-gray-700">
-              Thumbnail Image
+              Images
             </label>
-            <div className="mt-1 flex items-center">
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  if (fileInputRef.current) {
-                    fileInputRef.current.click();
-                  } else {
-                    console.error("fileInputRef.current is null");
-                  }
-                }}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <FaUpload className="mr-2" />
-                Upload Image
-              </button>
+            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+              <div className="space-y-1 text-center">
+                <FaUpload className="mx-auto h-12 w-12 text-gray-400" />
+                <div className="flex text-sm text-gray-600">
+                  <label
+                    htmlFor="images"
+                    className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                  >
+                    <span>Upload images</span>
+                    <input
+                      id="images"
+                      name="images"
+                      type="file"
+                      multiple
+                      onChange={handleImageUpload}
+                      className="sr-only"
+                    />
+                  </label>
+                  <p className="pl-1">or drag and drop</p>
+                </div>
+                <p className="text-xs text-gray-500">
+                  PNG, JPG, GIF up to 10MB
+                </p>
+              </div>
             </div>
-            {image && (
-              <div className="mt-2">
-                <img
-                  src={image}
-                  alt="Preview"
-                  className="max-w-full h-auto rounded-md"
-                />
+            {blogInfo?.images?.length  && blogInfo?.images?.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                {blogInfo?.images?.map((image: any, index: any) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={image?.url}
+                      alt={`Uploaded image ${image?.title}`}
+                      className="h-24 w-full object-cover rounded-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setBlogInfo((prev: any) => ({
+                          ...prev,
+                          images: prev.images.filter(
+                            (_: any, i: any) => i !== index
+                          ),
+                        }))
+                      }
+                      className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none"
+                    >
+                      <FaTimes size={12} />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>

@@ -24,9 +24,8 @@ const ShoppingCart = ({
   viewProductCart,
 }: CartItem) => {
   const dispatch: AppDispatch = useDispatch();
-
   const [isOpen, setIsOpen] = useState(false);
-
+  const [totalAmount, setTotalAmount] = useState<number>(0);
   const fetchViewCart = async () => {
     await dispatch(viewProductCart());
   };
@@ -67,6 +66,14 @@ const ShoppingCart = ({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
+
+  useEffect(() => {
+    let sum = 0;
+    for (let index = 0; index < products?.length; index++) {
+      sum += Number(products[index]?.quantity || 0) * (products[index]?.productId?.price || 0);
+    }
+    setTotalAmount(sum);
+  }, [products]); // Add productsCart as a dependency
 
   return (
     <div className="relative ">
@@ -116,7 +123,7 @@ const ShoppingCart = ({
                         <div className="flex justify-between text-base font-medium text-gray-900">
                           <h3>{item.productId?.productName}</h3>
                           <p className="ml-4">
-                            ${item.productId?.price * item.productId?.quantity}
+                            ${item.productId?.price * item.quantity}
                           </p>
                         </div>
                       </div>
@@ -162,7 +169,7 @@ const ShoppingCart = ({
             <div className="mt-8">
               <div className="flex justify-between text-base font-medium text-gray-900">
                 <p>Subtotal</p>
-                <p>$ 120</p>
+                <p>$ {totalAmount}</p>
               </div>
               <p className="mt-0.5 text-sm text-gray-500">
                 Shipping and taxes calculated at checkout.
