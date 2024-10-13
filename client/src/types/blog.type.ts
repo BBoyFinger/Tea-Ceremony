@@ -6,4 +6,5 @@ export interface IBlog {
     url: string;
     title: string;
   }[];
+  createdAt?: string;
 }

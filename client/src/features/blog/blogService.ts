@@ -6,6 +6,12 @@ const getBlogs = async () => {
   return response.data.data;
 };
 
+const getBlogById = async (id: string) => {
+  const response = await axiosInstance.get(`/blog/${id}`);
+  return response.data.data;
+};
+
+
 const createBlog = async (data: IBlog) => {
   const response = await axiosInstance.post("/blog", data);
   return response.data.data;
@@ -31,4 +37,5 @@ export const BlogService = {
   createBlog,
   editBlog,
   deleteBlog,
+  getBlogById
 };

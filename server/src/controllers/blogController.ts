@@ -5,11 +5,19 @@ import BlogModel from "../models/blogModel";
 const blogController = {
   createBlog: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const blog = await BlogModel.create(req.body);
+      const { title, content, images } = req.body;
+      const newBlog = new BlogModel({
+        title,
+        content,
+        images,
+        author: req.userId,
+      });
+
+      await newBlog.save();
 
       return res.status(HttpStatusCode.Created).json({
         message: "Create Blog successfully!",
-        data: blog,
+        data: newBlog.populate("author"),
       });
     } catch (error: any) {
       return res.status(HttpStatusCode.InternalServerError).json({

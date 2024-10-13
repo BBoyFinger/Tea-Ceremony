@@ -1,3 +1,4 @@
+import { useDispatch, useSelector } from "react-redux";
 import logo from "../assets/logo.svg";
 import {
   FaFacebookF,
@@ -7,6 +8,11 @@ import {
   FaPinterest,
   FaTiktok,
 } from "react-icons/fa";
+import { AppDispatch, RootState } from "../store/store";
+import { useEffect } from "react";
+import { getBlog } from "../features/blog/blogSlice";
+import moment from "moment";
+import { Link } from "react-router-dom";
 
 type Props = {};
 
@@ -64,6 +70,12 @@ const links = [
 ];
 
 const Footer = (props: Props) => {
+  const dispatch: AppDispatch = useDispatch();
+  const blogState = useSelector((state: RootState) => state.blogReducer.blogs);
+
+  useEffect(() => {
+    dispatch(getBlog());
+  }, [dispatch]);
   return (
     <>
       <footer id="footer" className="bg-[#a66920] md:bg-transparent pb-[20px]">
@@ -71,19 +83,70 @@ const Footer = (props: Props) => {
           <div className="container grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5">
             {links.map((section) => (
               <div key={section.title}>
-                <h2 className="text-[14px] text-white lg:text-[15px] pt-[15px] md:pt-0 md:pb-[20px] lg:pt-0 lg:pb-[20px] leading-5 font-semibold md:text-[#7E792A] lg:text-[#7E792A] uppercase">
-                  {section.title}
-                </h2>
-                <ul className="inline text-black text-sm leading-[1.2em] pr-[10px] pb-[7px]">
-                  {section.items.map((item) => (
-                    <li
-                      key={item.name}
-                      className="inline-block pb-0 pr-[10px] text-white md:text-[12px] md:pb-[10px] lg:pb-[7px] md:text-black md:leading-5 md:block text-[12px] lg:text-[14px]"
-                    >
-                      <a href={item.href}>{item.name}</a>
-                    </li>
-                  ))}
-                </ul>
+                {section.title === "Tea Blog" ? (
+                  <>
+                    <h2 className="text-[14px] text-white lg:text-[15px] pt-[15px] md:pt-0 md:pb-[20px] lg:pt-0 lg:pb-[20px] leading-5 font-semibold md:text-[#7E792A] lg:text-[#7E792A] uppercase">
+                      {section.title}
+                    </h2>
+                    <div>
+                      {/* {blogState.map((blog) => (
+                        <>
+                          {blog.images && blog.images.length > 0 && (
+                            <Link to={`/blog/${blog._id}`}>
+                              <img
+                                src={blog.images[0].url && blog.images[0].url}
+                                alt={blog.title}
+                                className="w-full h-auto rounded-lg"
+                              />
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-[#a66920]">
+                                  {blog.title?.substring(0, 20)} ...
+                                </span>
+                                <span className="text-sm">
+                                  {moment(blog.createdAt).format("LL")}
+                                </span>
+                              </div>
+                            </Link>
+                          )}
+                        </>
+                      ))} */}
+                      {blogState[0]?.images &&
+                        blogState[0]?.images.length > 0 && (
+                          <Link to={`/blog/${blogState[0]._id}`}>
+                            <img
+                              src={
+                                blogState[0]?.images[0].url &&
+                                blogState[0]?.images[0].url
+                              }
+                              alt={blogState[0].title}
+                              className="w-full h-auto rounded-lg"
+                            />
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-[#a66920]">
+                                {blogState[0].title?.substring(0, 20)} ...
+                              </span>
+                              <span className="text-sm">
+                                {moment(blogState[0].createdAt).format("LL")}
+                              </span>
+                            </div>
+                          </Link>
+                        )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <ul className="inline text-black text-sm leading-[1.2em] pr-[10px] pb-[7px]">
+                      {section.items.map((item) => (
+                        <li
+                          key={item.name}
+                          className="inline-block pb-0 pr-[10px] text-white md:text-[12px] md:pb-[10px] lg:pb-[7px] md:text-black md:leading-5 md:block text-[12px] lg:text-[14px]"
+                        >
+                          <a href={item.href}>{item.name}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
               </div>
             ))}
           </div>

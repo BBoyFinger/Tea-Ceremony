@@ -132,6 +132,14 @@ function Table({
                     <span title={item[column.key]}>
                       {item[column.key]?.substring(0, 50)} ...
                     </span>
+                  ) : column.key === "title" ? (
+                    <span title={item[column.key]}>
+                      {item[column.key]?.substring(0, 20)} ...
+                    </span>
+                  ) : column.key === "content" ? (
+                    <span title={item[column.key]}>
+                      {item[column.key]?.substring(0, 50)} ...
+                    </span>
                   ) : (
                     item[column.key]
                   )}

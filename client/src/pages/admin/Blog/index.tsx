@@ -8,6 +8,12 @@ import { FaTimes, FaUpload } from "react-icons/fa";
 import { uploadImageBlog } from "../../../utils/uploadImage";
 import { AppDispatch, RootState } from "../../../store/store";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  createBlog,
+  getBlog,
+  updateBlog,
+} from "../../../features/blog/blogSlice";
+import { toast } from "react-toastify";
 
 const BlogManagement = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -72,12 +78,28 @@ const BlogManagement = () => {
     setBlogInfo((prev: any) => {
       return {
         ...prev,
-        images: [{ url: uploadImageFormCloudinary.url, title: file.name }],
+        images: [{ url: uploadImageFormCloudinary?.url, title: file?.name }],
       };
     });
   };
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async () => {
+    console.log(blogInfo);
+    if (blogInfo?._id) {
+      await dispatch(updateBlog(blogInfo));
+      toast.success("Update blog successfully!");
+    } else {
+      const payload = {
+        title: blogInfo?.title,
+        content: blogInfo?.content,
+        images: blogInfo?.images,
+      };
+      await dispatch(createBlog(payload));
+      toast.success("Create blog successfully!");
+      setIsModalOpen(false);
+    }
+    await dispatch(getBlog());
+  };
   return (
     <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
@@ -192,7 +214,7 @@ const BlogManagement = () => {
                 </p>
               </div>
             </div>
-            {blogInfo?.images?.length  && blogInfo?.images?.length > 0 && (
+            {blogInfo?.images?.length && blogInfo?.images?.length > 0 && (
               <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
                 {blogInfo?.images?.map((image: any, index: any) => (
                   <div key={index} className="relative">

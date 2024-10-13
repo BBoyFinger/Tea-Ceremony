@@ -18,9 +18,10 @@ import BlogPage from "../pages/blog";
 import AboutUs from "../pages/about";
 import ContactUs from "../pages/contact";
 import BlogManagement from "../pages/admin/Blog";
-import { Outlet, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import BlogDetailsPage from "../pages/blog/[id]";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const { user } = useSelector((state: RootState) => state.authReducer);
@@ -117,6 +118,10 @@ const router = createBrowserRouter([
       {
         path: "/blog",
         element: <BlogPage />,
+      },
+      {
+        path: "/blog/:id",
+        element: <BlogDetailsPage />,
       },
       {
         path: "/about",
