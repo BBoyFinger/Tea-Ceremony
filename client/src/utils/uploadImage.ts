@@ -7,7 +7,6 @@ export const uploadImageProduct = async (image: any) => {
   formData.append("file", image);
   formData.append("upload_preset", "teaware_product");
   try {
-    console.log(formData.get("file"));
     const response = await axios.post(url, formData, {
       withCredentials: false, // Tắt chế độ credentials
     });
@@ -23,7 +22,6 @@ export const uploadImageBlog = async (image: any) => {
   formData.append("file", image);
   formData.append("upload_preset", "teaware_blog");
   try {
-    console.log(formData.get("file"));
     const response = await axios.post(url, formData, {
       withCredentials: false, // Tắt chế độ credentials
     });

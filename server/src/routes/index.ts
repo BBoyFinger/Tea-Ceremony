@@ -72,9 +72,10 @@ router.get("/order/:id", orderController.getOrderById);
 
 //blog
 router.post("/blog", authMiddleware, blogController.createBlog);
-router.get("/blogs", authMiddleware, blogController.getAllBlogs);
-router.get("/blog/:id", authMiddleware, blogController.getBlogById);
+router.get("/blogs", blogController.getAllBlogs);
+router.get("/blog/:id", blogController.getBlogById);
 router.put("/blog/:id", authMiddleware, blogController.updateBlog);
-router.delete("/blog", authMiddleware, blogController.deleteBlogs);
+router.delete("/blogs", authMiddleware, blogController.deleteBlogs);
+router.get("/blogs/search/", blogController.searchBlogs);
 
 export default router;

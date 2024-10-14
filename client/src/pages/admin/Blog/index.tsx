@@ -10,14 +10,20 @@ import { AppDispatch, RootState } from "../../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createBlog,
+  deleteBlog,
   getBlog,
   updateBlog,
 } from "../../../features/blog/blogSlice";
 import { toast } from "react-toastify";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const BlogManagement = () => {
   const dispatch: AppDispatch = useDispatch();
+  // Define custom modules for the toolbar
+
   const blogs = useSelector((state: RootState) => state.blogReducer.blogs);
+  const [content, setContent] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState<string[]>([]);
   const [blogInfo, setBlogInfo] = useState<IBlog | null>({
@@ -33,29 +39,38 @@ const BlogManagement = () => {
   });
   const [UploadImageInput, setUploadImageInput] = useState("");
 
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setBlogInfo({ ...blogInfo, [name]: value });
   };
 
-  const handleEdit = (blog: IBlog) => {
-    // Logic chỉnh sửa
-  };
-
-  const handleDelete = (id: string[]) => {
+  const handleDelete = async (id: string[]) => {
     // Logic xóa
+    if (window.confirm("Are u sure delete this blog!")) {
+      await dispatch(deleteBlog(id));
+      await dispatch(getBlog());
+      toast.success("Delete blog successfully");
+    }
   };
 
-  const handleSelectItem = () => {};
+  const handleSelectItem = (id: string) => {
+    if (selectedBlog.includes(id)) {
+      setSelectedBlog(selectedBlog.filter((blogId) => blogId !== id));
+    } else {
+      setSelectedBlog([...selectedBlog, id]);
+    }
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
   const openModal = (blog: IBlog | null = null) => {
+    console.log(blog?._id);
     setBlogInfo(blog);
+    if (blog?.content) {
+      setContent(blog?.content);
+    }
     setIsModalOpen(true);
   };
 
@@ -67,6 +82,14 @@ const BlogManagement = () => {
   ];
 
   const handleSort = () => {};
+
+  const handleDeletedItem = async () => {
+    if (window.confirm("Are you sure you want to delete the selected blog?")) {
+      await dispatch(deleteBlog(selectedBlog));
+      toast.success("Delete Blog successfully!");
+      dispatch(getBlog());
+    }
+  };
 
   const handleImageUpload = async (e: any) => {
     const file = e.target.files[0];
@@ -84,18 +107,24 @@ const BlogManagement = () => {
   };
 
   const handleSubmit = async () => {
-    console.log(blogInfo);
     if (blogInfo?._id) {
-      await dispatch(updateBlog(blogInfo));
+      const payload = {
+        _id: blogInfo?._id,
+        title: blogInfo?.title,
+        content: content,
+        images: blogInfo?.images,
+      };
+      await dispatch(updateBlog(payload));
       toast.success("Update blog successfully!");
+      setIsModalOpen(false);
     } else {
       const payload = {
         title: blogInfo?.title,
-        content: blogInfo?.content,
+        content: content,
         images: blogInfo?.images,
       };
-      await dispatch(createBlog(payload));
       toast.success("Create blog successfully!");
+      await dispatch(createBlog(payload));
       setIsModalOpen(false);
     }
     await dispatch(getBlog());
@@ -128,14 +157,14 @@ const BlogManagement = () => {
       <Table
         selectedItems={selectedBlog}
         onSelectItem={handleSelectItem}
-        onDeleteSelected={() => {}}
+        onDeleteSelected={handleDeletedItem}
         columns={columns}
         data={blogs}
         sortBy={"sortBy"}
         sortOrder={"asc"}
         itemsPerPage={20}
         onSort={handleSort}
-        onEdit={handleEdit}
+        onEdit={openModal}
         onDelete={handleDelete}
       />
 
@@ -149,6 +178,9 @@ const BlogManagement = () => {
             blogInfo?._id === undefined ? "Create Blog" : "Edit Blog"
           }`}
           cancelText="Cancel"
+          className={
+            "inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl overflow-y-auto max-h-[90vh]"
+          }
         >
           <div>
             <label
@@ -174,15 +206,32 @@ const BlogManagement = () => {
             >
               Content
             </label>
-            <textarea
+            <ReactQuill
+              theme="snow"
               id="content"
-              name="content"
-              value={blogInfo?.content}
-              onChange={handleInputChange}
-              rows={4}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Write your blog content here"
-            ></textarea>
+              value={content}
+              onChange={setContent}
+              modules={{
+                toolbar: [
+                  [{ header: "1" }, { header: "2" }, { font: [] }],
+                  [{ list: "ordered" }, { list: "bullet" }],
+                  ["bold", "italic", "underline"],
+                  [{ align: [] }],
+                  ["link", "image"],
+                ],
+              }}
+              formats={[
+                "header",
+                "font",
+                "list",
+                "bold",
+                "italic",
+                "underline",
+                "align",
+                "link",
+                "image",
+              ]}
+            />
           </div>
 
           <div className="col-span-full">
@@ -214,33 +263,32 @@ const BlogManagement = () => {
                 </p>
               </div>
             </div>
-            {blogInfo?.images?.length && blogInfo?.images?.length > 0 && (
-              <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                {blogInfo?.images?.map((image: any, index: any) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={image?.url}
-                      alt={`Uploaded image ${image?.title}`}
-                      className="h-24 w-full object-cover rounded-md"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setBlogInfo((prev: any) => ({
-                          ...prev,
-                          images: prev.images.filter(
-                            (_: any, i: any) => i !== index
-                          ),
-                        }))
-                      }
-                      className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none"
-                    >
-                      <FaTimes size={12} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+
+            <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+              {blogInfo?.images?.map((image: any, index: any) => (
+                <div key={index} className="relative">
+                  <img
+                    src={image?.url}
+                    alt={`Uploaded image ${image?.title}`}
+                    className="h-24 w-full object-cover rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setBlogInfo((prev: any) => ({
+                        ...prev,
+                        images: prev.images.filter(
+                          (_: any, i: any) => i !== index
+                        ),
+                      }))
+                    }
+                    className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none"
+                  >
+                    <FaTimes size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </Modal>
       </div>

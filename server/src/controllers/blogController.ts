@@ -27,6 +27,30 @@ const blogController = {
       });
     }
   },
+  searchBlogs: async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { query } = req.query;
+
+      const searchBlogs = await BlogModel.find({
+        $or: [
+          {
+            title: { $regex: query, $options: "i" },
+          }, // 'i' để không phân biệt chữ hoa, chữ thường
+        ],
+      });
+      return res.status(HttpStatusCode.OK).json({
+        message: "Search Blog successfully!",
+        data: searchBlogs,
+      });
+    } catch (error: any) {
+      return res.status(HttpStatusCode.InternalServerError).json({
+        message: error.message || "An error occurred",
+        error: true,
+        success: false,
+      });
+    }
+  },
+
   getAllBlogs: async (req: Request, res: Response): Promise<Response> => {
     try {
       const blogs = await BlogModel.find();
@@ -47,7 +71,7 @@ const blogController = {
   getBlogById: async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
     try {
-      const blog = await BlogModel.findById(id);
+      const blog = await BlogModel.findById(id).populate("author");
       return res.status(HttpStatusCode.Created).json({
         message: "Get Blog by id successfully!",
         data: blog,

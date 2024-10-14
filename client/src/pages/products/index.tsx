@@ -49,7 +49,7 @@ const ProductListingPage = () => {
   useEffect(() => {
     if (categories.length > 0) {
       const firstCategory = categories[0].name; // Lấy tên danh mục đầu tiên
-      setSelectedCategory(firstCategory as string); // Cập nhật selectedCategory
+      setSelectedCategory("All"); // Cập nhật selectedCategory
       dispatch(getProductByCategory(firstCategory as string)); // Lấy sản phẩm theo danh mục đầu tiên
     }
   }, [categories, dispatch]); // Chạy effect này khi categories thay đổi
@@ -59,7 +59,6 @@ const ProductListingPage = () => {
     if (value === "asc") {
     }
   };
-
 
   const handleCategoryChange = (categoryName: string) => {
     setSelectedCategory(categoryName);
@@ -121,8 +120,12 @@ const ProductListingPage = () => {
               <ul>
                 <li className="mb-2">
                   <button
-                    className={`w-full text-left py-2 px-4 text-[#666] border-l-4 hover:bg-gray-100"
-                      `}
+                    className={`w-full text-left py-2 px-4 ${
+                      selectedCategory === "All"
+                        ? "bg-[#eee] text-[#666] border-l-4 border-solid border-[#7E792A]"
+                        : "hover:bg-gray-100"
+                    }`}
+                    onClick={() => handleCategoryChange("All")}
                   >
                     All
                   </button>
@@ -189,14 +192,19 @@ const ProductListingPage = () => {
             </div>
 
             <div className="">
-              {productByCategory && productByCategory.length > 0 ? (
-                // Nếu có sản phẩm theo category, hiển thị chúng
-                <ProductsList products={productByCategory} />
-              ) : products && products.length > 0 ? (
-                // Nếu không có sản phẩm theo category, hiển thị danh sách toàn bộ sản phẩm
-                <ProductsList products={products} />
+              {products && products.length > 0 ? (
+                selectedCategory === "All" ? (
+                  // Hiển thị tất cả sản phẩm khi chọn "All"
+                  <ProductsList products={products} />
+                ) : productByCategory && productByCategory.length > 0 ? (
+                  // Hiển thị sản phẩm theo danh mục nếu có sản phẩm thuộc danh mục
+                  <ProductsList products={productByCategory} />
+                ) : (
+                  // Nếu không có sản phẩm thuộc danh mục, hiển thị thông báo
+                  <div>No products available in this category</div>
+                )
               ) : (
-                // Nếu không có sản phẩm nào, hiển thị một thông báo hoặc phần tử trống
+                // Nếu không có sản phẩm nào, hiển thị thông báo
                 <div>No products available</div>
               )}
             </div>

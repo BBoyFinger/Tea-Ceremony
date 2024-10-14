@@ -39,7 +39,7 @@ const CartPage = () => {
 
   useEffect(() => {
     let sum = 0;
-    for (let index = 0; index < productsCart.length; index++) {
+    for (let index = 0; index < productsCart?.length; index++) {
       sum +=
         Number(productsCart[index]?.quantity || 0) *
         (productsCart[index]?.productId?.price || 0);
