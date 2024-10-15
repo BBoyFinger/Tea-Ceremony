@@ -81,13 +81,17 @@ const CategoryManagement = () => {
   }, [isSuccess, isError, updatedCategory, createdCategory]);
 
   const handleSearch = (e: any) => {
-    dispatch(setSearchField(searchField));
+    const payload = {
+      name: searchField.categoryName,
+    };
+    dispatch(getCategories(payload));
   };
 
   const handleInputChange = (e: any) => {
     const { value, name } = e.target;
 
     setCategoryInfo({ ...categoryInfo, [name]: value });
+    dispatch(setSearchField({ [name]: value }));
   };
 
   const handleSort = (column: string) => {
@@ -172,7 +176,8 @@ const CategoryManagement = () => {
   };
   const handleInputSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
-    dispatch(setSearchField({ [name]: value  }));
+    console.log("name of input", value);
+    dispatch(setSearchField({ [name]: value }));
   };
 
   return (
@@ -182,10 +187,12 @@ const CategoryManagement = () => {
         <div className="relative">
           <input
             type="text"
+            id="name"
+            name="categoryName"
             placeholder="Search categories"
             className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchField.name}
-            onChange={handleInputSearchChange}
+            value={searchField.categoryName}
+            onChange={handleInputChange}
           />
           <FiSearch className="absolute left-3 top-3 text-gray-400" />
         </div>

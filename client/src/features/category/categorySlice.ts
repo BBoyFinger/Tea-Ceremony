@@ -5,7 +5,7 @@ import { categoryService } from "./categoryService";
 interface ICategoryState {
   category: ICategory | null;
   searchField: {
-    name: string;
+    categoryName: string;
   };
   categories: ICategory[];
   isLoading: boolean;
@@ -21,7 +21,7 @@ const initialState: ICategoryState = {
   category: null,
   categories: [],
   searchField: {
-    name: "",
+    categoryName: "",
   },
   isLoading: false,
   isError: false,
