@@ -14,7 +14,7 @@ router.post("/signup", authController.userSignUp);
 router.post("/signin", authController.userSignIn);
 router.get("/user-detail", authMiddleware, authController.userDetail);
 router.get("/logout", authController.userLogout);
-router.get("/user", authMiddleware, authController.getAllUser);
+router.get("/users", authMiddleware, authController.getAllUser);
 router.delete("/users", authMiddleware, authController.deleteUsers);
 router.post("/update-user", authMiddleware, authController.updateUser);
 router.get(
@@ -76,6 +76,6 @@ router.get("/blogs", blogController.getAllBlogs);
 router.get("/blog/:id", blogController.getBlogById);
 router.put("/blog/:id", authMiddleware, blogController.updateBlog);
 router.delete("/blogs", authMiddleware, blogController.deleteBlogs);
-router.get("/blogs/search/", blogController.searchBlogs);
+router.get("/blogs/search", blogController.searchBlogs);
 
 export default router;

@@ -4,6 +4,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import { SearchBlog } from "../../features/blog/blogSlice";
 
 interface Post {
   id: number;
@@ -17,13 +18,16 @@ interface Post {
 }
 
 const BlogPage = () => {
-  const blogs = useSelector((state: RootState) => state.blogReducer.blogs);
+  const dispatch: AppDispatch = useDispatch();
+  const blogState = useSelector((state: RootState) => state.blogReducer);
+  const { blogs, searchBlogs } = blogState;
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+    dispatch(SearchBlog(searchQuery));
+  }, [searchQuery]);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -38,6 +42,8 @@ const BlogPage = () => {
     setSearchQuery(query);
   };
 
+  console.log(searchBlogs)
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-center">Our Blog</h1>
@@ -47,7 +53,7 @@ const BlogPage = () => {
           <input
             type="text"
             placeholder="Search blogs..."
-            className="w-full p-4 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => handleSearch(e.target.value)}
             aria-label="Search blogs"
           />
@@ -61,7 +67,7 @@ const BlogPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogs.map((blog) => (
+          {searchBlogs.map((blog: any) => (
             <div
               key={blog?._id}
               className="bg-white rounded-lg shadow-lg overflow-hidden transition-shadow duration-300 hover:shadow-xl"
@@ -73,7 +79,7 @@ const BlogPage = () => {
               />
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-2">{blog.title}</h2>
-                <p className="text-gray-600 mb-4" >
+                <p className="text-gray-600 mb-4">
                   {blog.content?.substring(0, 100)}
                 </p>
                 <div className="flex justify-between items-center mb-4">

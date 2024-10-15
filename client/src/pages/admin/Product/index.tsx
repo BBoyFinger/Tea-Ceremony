@@ -145,7 +145,7 @@ const ProductManagement = () => {
 
   useEffect(() => {
     dispatch(getProducts(filter));
-    dispatch(getCategories());
+    dispatch(getCategories(""));
     dispatch(resetProductState());
   }, [dispatch, isLoading]);
 

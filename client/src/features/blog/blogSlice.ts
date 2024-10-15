@@ -8,6 +8,7 @@ interface initialBlog {
   blogs: IBlog[];
   isLoading: boolean;
   updatedBlog: any;
+  searchBlogs: [];
   deleteBlog: any;
   createdBlog: any;
   isError: boolean;
@@ -19,6 +20,7 @@ const initialState: initialBlog = {
   blog: null,
   blogs: [],
   isLoading: false,
+  searchBlogs: [],
   isError: false,
   isSuccess: false,
   updatedBlog: null,
@@ -36,6 +38,17 @@ export const getBlog = createAsyncThunk("get-blogs", async (_, thunkApi) => {
     return thunkApi.rejectWithValue(error);
   }
 });
+
+export const SearchBlog = createAsyncThunk(
+  "search-blogs",
+  async (query: string, thunkApi) => {
+    try {
+      return await BlogService.searchBlog(query);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
 
 export const getBlogById = createAsyncThunk(
   "get-blogs-by-id",
@@ -153,6 +166,21 @@ const blogSlice = createSlice({
         state.deleteBlog = action.payload;
       })
       .addCase(deleteBlog.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.error.message as string;
+      })
+      .addCase(SearchBlog.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(SearchBlog.fulfilled, (state, action) => {
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.isError = false;
+        state.searchBlogs = action.payload;
+      })
+      .addCase(SearchBlog.rejected, (state, action) => {
         state.isError = true;
         state.isLoading = false;
         state.isSuccess = false;

@@ -4,6 +4,9 @@ import { categoryService } from "./categoryService";
 
 interface ICategoryState {
   category: ICategory | null;
+  searchField: {
+    name: string;
+  };
   categories: ICategory[];
   isLoading: boolean;
   updatedCategory: any;
@@ -17,6 +20,9 @@ interface ICategoryState {
 const initialState: ICategoryState = {
   category: null,
   categories: [],
+  searchField: {
+    name: "",
+  },
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -30,9 +36,9 @@ export const resetCategoryState = createAction("Reset_categoryState");
 
 export const getCategories = createAsyncThunk(
   "categories",
-  async (_, thunkApi) => {
+  async (params: any, thunkApi) => {
     try {
-      return await categoryService.getCategories();
+      return await categoryService.getCategories(params);
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }
@@ -75,7 +81,11 @@ export const deleteCategory = createAsyncThunk(
 const categorySlice = createSlice({
   name: "category",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    setSearchField: (state, action) => {
+      state.searchField = { ...state.searchField, ...action.payload };
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getCategories.pending, (state, action) => {
@@ -134,8 +144,10 @@ const categorySlice = createSlice({
         state.isLoading = false;
         state.isSuccess = false;
         state.message = action.error.message as string;
-      }).addCase(resetCategoryState, () => initialState);
+      })
+      .addCase(resetCategoryState, () => initialState);
   },
 });
 
+export const { setSearchField } = categorySlice.actions;
 export default categorySlice.reducer;

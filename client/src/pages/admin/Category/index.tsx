@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { FiPlus, FiSearch } from "react-icons/fi";
 
 import { ImSpinner3 } from "react-icons/im";
@@ -10,6 +10,7 @@ import {
   deleteCategory,
   getCategories,
   resetCategoryState,
+  setSearchField,
   updateCategory,
 } from "../../../features/category/categorySlice";
 import { Modal } from "../../../components/ui/Modal";
@@ -56,11 +57,12 @@ const CategoryManagement = () => {
     isSuccess,
     createdCategory,
     updatedCategory,
+    searchField,
   } = categoryState;
 
   useEffect(() => {
     // Simulating API call to fetch categories
-    dispatch(getCategories());
+    dispatch(getCategories(""));
     dispatch(resetCategoryState());
   }, [dispatch]);
 
@@ -79,11 +81,12 @@ const CategoryManagement = () => {
   }, [isSuccess, isError, updatedCategory, createdCategory]);
 
   const handleSearch = (e: any) => {
-    setSearchTerm(e.target.value);
+    dispatch(setSearchField(searchField));
   };
 
   const handleInputChange = (e: any) => {
     const { value, name } = e.target;
+
     setCategoryInfo({ ...categoryInfo, [name]: value });
   };
 
@@ -124,7 +127,7 @@ const CategoryManagement = () => {
       await dispatch(createCategory(payload));
       await dispatch(resetCategoryState());
     }
-    await dispatch(getCategories());
+    await dispatch(getCategories(""));
 
     closeModal();
   };
@@ -156,7 +159,7 @@ const CategoryManagement = () => {
     ) {
       await dispatch(deleteCategory(selectedCategories));
       toast.success("Delete Category successfully!");
-      dispatch(getCategories());
+      dispatch(getCategories(""));
     }
   };
 
@@ -165,7 +168,11 @@ const CategoryManagement = () => {
       await dispatch(deleteCategory(id));
       toast.success("Delete category successfully");
     }
-    await dispatch(getCategories());
+    await dispatch(getCategories(""));
+  };
+  const handleInputSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+    dispatch(setSearchField({ [name]: value  }));
   };
 
   return (
@@ -177,17 +184,25 @@ const CategoryManagement = () => {
             type="text"
             placeholder="Search categories"
             className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={handleSearch}
+            value={searchField.name}
+            onChange={handleInputSearchChange}
           />
           <FiSearch className="absolute left-3 top-3 text-gray-400" />
         </div>
-        <button
-          onClick={() => openModal(null)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
-        >
-          <FiPlus className="mr-2" /> Add Category
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleSearch}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
+          >
+            <FiPlus className="mr-2" /> Search Category
+          </button>
+          <button
+            onClick={() => openModal(null)}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
+          >
+            <FiPlus className="mr-2" /> Add Category
+          </button>
+        </div>
       </div>
       {/* Table */}
 

@@ -6,6 +6,13 @@ const getBlogs = async () => {
   return response.data.data;
 };
 
+const searchBlog = async (query: string) => {
+  const response = await axiosInstance.get("/blogs/search", {
+    params: { query },
+  });
+  return response.data.data;
+};
+
 const getBlogById = async (id: string) => {
   const response = await axiosInstance.get(`/blog/${id}`);
   return response.data.data;
@@ -36,5 +43,6 @@ export const BlogService = {
   createBlog,
   editBlog,
   deleteBlog,
+  searchBlog,
   getBlogById,
 };

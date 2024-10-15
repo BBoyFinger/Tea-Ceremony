@@ -54,7 +54,15 @@ const categoryController = {
   },
   getAllCategories: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const categories = await categoryModel.find();
+      const { name } = req.query as { name: string };
+      const query: any = {};
+
+      if (name) {
+        query.name = { $regex: name, $options: "i" };
+      }
+
+      const categories = await categoryModel.find(query);
+      
       if (!categories) {
         return res.status(HttpStatusCode.NotFound).json({
           message: "Get category unsuccessfully!",

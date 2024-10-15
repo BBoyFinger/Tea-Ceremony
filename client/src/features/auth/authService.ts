@@ -2,7 +2,15 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosConfig";
 
 const getAllUser = async () => {
-  const response = await axiosInstance.get("/user");
+  const response = await axiosInstance.get("/users");
+  return response.data.data;
+};
+
+const searchUser = async (searchParams: any) => {
+  const query = new URLSearchParams(searchParams);
+  const response = await axiosInstance.get("/users", {
+    params: query,
+  });
   return response.data.data;
 };
 
@@ -77,6 +85,7 @@ const authService = {
   viewProductCart,
   updateCartProduct,
   deleteCartProduct,
+  searchUser
 };
 
 export default authService;

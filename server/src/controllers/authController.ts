@@ -7,6 +7,12 @@ import UserModel from "../models/userModel";
 import uploadProductPermission from "../utils/permission";
 import addToCartModel from "../models/cartProduct";
 
+interface SearchQuery {
+  name?: string;
+  email?: string;
+  role?: string;
+}
+
 const authController = {
   userSignUp: async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -179,7 +185,20 @@ const authController = {
 
   getAllUser: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const users = await UserModel.find().select("-pictureImg");
+      const { name, email, role } = req.query as SearchQuery;
+
+      // Tạo object query tìm kiếm
+      const query: any = {};
+      if (name) {
+        query.name = { $regex: name, $options: "i" }; // Tìm kiếm không phân biệt chữ hoa/thường
+      }
+      if (email) {
+        query.email = { $regex: email, $options: "i" };
+      }
+      if (role) {
+        query.role = role; // Lọc chính xác theo role
+      }
+      const users = await UserModel.find(query).select("-pictureImg");
       const sessionUserId = req.userId;
 
       if (!uploadProductPermission(sessionUserId)) {

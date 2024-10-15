@@ -4,6 +4,11 @@ import authService from "./authService";
 
 interface AuthState {
   user: User | null;
+  searchField: {
+    name: string;
+    email: string;
+    role: string;
+  };
   users: User[];
   isLoading: boolean;
   userAddToCart: any;
@@ -21,6 +26,11 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   users: [],
+  searchField: {
+    name: "",
+    email: "",
+    role: "",
+  },
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -36,13 +46,24 @@ const initialState: AuthState = {
 
 export const resetState = createAction("Reset_all");
 
-export const getAllUser = createAsyncThunk("user", async (_, thunkApi) => {
+export const getAllUser = createAsyncThunk("users", async (_, thunkApi) => {
   try {
     return await authService.getAllUser();
   } catch (error) {
     return thunkApi.rejectWithValue(error);
   }
 });
+
+export const searchUser = createAsyncThunk(
+  "search-user",
+  async (searchParams: any, thunkApi) => {
+    try {
+      return await authService.searchUser(searchParams);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
 
 export const addCart = createAsyncThunk(
   "addToCart",
@@ -132,6 +153,9 @@ export const authSlice = createSlice({
   reducers: {
     setUserDetails: (state, action) => {
       state.user = action.payload;
+    },
+    setSearchField: (state, action) => {
+      state.searchField = { ...state.searchField, ...action.payload };
     },
   },
   extraReducers: (builder) => {
@@ -254,11 +278,26 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.error.message || "";
       })
+      .addCase(searchUser.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(searchUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.users = action.payload;
+      })
+      .addCase(searchUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error.message || "";
+      })
 
       .addCase(resetState, () => initialState);
   },
 });
 
-export const { setUserDetails } = authSlice.actions;
+export const { setUserDetails, setSearchField } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -41,7 +41,7 @@ const ProductListingPage = () => {
   };
 
   useEffect(() => {
-    dispatch(getCategories());
+    dispatch(getCategories(""));
     dispatch(getProducts(filter));
   }, [dispatch]);
 

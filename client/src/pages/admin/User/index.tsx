@@ -7,6 +7,8 @@ import {
   getAllUser,
   deleteUsers,
   updateUser,
+  setSearchField,
+  searchUser,
 } from "../../../features/auth/authSlice";
 import { toast } from "react-toastify";
 import { Modal } from "../../../components/ui/Modal";
@@ -24,11 +26,7 @@ const UserManagement = (props: Props) => {
   const [sortBy, setSortBy] = useState("name");
   const [userRole, setUserRole] = useState("ADMIN");
   const [status, setStatus] = useState("Active");
-  const [searchField, setSearchField] = useState({
-    email: "",
-    name: "",
-    role: "",
-  });
+
   const [userDetail, setUserDetail] = useState({
     email: "",
     name: "",
@@ -36,14 +34,15 @@ const UserManagement = (props: Props) => {
     userId: "",
     status: "",
   });
+
   const dispatch: AppDispatch = useDispatch();
   // Selector from redux
   const userState = useSelector((state: RootState) => state.authReducer);
-  const { users, isLoading } = userState;
+  const { users, isLoading, searchField } = userState;
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
-    setSearchField({ ...searchField, [name]: value });
+    dispatch(setSearchField({ [name]: value }));
   };
 
   useEffect(() => {
@@ -57,6 +56,10 @@ const UserManagement = (props: Props) => {
     } else {
       setSelectedUsers([...selectedUsers, userId]);
     }
+  };
+
+  const handleSearch = () => {
+    dispatch(searchUser(searchField));
   };
 
   const handleEditUser = (user: any) => {
@@ -144,7 +147,7 @@ const UserManagement = (props: Props) => {
                 type="text"
                 id="searchName"
                 name="name"
-                value={searchField.name}
+                value={searchField?.name}
                 onChange={handleInputChange}
                 className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 placeholder="Enter name"
@@ -178,9 +181,7 @@ const UserManagement = (props: Props) => {
                 name="role"
                 value={searchField.role}
                 id="role-select"
-                onChange={(e) => {
-                  setUserRole(e.target.value);
-                }}
+                onChange={handleInputChange}
                 className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               >
                 {Object.values(ROLE).map((el) => (
@@ -194,7 +195,9 @@ const UserManagement = (props: Props) => {
         </div>
         {/* Button */}
         <div className="flex items-center justify-end mb-2">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
+            onClick={handleSearch}
+          >
             <BsSearch className="mr-2" /> Search
           </button>
         </div>

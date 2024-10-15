@@ -1,8 +1,11 @@
 import { ICategory } from "../../types/category.types";
 import axiosInstance from "../../utils/axiosConfig";
 
-const getCategories = async () => {
-  const response = await axiosInstance.get("/category");
+const getCategories = async (searchParams: any) => {
+  const query = new URLSearchParams(searchParams);
+  const response = await axiosInstance.get("/category", {
+    params: query,
+  });
   return response.data.data;
 };
 

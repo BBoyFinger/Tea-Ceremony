@@ -24,14 +24,6 @@ const Dashboard = (props: Props) => {
   const [totalProduct, setTotalProduct] = useState(0);
   const { users } = UserState;
   const { products } = ProductState;
-  const [productName, setProductName] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const filter = {
-    productName: productName,
-    minPrice: minPrice,
-    maxPrice: maxPrice,
-  };
 
   useEffect(() => {
     let totalProductSum = 0;
@@ -39,12 +31,13 @@ const Dashboard = (props: Props) => {
       totalProductSum += Number(products[index]?.quantity); // Fix here
     }
     setTotalProduct(totalProductSum);
-    dispatch(getProducts(filter));
   }, [products]); // Add products as a dependency
 
   useEffect(() => {
     dispatch(getAllUser());
+    dispatch(getProducts({}));
   }, [dispatch]);
+
   const chartData = [
     { name: "Jan", value: 400 },
     { name: "Feb", value: 300 },
