@@ -51,7 +51,7 @@ router.get("/category/:id", categoryController.getCategoryById);
 router.post("/upload-product", authMiddleware, productController.createProduct);
 router.put("/product/:id", authMiddleware, productController.updateProduct);
 router.delete("/product", authMiddleware, productController.deleteProducts);
-router.get("/product", productController.getAllProducts);
+router.get("/products", productController.getAllProducts);
 router.get("/product/:id", productController.getProductById);
 router.get("/products/search/", productController.searchProduct);
 router.get(

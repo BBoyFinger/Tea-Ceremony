@@ -8,6 +8,7 @@ import {
   deleteProduct,
   getProducts,
   resetProductState,
+  setSearchField,
   updateProduct,
 } from "../../../features/product/productSlice";
 import { Modal } from "../../../components/ui/Modal";
@@ -24,22 +25,6 @@ const ProductManagement = () => {
   const dispatch: AppDispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [UploadImageInput, setUploadImageInput] = useState("");
-  const [productName, setProductName] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-
-  const filter = {
-    productName: productName,
-    minPrice: minPrice,
-    maxPrice: maxPrice,
-  };
-
-  const [searchField, setSearchField] = useState({
-    productName: "",
-    category: "",
-    brand: "",
-    availability: "",
-  });
 
   const columns = [
     { key: "images", label: "Image", sortable: false }, // Hình ảnh sản phẩm
@@ -60,6 +45,7 @@ const ProductManagement = () => {
   const { categories } = categoryState;
   const {
     products,
+    searchField,
     isError,
     isSuccess,
     createdProduct,
@@ -79,7 +65,11 @@ const ProductManagement = () => {
         title: "",
       },
     ],
-    category: "",
+    category: {
+      name: "",
+      desription: "",
+      productCount: 0,
+    },
     material: "",
     stockQuantity: 0,
     availability: "In Stock",
@@ -144,10 +134,10 @@ const ProductManagement = () => {
   };
 
   useEffect(() => {
-    dispatch(getProducts(filter));
+    dispatch(getProducts(""));
     dispatch(getCategories(""));
     dispatch(resetProductState());
-  }, [dispatch, isLoading]);
+  }, [dispatch]);
 
   useEffect(() => {
     if (isSuccess && createdProduct) {
@@ -173,7 +163,7 @@ const ProductManagement = () => {
 
   const handleSearchInputChange = (e: any) => {
     const { name, value } = e.target;
-    setSearchField({ ...searchField, [name]: value });
+    dispatch(setSearchField({ ...searchField, [name]: value }));
   };
 
   const handleImageUpload = async (e: any) => {
@@ -197,6 +187,7 @@ const ProductManagement = () => {
 
   const openModal = (product: IProduct | null = null) => {
     setProductInfo(product);
+    console.log(productInfo.category.name);
     setIsModalOpen(true);
   };
 
@@ -204,7 +195,7 @@ const ProductManagement = () => {
     if (window.confirm("Are u sure delete this product?")) {
       await dispatch(deleteProduct(id));
       toast.success("Delete Product Successfully!");
-      dispatch(getProducts(filter));
+      dispatch(getProducts(""));
     }
   };
 
@@ -224,7 +215,7 @@ const ProductManagement = () => {
     ) {
       await dispatch(deleteProduct(selectedProduct));
       toast.success("Delete products successfully!");
-      dispatch(getProducts(filter));
+      dispatch(getProducts(""));
     }
   };
 
@@ -274,8 +265,17 @@ const ProductManagement = () => {
       await dispatch(resetProductState());
     }
 
-    await dispatch(getProducts(filter));
+    await dispatch(getProducts(""));
     setIsModalOpen(false);
+  };
+
+  const handleSearch = async () => {
+    const payload = {
+      productName: searchField.productName,
+      category: searchField?.category,
+      availability: searchField.availability,
+    };
+    await dispatch(getProducts(payload));
   };
 
   return (
@@ -303,23 +303,7 @@ const ProductManagement = () => {
               placeholder="Enter name"
             />
           </div>
-          <div className="flex items-center gap-4">
-            <label
-              htmlFor="searchBrand"
-              className="min-w-[100px] block text-left  text-sm font-medium text-gray-700 mb-1"
-            >
-              Brand
-            </label>
-            <input
-              type="text"
-              id="brand"
-              name="brand"
-              value={searchField.brand}
-              onChange={handleSearchInputChange}
-              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              placeholder="Enter brand"
-            />
-          </div>
+
           <div className="flex items-center gap-4">
             <label
               htmlFor="category"
@@ -334,6 +318,9 @@ const ProductManagement = () => {
               onChange={handleSearchInputChange}
               className="w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
+              <option defaultValue={""} className="text-sm">
+                Select Categories
+              </option>
               {categories.map((el) => (
                 <option value={el.name} key={el._id} className="text-sm">
                   {el.name}
@@ -370,7 +357,10 @@ const ProductManagement = () => {
       </div>
       {/* Button */}
       <div className="flex items-center justify-end mb-2 gap-4">
-        <button className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center">
+        <button
+          className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
+          onClick={handleSearch}
+        >
           <BsSearch className="mr-2" /> Search
         </button>
         <button
@@ -500,9 +490,7 @@ const ProductManagement = () => {
               <select
                 id="category"
                 name="category"
-                value={
-                  productInfo?.category ? productInfo.category.toString() : ""
-                }
+                value={productInfo?.category?._id}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >

@@ -3,6 +3,7 @@ import { IProduct } from "../types/product.types";
 import { Link } from "react-router-dom";
 import { LuShoppingCart } from "react-icons/lu";
 import Context from "../context";
+import scrollTop from "../utils/scrollTop";
 
 type Props = {
   title: String;
@@ -17,7 +18,6 @@ const SpecialProduct = ({
   isLoading,
   handleAddToCart,
 }: Props) => {
-  
   return (
     <section className="bg-white ">
       <div className="container mx-auto px-4">
@@ -41,6 +41,7 @@ const SpecialProduct = ({
                 <>
                   <Link
                     to={`/products/${product._id}`}
+                    onClick={scrollTop}
                     className="transition-transform duration-300 transform hover:scale-105 cursor-pointer h-36 bg-white"
                   >
                     <div className="bg-slate-200 h-full p-5 min-w-[120px] md:min-w-[145px] animate-pulse"></div>
@@ -68,6 +69,7 @@ const SpecialProduct = ({
                     />
                   </div>
                   <Link
+                    onClick={scrollTop}
                     to={`/products/${product._id}`}
                     className="transition-transform duration-300 transform hover:scale-105 cursor-pointer"
                   >

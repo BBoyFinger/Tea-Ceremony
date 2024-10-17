@@ -18,6 +18,7 @@ function App() {
   const dispatch: AppDispatch = useDispatch();
   const authState = useSelector((state: RootState) => state.authReducer);
   const { userAddToCart } = authState;
+  
 
   const fetchUserDetails = async (): Promise<void> => {
     try {

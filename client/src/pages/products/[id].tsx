@@ -17,7 +17,7 @@ import {
 } from "../../features/product/productSlice";
 import RelatedProducts from "../../components/RelatedProduct";
 import Context from "../../context";
-import { addCart } from "../../features/auth/authSlice";
+import { addCart, viewProductCart } from "../../features/auth/authSlice";
 
 const ProductDetailPage = () => {
   const context = useContext(Context);
@@ -42,6 +42,7 @@ const ProductDetailPage = () => {
   const handleAddToCart = async (productId: string) => {
     await dispatch(addCart(productId));
     context?.fetchUserAddToCart();
+    await dispatch(viewProductCart())
   };
 
   const renderStars = (rating: any) => {

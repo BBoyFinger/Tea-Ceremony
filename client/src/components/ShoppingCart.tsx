@@ -9,6 +9,7 @@ import {
   deleteCartProduct,
   updateCartProduct,
 } from "../features/auth/authSlice";
+import Context from "../context";
 
 interface CartItem {
   count: any;
@@ -23,15 +24,14 @@ const ShoppingCart = ({
   products,
   viewProductCart,
 }: CartItem) => {
+  const context = useContext(Context);
   const dispatch: AppDispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [totalAmount, setTotalAmount] = useState<number>(0);
-  const fetchViewCart = async () => {
-    await dispatch(viewProductCart());
-  };
 
   useEffect(() => {
-    fetchViewCart();
+    dispatch(viewProductCart());
+    context?.fetchUserAddToCart();
   }, [dispatch]);
 
   const increaseQuantity = async (id: any, currentQuantity: number) => {
@@ -54,6 +54,7 @@ const ShoppingCart = ({
     if (window.confirm("Are u want to delete this product in cart?")) {
       dispatch(deleteCartProduct(id));
       dispatch(viewProductCart());
+      context?.fetchUserAddToCart();
     }
   };
 
@@ -70,7 +71,9 @@ const ShoppingCart = ({
   useEffect(() => {
     let sum = 0;
     for (let index = 0; index < products?.length; index++) {
-      sum += Number(products[index]?.quantity || 0) * (products[index]?.productId?.price || 0);
+      sum +=
+        Number(products[index]?.quantity || 0) *
+        (products[index]?.productId?.price || 0);
     }
     setTotalAmount(sum);
   }, [products]); // Add productsCart as a dependency

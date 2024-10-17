@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { IProduct } from "../types/product.types";
 import { AppDispatch, RootState } from "../store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { addCart } from "../features/auth/authSlice";
+import { addCart, viewProductCart } from "../features/auth/authSlice";
 import Context from "../context";
+import scrollTop from "../utils/scrollTop";
 
 const ProductsList: React.FC<{ products: IProduct[] }> = ({ products }) => {
   const dispatch: AppDispatch = useDispatch();
@@ -14,6 +15,7 @@ const ProductsList: React.FC<{ products: IProduct[] }> = ({ products }) => {
   const handleAddToCart = async (productId: string) => {
     await dispatch(addCart(productId));
     context?.fetchUserAddToCart();
+    await dispatch(viewProductCart());
   };
 
   return (
@@ -24,7 +26,7 @@ const ProductsList: React.FC<{ products: IProduct[] }> = ({ products }) => {
           className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-105"
         >
           <div className="p-4">
-            <Link to={`/products/${product._id}`}>
+            <Link to={`/products/${product._id}`} onClick={scrollTop}>
               {product.images && product.images.length > 0 && (
                 <img
                   src={product.images[0].url}

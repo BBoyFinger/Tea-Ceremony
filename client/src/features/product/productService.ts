@@ -2,8 +2,9 @@ import { IProduct } from "../../types/product.types";
 import axiosInstance from "../../utils/axiosConfig";
 
 const getProducts = async (query: string) => {
-  const response = await axiosInstance.get("/product", {
-    params: { query },
+  const params = new URLSearchParams(query);
+  const response = await axiosInstance.get("/products", {
+    params: params,
   });
   return response.data.data;
 };

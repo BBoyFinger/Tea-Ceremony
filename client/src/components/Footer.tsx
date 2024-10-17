@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { getBlog } from "../features/blog/blogSlice";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import scrollTop from "../utils/scrollTop";
 
 type Props = {};
 
@@ -112,7 +113,10 @@ const Footer = (props: Props) => {
                       ))} */}
                       {blogState[0]?.images &&
                         blogState[0]?.images.length > 0 && (
-                          <Link to={`/blog/${blogState[0]._id}`}>
+                          <Link
+                            to={`/blog/${blogState[0]._id}`}
+                            onClick={scrollTop}
+                          >
                             <img
                               src={
                                 blogState[0]?.images[0].url &&

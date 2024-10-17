@@ -198,7 +198,7 @@ const authController = {
       if (role) {
         query.role = role; // Lọc chính xác theo role
       }
-      const users = await UserModel.find(query).select("-pictureImg");
+      const users = await UserModel.find(query);
       const sessionUserId = req.userId;
 
       if (!uploadProductPermission(sessionUserId)) {

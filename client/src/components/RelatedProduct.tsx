@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import scrollTop from "../utils/scrollTop";
 
 type RelatedProduct = {
   _id: string;
@@ -25,6 +26,7 @@ const RelatedProducts = ({ relatedProducts }: Props) => {
             to={`/products/${relatedProduct._id}`}
             key={relatedProduct._id}
             className="bg-white rounded-lg shadow-md overflow-hidden"
+            onClick={scrollTop}
           >
             <img
               src={relatedProduct.images[0]?.url}

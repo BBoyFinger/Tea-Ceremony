@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { SearchBlog } from "../../features/blog/blogSlice";
+import scrollTop from "../../utils/scrollTop";
 
 interface Post {
   id: number;
@@ -42,7 +43,7 @@ const BlogPage = () => {
     setSearchQuery(query);
   };
 
-  console.log(searchBlogs)
+  console.log(searchBlogs);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -90,6 +91,7 @@ const BlogPage = () => {
                 <Link
                   to={`${blog._id}`}
                   className="w-full bg-[#f05338] hover:bg-[#f03838] px-3 py-2 text-white rounded-lg "
+                  onClick={scrollTop}
                 >
                   View Details blog
                 </Link>

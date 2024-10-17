@@ -4,12 +4,10 @@ import HttpStatusCode from "../utils/HttpStatusCode";
 import uploadProductPermission from "../utils/permission";
 import CategoryModel from "../models/categoryModel";
 
-interface Filter {
-  productName?: { $regex: string; $options: string };
-  price?: {
-    $gte?: number;
-    $lte?: number;
-  };
+interface Query {
+  productName?: string;
+  category?: string;
+  availability?: string;
 }
 
 export const productController = {
@@ -61,23 +59,29 @@ export const productController = {
 
   getAllProducts: async (req: Request, res: Response): Promise<Response> => {
     try {
-      const { minPrice, maxPrice } = req.query;
+      const { productName, category, availability } = req.query as Query;
 
-      const productName = typeof req.query.productName === 'string' ? req.query.productName : '';
-
-      let filter: Filter = {};
+      let query: any = {};
 
       // Lọc theo tên sản phẩm (nếu có)
       if (productName) {
-        filter.productName = { $regex: productName, $options: "i" };
+        query.productName = { $regex: productName, $options: "i" };
       }
 
-      if (minPrice || maxPrice) {
-        filter.price = {};
-        if (minPrice) filter.price.$gte = Number(minPrice);
-        if (maxPrice) filter.price.$lte = Number(maxPrice);
+      if (category) {
+        query["category.name"] = category;
       }
-      const products = await ProductModel.find(filter)
+
+      // if (availability) {
+      //   query.availability = { $regex: availability, $option: "i" };
+      // }
+
+      // if (minPrice || maxPrice) {
+      //   query.price = {};
+      //   if (minPrice) query.price.$gte = Number(minPrice);
+      //   if (maxPrice) query.price.$lte = Number(maxPrice);
+      // }
+      const products = await ProductModel.find(query)
         .populate("category")
         .sort({ createdAt: -1 });
       return res.status(HttpStatusCode.OK).json({

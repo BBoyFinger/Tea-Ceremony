@@ -5,6 +5,7 @@ import { AppDispatch, RootState } from "../store/store";
 import { searchProduct } from "../features/product/productSlice";
 import { IProduct } from "../types/product.types";
 import { Link } from "react-router-dom";
+import scrollTop from "../utils/scrollTop";
 
 const ProductSearch = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -93,6 +94,7 @@ const ProductSearch = () => {
                 <Link
                   to={`products/${product._id}`}
                   key={product._id}
+                  onClick={scrollTop}
                   className="leading-5 flex gap-3 flex-col justify-center items-center group  font-normal transition-transform duration-300 transform hover:scale-105"
                 >
                   <div className="">

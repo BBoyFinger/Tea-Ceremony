@@ -5,6 +5,11 @@ import { productService } from "./productService";
 interface IProductState {
   product: IProduct | null;
   products: IProduct[];
+  searchField: {
+    productName: string;
+    category: string;
+    availability: string;
+  };
   isLoading: boolean;
   searchProducts: [];
   productByCategory: any;
@@ -24,6 +29,11 @@ const initialState: IProductState = {
   product: null,
   products: [],
   productByCategory: [],
+  searchField: {
+    productName: "",
+    category: "",
+    availability: "",
+  },
   isLoading: false,
   searchProducts: [],
   isError: false,
@@ -164,7 +174,11 @@ export const resetProductState = createAction("Reset_product");
 const productSlice = createSlice({
   name: "product",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    setSearchField: (state, action) => {
+      state.searchField = { ...state.searchField, ...action.payload };
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getProducts.pending, (state, action) => {
@@ -317,5 +331,7 @@ const productSlice = createSlice({
       .addCase(resetProductState, () => initialState);
   },
 });
+
+export const { setSearchField } = productSlice.actions;
 
 export default productSlice.reducer;
