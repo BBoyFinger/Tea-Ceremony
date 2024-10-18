@@ -181,6 +181,7 @@ const ShoppingCart = ({
                 <Link
                   to={"/cart"}
                   className="border-2 text-2xl text-center border-[#f05338] text-black min-w-[120px] hover:text-white py-[2px] px-3 rounded-3xl hover:bg-[#f04138] transition-colors duration-300"
+                  onClick={() => setIsOpen(false)}
                 >
                   View Cart
                 </Link>

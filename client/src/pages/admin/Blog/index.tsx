@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import Table from "../../../components/ui/Table";
 
 import { IBlog } from "../../../types/blog.type";
@@ -12,6 +12,7 @@ import {
   createBlog,
   deleteBlog,
   getBlog,
+  SearchBlog,
   updateBlog,
 } from "../../../features/blog/blogSlice";
 import { toast } from "react-toastify";
@@ -21,8 +22,9 @@ import "react-quill/dist/quill.snow.css";
 const BlogManagement = () => {
   const dispatch: AppDispatch = useDispatch();
   // Define custom modules for the toolbar
-
-  const blogs = useSelector((state: RootState) => state.blogReducer.blogs);
+  const [searchQuery, setSearchQuery] = useState("");
+  const blogState = useSelector((state: RootState) => state.blogReducer);
+  const { blogs, searchBlogs } = blogState;
   const [content, setContent] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState<string[]>([]);
@@ -43,6 +45,10 @@ const BlogManagement = () => {
     const { name, value } = e.target;
     setBlogInfo({ ...blogInfo, [name]: value });
   };
+
+  useEffect(() => {
+    dispatch(SearchBlog(searchQuery));
+  }, [searchQuery]);
 
   const handleDelete = async (id: string[]) => {
     // Logic xóa
@@ -74,7 +80,9 @@ const BlogManagement = () => {
     setIsModalOpen(true);
   };
 
-  const handleSearch = (e: any) => {};
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
 
   const columns = [
     { key: "title", label: "Title", sortable: true },
@@ -141,8 +149,7 @@ const BlogManagement = () => {
             type="text"
             placeholder="Search Blogs"
             className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value=""
-            onChange={handleSearch}
+            onChange={(e) => handleSearch(e.target.value)}
           />
           <FiSearch className="absolute left-3 top-3 text-gray-400" />
         </div>
@@ -159,7 +166,7 @@ const BlogManagement = () => {
         onSelectItem={handleSelectItem}
         onDeleteSelected={handleDeletedItem}
         columns={columns}
-        data={blogs}
+        data={searchBlogs}
         sortBy={"sortBy"}
         sortOrder={"asc"}
         itemsPerPage={20}

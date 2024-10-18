@@ -58,30 +58,16 @@ export const productController = {
   },
 
   getAllProducts: async (req: Request, res: Response): Promise<Response> => {
+    const { productName, category, availability } = req.query as Query;
+
+    // Tạo bộ lọc động
+    const filters: any = {};
+    if (productName) filters.name = { $regex: productName, $options: "i" }; // Tìm kiếm theo tên
+    if (category) filters.category = category;
+    if (availability) filters.availability = availability === "instock";
+    
     try {
-      const { productName, category, availability } = req.query as Query;
-
-      let query: any = {};
-
-      // Lọc theo tên sản phẩm (nếu có)
-      if (productName) {
-        query.productName = { $regex: productName, $options: "i" };
-      }
-
-      if (category) {
-        query["category.name"] = category;
-      }
-
-      // if (availability) {
-      //   query.availability = { $regex: availability, $option: "i" };
-      // }
-
-      // if (minPrice || maxPrice) {
-      //   query.price = {};
-      //   if (minPrice) query.price.$gte = Number(minPrice);
-      //   if (maxPrice) query.price.$lte = Number(maxPrice);
-      // }
-      const products = await ProductModel.find(query)
+      const products = await ProductModel.find(filters)
         .populate("category")
         .sort({ createdAt: -1 });
       return res.status(HttpStatusCode.OK).json({
